@@ -22,7 +22,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
+            android:layout_weight="4.4"
             android:src="@drawable/logo" />
 
         <TextView
@@ -34,13 +34,13 @@
             android:textSize="28sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp"
-            android:layout_weight="0.1"/>
+            android:layout_weight="0.05"/>
 
         <EditText
             android:id="@+id/familia_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.2"
+            android:layout_weight="0.1"
             android:textAlignment="center"
             android:textSize="25sp"
             android:textColor="@color/black"
@@ -51,19 +51,19 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/familia"
+            android:text="@string/password"
             android:fontFamily="@font/andika_regular"
             android:textAlignment="center"
             android:textSize="28sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp"
-            android:layout_weight="0.1"/>
+            android:layout_weight="0.05"/>
 
         <EditText
             android:id="@+id/password_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.2"
+            android:layout_weight="0.1"
             android:textAlignment="center"
             android:textSize="25sp"
             android:textColor="@color/black"
@@ -71,46 +71,81 @@
             android:background="@drawable/text_box"
             />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.05"
+            android:textAlignment="center"
+            android:textColor="@color/red"
+            android:textSize="15sp"
+            android:fontFamily="@font/andika_regular"
+            android:text="@string/login_incorrectos"
+            android:visibility="visible"
+            />
+
+
+
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="20dp"
-            android:weightSum="2">
+            android:layout_weight="0.2">
 
             <TextView
+                android:id="@+id/acceder_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:fontFamily="@font/andika_regular"
                 android:text="@string/acceder"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:padding="5dp"
                 android:paddingStart="30dp"
                 android:paddingEnd="30dp"
                 android:background="@drawable/corners"
-                android:layout_weight="1"
+                android:textAlignment="center"
+                android:layout_alignParentStart="true"
                 />
 
             <TextView
+                android:id="@+id/registrarse_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:fontFamily="@font/andika_regular"
                 android:text="@string/registrarse"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:padding="5dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:background="@drawable/corners"
-                android:layout_weight="1"
-                android:layout_marginStart="48dp"
+                android:layout_alignParentEnd="true"
                 />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/copyright_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_copyright"
+        android:backgroundTint="@android:color/transparent"/>
+
+    <ImageButton
+        android:id="@+id/condition_of_use_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_condition_of_use"
+        android:backgroundTint="@android:color/transparent"/>
 
 
 
