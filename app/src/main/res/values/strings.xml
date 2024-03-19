@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SmartSpend</string>
+    <string name="familia">Familia</string>
+    <string name="ejemplo_familia">perez92 o rodriguez21</string>
+    <string name="acceder">Acceder</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="password">Contraseña</string>
+    <string name="login_incorrectos">Usuario o contraseña incorrectos</string>
 </resources>
