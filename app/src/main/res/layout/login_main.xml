@@ -44,7 +44,6 @@
             android:textAlignment="center"
             android:textSize="25sp"
             android:textColor="@color/black"
-            android:hint="@string/ejemplo_familia"
             android:background="@drawable/text_box"
             />
 
