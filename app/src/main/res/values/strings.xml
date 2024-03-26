@@ -12,10 +12,22 @@
     <string name="email">Email</string>
     <string name="ejemplo_correo">ejemplo@ejemplo.com</string>
     <string name="repetir_password">Repetir la contraseña</string>
-    <string name="advise_email">La cuenta estará ligada a este correo</string>
+    <string name="advise_email">El email no es valido</string>
+    <string name="advise_email2">Este email ya esta en uso</string>
     <string name="registrame">Registrame</string>
     <string name="nombre_ocupado">El nombre de usuario ya está ocupado</string>
     <string name="correo_invalido">El correo no es valido</string>
     <string name="password_advise">Debe tener un tamaño de 8 con numeros y letras</string>
     <string name="password_not_equals">Las contraseñas no coinciden</string>
+    <string name="terms1">"He leido y acepto los "</string>
+    <string name="terms2">terminos y condiciones</string>
+    <string name="forgot">Recuperar contraseña</string>
+    <string name="toolbar_example">Usuario</string>
+    <string name="settings">Editar perfil</string>
+    <string name="historial">Historial de tareas</string>
+    <string name="share">Compartir aplicación</string>
+    <string name="restablecer_ajustes">Restablecer ajustes</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="bar_tittle"></string>
+    <string name="navigation_drawer_close" />
 </resources>

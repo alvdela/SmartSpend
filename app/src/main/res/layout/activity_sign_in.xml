@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    >
+    tools:context=".SignInActivity"
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="35dp"
-        android:layout_marginEnd="35dp"
         android:layout_alignParentTop="true"
-        >
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="35dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/nombre_de_la_familia"
             android:fontFamily="@font/andika_regular"
+            android:text="@string/nombre_de_la_familia"
             android:textAlignment="center"
-            android:textSize="25sp"
             android:textColor="@color/black"
-            />
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/familia_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:hint="@string/ejemplo_familia"
-            android:textColorHint="@color/dark_grey"
-            android:inputType="text"
             android:background="@drawable/text_box"
-            />
-        <TextView
+            android:hint="@string/ejemplo_familia"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textColorHint="@color/dark_grey"
+            android:textSize="20sp" />
+        <!--<TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/nombre_ocupado"
@@ -46,86 +48,83 @@
             android:textSize="15sp"
             android:textColor="@color/red"
             android:visibility="visible"
-            />
+            />-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/nombre_del_tutor"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/andika_regular"
+            android:text="@string/nombre_del_tutor"
             android:textAlignment="center"
-            android:textSize="25sp"
             android:textColor="@color/black"
-            />
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/tutor_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:hint="@string/ejemplo_nombre_tutor"
-            android:textColorHint="@color/dark_grey"
-            android:inputType="text"
             android:background="@drawable/text_box"
-            />
+            android:hint="@string/ejemplo_nombre_tutor"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textColorHint="@color/dark_grey"
+            android:textSize="20sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/email"
-            android:fontFamily="@font/andika_regular"
-            android:textAlignment="center"
-            android:textSize="25sp"
-            android:textColor="@color/black"
             android:layout_marginTop="20dp"
-            />
+            android:fontFamily="@font/andika_regular"
+            android:text="@string/email"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:hint="@string/ejemplo_correo"
-            android:textColorHint="@color/dark_grey"
-            android:inputType="textEmailAddress"
             android:background="@drawable/text_box"
-            />
+            android:hint="@string/ejemplo_correo"
+            android:inputType="textEmailAddress"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textColorHint="@color/dark_grey"
+            android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_advise_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_regular"
             android:text="@string/advise_email"
-            android:fontFamily="@font/andika_regular"
             android:textAlignment="center"
-            android:textSize="15sp"
-            android:textColor="@color/black"
-            />
+            android:textColor="@color/red"
+            android:textSize="15sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/password"
             android:fontFamily="@font/andika_regular"
+            android:text="@string/password"
             android:textAlignment="center"
-            android:textSize="25sp"
             android:textColor="@color/black"
-            />
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/text_box"
+            android:inputType="textPassword"
             android:textAlignment="center"
-            android:textSize="20sp"
             android:textColor="@color/black"
             android:textColorHint="@color/dark_grey"
-            android:inputType="textPassword"
-            android:background="@drawable/text_box"
-            />
+            android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_advise_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/andika_regular"
@@ -138,50 +137,74 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/repetir_password"
             android:fontFamily="@font/andika_regular"
+            android:text="@string/repetir_password"
             android:textAlignment="center"
-            android:textSize="25sp"
             android:textColor="@color/black"
-            />
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/password_again"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/text_box"
+            android:inputType="textPassword"
             android:textAlignment="center"
-            android:textSize="20sp"
             android:textColor="@color/black"
             android:textColorHint="@color/dark_grey"
-            android:inputType="textPassword"
-            android:background="@drawable/text_box"
-            />
+            android:textSize="20sp" />
+
         <TextView
+            android:id="@+id/tv_advise_password2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/password_not_equals"
             android:fontFamily="@font/andika_regular"
+            android:text="@string/password_not_equals"
             android:textAlignment="center"
-            android:textSize="15sp"
             android:textColor="@color/red"
-            android:visibility="visible"
-            />
+            android:textSize="15sp"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/terminos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/terminos_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
+                android:text="@string/terms1"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:onClick="goTerms"
+                android:text="@string/terms2"
+                android:textColor="@color/salmon"
+                android:textSize="15sp" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/registrarse_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:layout_marginTop="15dp"
+            android:background="@drawable/corners"
             android:fontFamily="@font/andika_regular"
-            android:text="@string/registrame"
-            android:textSize="22sp"
             android:padding="5dp"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:background="@drawable/corners"
-            />
+            android:text="@string/registrame"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
 
     </LinearLayout>
 
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,4 +9,17 @@
     <color name="red">#E00C0C</color>
     <color name="green">#009F4D</color>
     <color name="dark_grey">#B5B5B5</color>
+
+    <color name="transparent">#00ffffff</color>
+
+    <color name="pastel_yellow">#f9eeb3</color>
+    <color name="orange">#FFC107</color>
+    <color name="orange_dark">#c7980c</color>
+
+    <color name="salmon_pastel">#ffccdd</color>
+    <color name="salmon">#EA786F</color>
+    <color name="salmon_dark">#ff4f78</color>
+
+    <color name="gray_light_trans">#9Ff7f7f7</color>
+
 </resources>

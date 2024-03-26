@@ -1,6 +1,7 @@
 package com.alvdela.smartspend
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,4 +18,6 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
     }
+
+    fun forgotPassword(view: View) {}
 }
