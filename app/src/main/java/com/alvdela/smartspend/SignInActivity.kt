@@ -1,11 +1,9 @@
 package com.alvdela.smartspend
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,5 +12,8 @@ class SignInActivity : AppCompatActivity() {
 
     }
 
-    fun goTerms(view: View) {}
+    fun showPrivacyTerms(view: View) {
+        val intent = Intent(this, PrivacyPolicyActivity::class.java)
+        startActivity(intent)
+    }
 }

@@ -185,7 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:onClick="goTerms"
+                android:onClick="showPrivacyTerms"
                 android:text="@string/terms2"
                 android:textColor="@color/salmon"
                 android:textSize="15sp" />
