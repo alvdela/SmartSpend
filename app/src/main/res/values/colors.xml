@@ -12,13 +12,18 @@
 
     <color name="transparent">#00ffffff</color>
 
-    <color name="pastel_yellow">#f9eeb3</color>
-    <color name="orange">#FFC107</color>
-    <color name="orange_dark">#c7980c</color>
-
-    <color name="salmon_pastel">#ffccdd</color>
-    <color name="salmon">#EA786F</color>
-    <color name="salmon_dark">#ff4f78</color>
+    <color name="color1">#6887e1</color>
+    <color name="color2">#20acd9</color>
+    <color name="color3">#6bd786</color>
+    <color name="color4">#dd83a0</color>
+    <color name="color5">#aeeceb</color>
+    <color name="color6">#d67ad7</color>
+    <color name="color7">#9c96c9</color>
+    <color name="color8">#c79858</color>
+    <color name="color9">#aad852</color>
+    <color name="color10">#2bc8c8</color>
+    <color name="color11">#c34b46</color>
+    <color name="color12">#bd7395</color>
 
     <color name="gray_light_trans">#9Ff7f7f7</color>
 

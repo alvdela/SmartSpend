@@ -187,7 +187,7 @@
                 android:layout_marginStart="5dp"
                 android:onClick="showPrivacyTerms"
                 android:text="@string/terms2"
-                android:textColor="@color/salmon"
+                android:textColor="@color/red"
                 android:textSize="15sp" />
         </LinearLayout>
 

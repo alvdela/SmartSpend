@@ -8,28 +8,31 @@ class Family(
     private var familyName: String,
     private var emailFamily: String
 ): Serializable{
-    private var passwordFamily: String = ""
-    private var members: MutableMap<String, Member> = mutableMapOf()
+    private var members: MutableMap<Int, Member> = mutableMapOf()
 
     /**
      * Funcion para añadir miembros a la familia
      */
-    fun addMember(user:String, member: Member){
-        this.members[user] = member
+    fun addMember(userId:Int, member: Member){
+        this.members[userId] = member
     }
 
     /**
      * Funcion para eliminar un miembro de la familia
      */
-    fun deleteMember(user: String){
-        this.members.remove(user)
+    fun deleteMember(userId: Int){
+        this.members.remove(userId)
     }
 
     /**
      * Funcion que devuelve los datos de un miembro de la familia
      */
-    fun getMember(user: String): Member? {
-        return this.members[user]
+    fun getMember(userId: Int): Member? {
+        return this.members[userId]
+    }
+
+    fun getMembers(): MutableMap<Int, Member> {
+        return this.members
     }
 
     /* --- Aquí comienzan getter y setters --- */
@@ -50,7 +53,8 @@ class Family(
     }
 
     /* --- Metodos para asegurar la contraseña --- */
-    fun getPassword():String{
+
+   /* fun getPassword():String{
         return this.passwordFamily
     }
 
@@ -60,29 +64,20 @@ class Family(
         this.passwordFamily = hashedPassword
     }
 
-    /**
-     * Comprueba si la contraseña es correcta
-     */
     fun checkPassword(password: String): Boolean {
         val hashedPassword = hashPassword(password, passwordFamily.substring(0, 8))
         return hashedPassword == passwordFamily
     }
 
-    /**
-     * Genera un 'salt' para encriptar la contraseña
-     */
     private fun generateSalt(): String {
         val salt = ByteArray(8)
         SecureRandom().nextBytes(salt)
         return salt.toString(Charsets.UTF_8)
     }
 
-    /**
-     * Encripta la contraseña con el 'salt' generado
-     */
     private fun hashPassword(password: String, salt: String): String {
         val messageDigest = MessageDigest.getInstance("SHA-256")
         val bytes = messageDigest.digest("$password$salt".toByteArray(Charsets.UTF_8))
         return bytes.joinToString("") { "%02x".format(it) }
-    }
+    }*/
 }

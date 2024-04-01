@@ -24,6 +24,8 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var family: Family
 
+    private var currentId = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_main)
@@ -48,18 +50,24 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun goProfiles() {
-        TODO("Not yet implemented")
+        val intent = Intent(this, ProfilesActivity::class.java)
+        startActivity(intent)
     }
 
     private fun createMockFamily() {
         val parent = Parent("Invitado", "")
-        val members: MutableMap<String, Member> = mutableMapOf()
-        members[parent.getUser()] = parent
+        family = Family("Invitados", "email@email.com")
+        family.addMember(getNextId(),parent)
+        ContextFamily.mockFamily = family
     }
 
 
     fun showPrivacyTerms(view: View) {
         val intent = Intent(this, PrivacyPolicyActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun getNextId(): Int{
+        return currentId++
     }
 }
