@@ -45,6 +45,8 @@ class Allowance (
         this.type = newType
     }
 
+    /* Fin de setter y getter */
+
     /**
      * Comprueba si la asignacion esta caducada o eliminada
      */

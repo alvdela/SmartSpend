@@ -10,14 +10,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentTop="true"
         android:layout_marginStart="45dp"
         android:layout_marginEnd="45dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="75sp"
-        android:weightSum="5">
+        android:weightSum="5.1">
 
         <ImageView
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:text="@string/familia"
             android:fontFamily="@font/andika_regular"
             android:textAlignment="center"
-            android:textSize="28sp"
+            android:textSize="27sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp" />
 
@@ -52,7 +52,7 @@
             android:text="@string/password"
             android:fontFamily="@font/andika_regular"
             android:textAlignment="center"
-            android:textSize="28sp"
+            android:textSize="27sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp" />
 
@@ -92,8 +92,7 @@
             android:text="@string/forgot"
             android:textColor="@color/black"
             android:layout_weight="0.5"
-            android:layout_marginTop="10dp"
-            android:onClick="forgotPassword"/>
+            android:layout_marginTop="10dp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -134,6 +133,16 @@
                 />
 
         </RelativeLayout>
+
+        <Button
+            android:id="@+id/mock_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_grey"
+            android:layout_gravity="center"
+            android:text="@string/acceder_como_invitado"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
     </LinearLayout>
 

@@ -1,12 +1,13 @@
 package com.alvdela.smartspend.domain
 
+import java.io.Serializable
 import java.security.MessageDigest
 import java.security.SecureRandom
 
-class Family (
+class Family(
     private var familyName: String,
     private var emailFamily: String
-){
+): Serializable{
     private var passwordFamily: String = ""
     private var members: MutableMap<String, Member> = mutableMapOf()
 

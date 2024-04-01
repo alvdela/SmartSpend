@@ -13,8 +13,11 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".ProfilesActivity"
+            android:exported="false" />
+        <activity
             android:name=".PrivacyPolicyActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".SignInActivity"
             android:exported="false" />

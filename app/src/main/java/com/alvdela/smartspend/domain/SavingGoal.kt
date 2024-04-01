@@ -7,6 +7,10 @@ class SavingGoal(
 ) {
     private var archived = false
 
+    fun isArchived(): Boolean{
+        return archived
+    }
+
     fun getDescription(): String{
         return this.description
     }
@@ -19,11 +23,20 @@ class SavingGoal(
         return this.saving
     }
 
-    fun saveMoney(money: Float){
-        if (money < 0){
-            throw IllegalArgumentException("Suma negativa")
+    fun saveMoney(money: Float): Float{
+        var rest = 0F
+        if ((getSaving() + money) > getGoal()){
+            rest = (getSaving() + money) - getGoal()
+            this.saving = getGoal()
         }
         this.saving = getSaving() + money
+        return rest
+    }
+
+    fun checkArchieved(){
+        if (getSaving() == getGoal()){
+            archived = true
+        }
     }
 
 }
