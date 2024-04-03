@@ -1,14 +1,15 @@
 package com.alvdela.smartspend
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.alvdela.smartspend.domain.Child
 import com.alvdela.smartspend.domain.Family
+import com.alvdela.smartspend.domain.Parent
 
 class ProfilesActivity : AppCompatActivity() {
 
@@ -36,9 +37,12 @@ class ProfilesActivity : AppCompatActivity() {
     }
 
     private fun showFamilyData() {
+        var i = 0
         for ((clave, valor) in family.getMembers()) {
-            profilesButtons[clave].visibility = View.VISIBLE
-            profilesButtons[clave].text = valor.getUser()
+            profilesButtons[i].visibility = View.VISIBLE
+            profilesButtons[i].text = clave
+            profilesButtons[i].tag = clave
+            i++
         }
     }
 
@@ -80,10 +84,26 @@ class ProfilesActivity : AppCompatActivity() {
     }
 
     fun triggerGoMain(view: View) {
-        goMain(view.tag.toString().toInt())
+        goMain(view.tag.toString())
     }
 
-    private fun goMain(memberId: Int) {
+    private fun goMain(user: String) {
+        val member = family.getMember(user)
+        if (member is Parent){
+            goParentMain(user)
+        }else if(member is Child){
+            goChildMain()
+        }
+    }
 
+    private fun goParentMain(user: String) {
+        val intent = Intent(this, MainParentsActivity::class.java).apply {
+            putExtra("USER_NAME", user)
+        }
+        startActivity(intent)
+    }
+
+    private fun goChildMain() {
+        TODO("Not yet implemented")
     }
 }

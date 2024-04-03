@@ -118,5 +118,10 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
 
     <string name="acceder_como_invitado">Acceder como invitado</string>
     <string name="familia_display">Familia: %s</string>
+
+    <string name="ingreso">+ %s€</string>
+    <string name="gasto">- %s€</string>
+    <string name="consultar_movimientos">Consultar movimientos</string>
+    <string name="miembro_de_la_familia">Miembro de la familia:</string>
 </resources>
 

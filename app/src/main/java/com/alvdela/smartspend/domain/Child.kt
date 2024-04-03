@@ -1,14 +1,20 @@
 package com.alvdela.smartspend.domain
 
+import java.time.LocalDate
+
 class Child(user: String) : Member(user) {
 
     private var actualMoney: Float = 0F
     private var allowanceList: MutableList<Allowance> = mutableListOf()
-    private var expenseList: MutableList<Expense> = mutableListOf()
+    private var cashFlowList: MutableList<CashFlow> = mutableListOf()
     private var goalList: MutableList<SavingGoal> = mutableListOf()
 
     fun getActualMoney(): Float {
         return this.actualMoney
+    }
+
+    fun setActualMoney(money: Float){
+        this.actualMoney = money
     }
 
     fun addAllowance(allowance: Allowance) {
@@ -24,7 +30,7 @@ class Child(user: String) : Member(user) {
         while (iterator.hasNext()){
             val allowance = iterator.next()
             if (allowance.checkPaymentDay()) {
-                val payment = Expense(allowance.getName(), allowance.getAmount(), ExpenseType.INGRESO)
+                val payment = CashFlow(allowance.getName(), allowance.getAmount(), CashFlowType.INGRESO, LocalDate.now())
                 addExpense(payment)
                 actualMoney += allowance.getPayment()
             }
@@ -35,18 +41,18 @@ class Child(user: String) : Member(user) {
 
     }
 
-    fun addExpense(expense: Expense): Boolean {
-        return if (expense.getAmount() > getActualMoney()) {
+    fun addExpense(cashFlow: CashFlow): Boolean {
+        return if (cashFlow.amount > getActualMoney()) {
             false
         } else {
-            actualMoney -= expense.getAmount()
-            this.expenseList.add(expense)
+            actualMoney -= cashFlow.amount
+            this.cashFlowList.add(cashFlow)
             true
         }
     }
 
-    fun getExpenses(): MutableList<Expense> {
-        return expenseList
+    fun getCashFlow(): MutableList<CashFlow> {
+        return cashFlowList
     }
 
     fun addGoal(goal: SavingGoal) {
@@ -61,7 +67,7 @@ class Child(user: String) : Member(user) {
         val goal = getGoals()[i]
         if (goal.isArchived()){
             this.actualMoney += goal.getSaving()
-            val payment = Expense(goal.getDescription(), goal.getSaving(), ExpenseType.INGRESO)
+            val payment = CashFlow(goal.getDescription(), goal.getSaving(), CashFlowType.INGRESO, LocalDate.now())
             addExpense(payment)
             this.goalList.removeAt(i)
         }

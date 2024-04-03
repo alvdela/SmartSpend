@@ -1,37 +1,35 @@
 package com.alvdela.smartspend.domain
 
 import java.io.Serializable
-import java.security.MessageDigest
-import java.security.SecureRandom
 
 class Family(
     private var familyName: String,
     private var emailFamily: String
 ): Serializable{
-    private var members: MutableMap<Int, Member> = mutableMapOf()
+    private var members: MutableMap<String, Member> = mutableMapOf()
 
     /**
      * Funcion para añadir miembros a la familia
      */
-    fun addMember(userId:Int, member: Member){
-        this.members[userId] = member
+    fun addMember(member: Member){
+        this.members[member.getUser()] = member
     }
 
     /**
      * Funcion para eliminar un miembro de la familia
      */
-    fun deleteMember(userId: Int){
-        this.members.remove(userId)
+    fun deleteMember(user: String){
+        this.members.remove(user)
     }
 
     /**
      * Funcion que devuelve los datos de un miembro de la familia
      */
-    fun getMember(userId: Int): Member? {
-        return this.members[userId]
+    fun getMember(user: String): Member? {
+        return this.members[user]
     }
 
-    fun getMembers(): MutableMap<Int, Member> {
+    fun getMembers(): MutableMap<String, Member> {
         return this.members
     }
 
@@ -50,6 +48,16 @@ class Family(
 
     fun setEmail(newEmail: String){
         this.emailFamily = newEmail
+    }
+
+    fun getChildrenNames(): List<String> {
+        val childList = mutableListOf("")
+        for ((userName,member) in members){
+            if (member is Child){
+                childList.add(userName)
+            }
+        }
+        return childList.toList()
     }
 
     /* --- Metodos para asegurar la contraseña --- */

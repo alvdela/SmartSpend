@@ -7,9 +7,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.alvdela.smartspend.domain.CashFlow
+import com.alvdela.smartspend.domain.CashFlowType
+import com.alvdela.smartspend.domain.Child
 import com.alvdela.smartspend.domain.Family
-import com.alvdela.smartspend.domain.Member
 import com.alvdela.smartspend.domain.Parent
+import java.time.LocalDate
 
 
 class LoginActivity : AppCompatActivity() {
@@ -55,9 +58,19 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun createMockFamily() {
-        val parent = Parent("Invitado", "")
         family = Family("Invitados", "email@email.com")
-        family.addMember(getNextId(),parent)
+        val parent = Parent("Invitado", "")
+        family.addMember(parent)
+        val child = Child("Hijo/a")
+        val expense1 = CashFlow("Gasto1", 5.5F, CashFlowType.COMIDA, LocalDate.now())
+        val expense2 = CashFlow("Gasto2", 10F, CashFlowType.COMPRAS, LocalDate.now())
+        val expense3 = CashFlow("Gasto3", 7.75F, CashFlowType.OCIO, LocalDate.of(2024,2,10))
+        child.setActualMoney(100f)
+        child.addExpense(expense1)
+        child.addExpense(expense2)
+        child.addExpense(expense3)
+        family.addMember(child)
+        println(child.getCashFlow().toList())
         ContextFamily.mockFamily = family
     }
 

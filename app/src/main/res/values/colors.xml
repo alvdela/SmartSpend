@@ -8,6 +8,7 @@
     <color name="dark_blue">#095280</color>
     <color name="red">#E00C0C</color>
     <color name="green">#009F4D</color>
+    <color name="mid_grey">#E6E6E6</color>
     <color name="dark_grey">#B5B5B5</color>
 
     <color name="transparent">#00ffffff</color>
