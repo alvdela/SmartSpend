@@ -2,8 +2,10 @@ package com.alvdela.smartspend
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -27,12 +29,11 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var family: Family
 
-    private var currentId = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_main)
         initObjects()
+        initShowButtons()
     }
 
     private fun initObjects() {
@@ -50,11 +51,22 @@ class LoginActivity : AppCompatActivity() {
             createMockFamily()
             goProfiles()
         }
+
+        signInButton.setOnClickListener {
+            goSignIn()
+        }
+
+        accessButton.setOnClickListener {
+            //TODO acceso mediante firebase
+        }
+    }
+
+    private fun goSignIn() {
+        startActivity(Intent(this, SignInActivity::class.java))
     }
 
     private fun goProfiles() {
-        val intent = Intent(this, ProfilesActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, ProfilesActivity::class.java))
     }
 
     private fun createMockFamily() {
@@ -80,7 +92,20 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun getNextId(): Int{
-        return currentId++
+    override fun onBackPressed() {
+        super.onBackPressed()
+        //TODO mensaje que pregunte al usuario si desea cerrar la aplicacion
+        val startMain = Intent(Intent.ACTION_MAIN)
+        startMain.addCategory(Intent.CATEGORY_HOME)
+        startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(startMain)
+    }
+
+    private fun initShowButtons() {
+        val passwordButton = findViewById<CheckBox>(R.id.show_password)
+
+        passwordButton.setOnCheckedChangeListener{ _, isChecked ->
+            passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
     }
 }
