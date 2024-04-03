@@ -123,5 +123,9 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="gasto">- %s€</string>
     <string name="consultar_movimientos">Consultar movimientos</string>
     <string name="miembro_de_la_familia">Miembro de la familia:</string>
+    <string name="tareas">Tareas</string>
+    <string name="administrar_la_familia">Administrar la familia</string>
+    <string name="add_member">Añadir miembro</string>
+    <string name="nueva_tarea">Nueva tarea</string>
 </resources>
 

@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
@@ -15,6 +16,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +42,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var seguimientoButton: ImageView
     private lateinit var taskButton: ImageView
     private lateinit var adminButton: ImageView
+    private lateinit var seguimientoLayout: ConstraintLayout
+    private lateinit var taskLayout: ConstraintLayout
+    private lateinit var adminLayout: ConstraintLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +63,103 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         seguimientoButton = findViewById(R.id.seguimiento_button)
         taskButton = findViewById(R.id.task_button)
         adminButton = findViewById(R.id.admin_button)
+        seguimientoLayout = findViewById(R.id.consultarLayout)
+        taskLayout = findViewById(R.id.tareasLayout)
+        adminLayout = findViewById(R.id.adminLayout)
 
-        val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+        //val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
         val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
         currentUserName.text = user
+        changeButtonState(seguimientoButton)
+
+        seguimientoButton.setOnClickListener {
+            if (!seguimiento){
+                restartButtons()
+                changeButtonState(seguimientoButton)
+                animateSegimiento()
+            }
+        }
+        taskButton.setOnClickListener {
+            if (!tareas){
+                restartButtons()
+                changeButtonState(taskButton)
+                animateTareas()
+            }
+        }
+        adminButton.setOnClickListener {
+            if (!administracion){
+                restartButtons()
+                changeButtonState(adminButton)
+                animateAdministracion()
+            }
+        }
+    }
+
+    private fun animateAdministracion() {
+        if (tareas){
+            Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
+            //taskLayout.visibility = View.GONE
+        }
+        if (seguimiento){
+            Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
+            //seguimientoLayout.visibility = View.GONE
+        }
+        //adminLayout.visibility = View.VISIBLE
+        adminLayout.translationX = 2000f
+        Animations.animateViewOfFloat(adminLayout, "translationX", 0f, 300)
+        seguimiento = false
+        tareas = false
+        administracion = true
+    }
+
+    private fun animateTareas() {
+        if (seguimiento){
+            Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
+            //seguimientoLayout.visibility = View.GONE
+            taskLayout.translationX = 2000f
+        }
+        if (administracion){
+            Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
+            //adminLayout.visibility = View.GONE
+            taskLayout.translationX = -2000f
+        }
+        //taskLayout.visibility = View.VISIBLE
+        Animations.animateViewOfFloat(taskLayout, "translationX", 0f, 300)
+        seguimiento = false
+        tareas = true
+        administracion = false
+    }
+
+    private fun animateSegimiento() {
+        if (tareas){
+            Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
+            //taskLayout.visibility = View.GONE
+        }
+        if (administracion){
+            Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
+            //adminLayout.visibility = View.GONE
+        }
+        seguimientoLayout.translationX = -2000f
+        //seguimientoLayout.visibility = View.VISIBLE
+        Animations.animateViewOfFloat(seguimientoLayout, "translationX", 0f, 300)
+        seguimiento = true
+        tareas = false
+        administracion = false
+    }
+
+    private fun changeButtonState(button: ImageView) {
+        button.setBackgroundColor(ContextCompat.getColor(this,R.color.light_blue))
+        button.setColorFilter(ContextCompat.getColor(this,R.color.mid_grey))
+    }
+
+    private fun restartButtons() {
+        seguimientoButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
+        taskButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
+        adminButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
+
+        seguimientoButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
+        taskButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
+        adminButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
     }
 
     private fun initSpinner(){
