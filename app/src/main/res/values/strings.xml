@@ -26,7 +26,7 @@
     <string name="settings">Editar perfil</string>
     <string name="historial">Historial de tareas</string>
     <string name="share">Compartir aplicación</string>
-    <string name="restablecer_ajustes">Restablecer ajustes</string>
+    <string name="back_profiles">Volver a perfiles</string>
     <string name="logout">Cerrar sesión</string>
     <string name="bar_tittle"></string>
     <string name="navigation_drawer_close" />

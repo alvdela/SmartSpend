@@ -1,13 +1,21 @@
 package com.alvdela.smartspend
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,26 +24,42 @@ import com.alvdela.smartspend.adapter.ExpenseAdapter
 import com.alvdela.smartspend.domain.Child
 import com.alvdela.smartspend.domain.Family
 import com.alvdela.smartspend.domain.Parent
+import com.google.android.material.navigation.NavigationView
 
-class MainParentsActivity : AppCompatActivity() {
-
-    private lateinit var drawer: DrawerLayout
+class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var family: Family
-    private lateinit var user: Parent
+    private var user: String? = null
+    private var seguimiento = true
+    private var tareas = false
+    private var administracion = false
 
+    private lateinit var drawer: DrawerLayout
     private lateinit var seleccionarMiembro: Spinner
+    private lateinit var seguimientoButton: ImageView
+    private lateinit var taskButton: ImageView
+    private lateinit var adminButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_parents)
+        user = intent.getStringExtra("USER_NAME")
         getFamily()
         initObjects()
+        initToolBar()
+        initNavView()
         initSpinner()
     }
 
     private fun initObjects() {
         seleccionarMiembro = findViewById(R.id.botonSeleccionarMiembro)
+        seguimientoButton = findViewById(R.id.seguimiento_button)
+        taskButton = findViewById(R.id.task_button)
+        adminButton = findViewById(R.id.admin_button)
+
+        val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+        val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
+        currentUserName.text = user
     }
 
     private fun initSpinner(){
@@ -80,10 +104,6 @@ class MainParentsActivity : AppCompatActivity() {
         } else {
             //TODO consulta a firebase
         }
-        val userName = intent.getStringExtra("USER_NAME")
-        if (userName != null) {
-            user = family.getMember(userName) as Parent
-        }
     }
 
     private fun initToolBar() {
@@ -99,5 +119,51 @@ class MainParentsActivity : AppCompatActivity() {
         drawer.addDrawerListener(toggle)
 
         toggle.syncState()
+    }
+
+    private fun initNavView() {
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
+        val headerView: View =
+            LayoutInflater.from(this).inflate(R.layout.nav_header_main, navigationView, false)
+        navigationView.removeHeaderView(headerView)
+        navigationView.addHeaderView(headerView)
+
+        /*val tvUser: TextView = findViewById(R.id.tvUserEmail)
+        tvUser.text = family.getEmail()*/
+    }
+
+    @Deprecated("Deprecated")
+    override fun onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START)
+        } else {
+            //TODO mostrar mensaje si quiere salir
+            super.onBackPressed()
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.nav_item_signout -> signOut()
+            R.id.nav_item_backprofiles -> backProfiles()
+
+        }
+
+        drawer.closeDrawer(GravityCompat.START)
+
+        return true
+    }
+
+    private fun backProfiles() {
+        startActivity(Intent(this, ProfilesActivity::class.java))
+    }
+
+    private fun signOut() {
+        //FirebaseAuth.getInstance().signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+        ContextFamily.mockFamily = null
     }
 }

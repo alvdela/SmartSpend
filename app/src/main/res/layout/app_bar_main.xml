@@ -27,6 +27,7 @@
                 android:layout_marginEnd="15dp">
 
                 <ImageView
+                    android:id="@+id/ivCurrentUserImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_person"
@@ -37,6 +38,7 @@
                     android:background="@color/gray_light_trans"/>
 
                 <TextView
+                    android:id="@+id/tvCurrentUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/toolbar_example"

@@ -13,9 +13,9 @@
     </group>
     <item android:title="">
         <menu>
-            <!--<item android:id="@+id/nav_item_clearpreferences"
-                android:icon="@android:drawable/ic_popup_sync"
-                android:title="@string/restablecer_ajustes"/>-->
+            <item android:id="@+id/nav_item_backprofiles"
+                android:icon="@drawable/ic_arrow_back"
+                android:title="@string/back_profiles"/>
             <item android:id="@+id/nav_item_signout"
                 android:icon="@drawable/ic_close"
                 android:title="@string/logout"/>
