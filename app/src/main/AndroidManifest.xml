@@ -13,19 +13,22 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".MainChildrenActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfilesActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PrivacyPolicyActivity"
             android:exported="false" />
         <activity
             android:name=".SignInActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".MainParentsActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".LoginActivity"
             android:exported="true"

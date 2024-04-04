@@ -120,7 +120,7 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="familia_display">Familia: %s</string>
 
     <string name="ingreso">+ %s€</string>
-    <string name="gasto">- %s€</string>
+    <string name="spent">- %s€</string>
     <string name="consultar_movimientos">Consultar movimientos</string>
     <string name="miembro_de_la_familia">Miembro de la familia:</string>
     <string name="tareas">Tareas</string>
@@ -128,5 +128,12 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="add_member">Añadir miembro</string>
     <string name="nueva_tarea">Nueva tarea</string>
     <string name="advise_name">Tamaño máximo de 12 caracteres</string>
+    <string name="mis_movimientos">Mis movimientos</string>
+    <string name="dinero_disponible">Dinero disponible</string>
+    <string name="add_spent">Añadir gasto</string>
+    <string name="objetivos_de_ahorro">Objetivos de ahorro</string>
+    <string name="add_goal">Añadir objetivo</string>
+    <string name="juegos">Juegos</string>
+    <string name="canguro">Canguro matemático</string>
 </resources>
 

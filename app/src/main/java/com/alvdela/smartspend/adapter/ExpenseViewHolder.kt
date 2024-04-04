@@ -31,7 +31,7 @@ class ExpenseViewHolder(val view: View): ViewHolder(view){
             expenseAmount.text = view.context.getString(R.string.ingreso, cashFlowModel.amount.toString())
         }else{
             expenseAmount.setTextColor(ContextCompat.getColor(view.context, R.color.red))
-            expenseAmount.text = view.context.getString(R.string.gasto, cashFlowModel.amount.toString())
+            expenseAmount.text = view.context.getString(R.string.spent, cashFlowModel.amount.toString())
         }
         when(cashFlowModel.type){
             CashFlowType.COMIDA -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.food))

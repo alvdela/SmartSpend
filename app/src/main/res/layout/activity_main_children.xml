@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_children"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainChildrenActivity"
+    android:background="@color/background">
+
+    <!-- tools:openDrawer="start" -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/expensesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_marginBottom="65dp"
+            android:background="@color/background"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:translationX="0dp"
+            tools:translationX="-500dp">
+
+            <TextView
+                android:id="@+id/tvmovimientos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/andika_regular"
+                android:text="@string/mis_movimientos"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/vDivideLine"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/tvmovimientos" />
+
+            <View
+                android:id="@+id/consultaContainer"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/corners_green"
+                app:layout_constraintTop_toBottomOf="@+id/vDivideLine" />
+
+            <TextView
+                android:id="@+id/tvMensajeDinero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/andika_regular"
+                android:text="@string/dinero_disponible"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/consultaContainer"
+                app:layout_constraintTop_toTopOf="@+id/consultaContainer" />
+
+            <TextView
+                android:id="@+id/tvDineroDisponible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/andika_regular"
+                android:textColor="@color/black"
+                tools:text = "12,50€"
+                android:textSize="25sp"
+                app:layout_constraintStart_toEndOf="@+id/tvMensajeDinero"
+                app:layout_constraintTop_toBottomOf="@+id/tvMensajeDinero" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/money_bag"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="@+id/consultaContainer"
+                app:layout_constraintTop_toTopOf="@+id/consultaContainer"
+                app:layout_constraintBottom_toBottomOf="@+id/consultaContainer"
+                android:layout_marginEnd="10dp"/>
+
+            <Button
+                android:id="@+id/buttonAddSpent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/consultaContainer"
+                app:layout_constraintEnd_toEndOf="@+id/consultaContainer"
+                app:layout_constraintStart_toStartOf="@+id/consultaContainer"
+                android:layout_marginTop="5dp"
+                android:background="@color/cash"
+                android:text="@string/add_spent"
+                android:textColor="@color/black"
+                android:fontFamily="@font/andika_bold"
+                android:textSize="17sp"
+                android:padding="5dp"
+                android:drawableEnd="@drawable/cash_out"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCashFlow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonAddSpent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="65dp"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tareasLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_marginBottom="65dp"
+            android:background="@color/background"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:translationX="500dp">
+
+            <TextView
+                android:id="@+id/tvTareas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/andika_regular"
+                android:text="@string/tareas"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/vDivideLine2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/tvTareas" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/vDivideLine2"
+                app:layout_constraintBottom_toTopOf="@+id/buttonAddTask"
+                android:layout_marginTop="5dp"
+                app:layout_constraintVertical_bias="0"
+                android:layout_marginBottom="65dp"/>
+
+            <Button
+                android:id="@+id/buttonAddTask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/corners_white"
+                android:text="@string/nueva_tarea"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:fontFamily="@font/andika_bold"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="20dp"/>
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/goalsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_marginBottom="65dp"
+            android:background="@color/background"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:translationX="1000dp">
+
+            <TextView
+                android:id="@+id/tvObjetivosAhorro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/andika_regular"
+                android:text="@string/objetivos_de_ahorro"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/vDivideLine3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/tvObjetivosAhorro" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAdminFamilia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/buttonAddGoal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vDivideLine3"
+                android:layout_marginTop="5dp"
+                app:layout_constraintVertical_bias="0" />
+
+            <Button
+                android:id="@+id/buttonAddGoal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/corners_white"
+                android:text="@string/add_goal"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:fontFamily="@font/andika_bold"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="20dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gamesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_marginBottom="65dp"
+            android:background="@color/background"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:translationX="1500dp">
+
+            <TextView
+                android:id="@+id/tvGames"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/andika_regular"
+                android:text="@string/juegos"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/vDivideLine4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/tvGames" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="55dp"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="30dp"
+                android:background="@color/color11"
+                android:textAlignment="center"
+                android:text="@string/canguro"
+                android:fontFamily="@font/andika_regular"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintTop_toBottomOf="@+id/vDivideLine4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:drawableStartCompat="@drawable/calculator" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/bottom_bar"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:orientation="horizontal"
+            android:weightSum="4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/expenses_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/dark_blue"
+                android:src="@drawable/ic_trade"
+                app:tint="@color/dark_grey" />
+
+            <ImageButton
+                android:id="@+id/task_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/dark_blue"
+                android:src="@drawable/ic_list"
+                app:tint="@color/dark_grey" />
+
+            <ImageButton
+                android:id="@+id/goals_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/dark_blue"
+                android:src="@drawable/ic_piggy_bank"
+                app:tint="@color/dark_grey" />
+
+            <ImageButton
+                android:id="@+id/games_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/dark_blue"
+                android:src="@drawable/ic_game"
+                app:tint="@color/dark_grey" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        app:menu="@menu/activity_children_drawer"
+        />
+
+</androidx.drawerlayout.widget.DrawerLayout>

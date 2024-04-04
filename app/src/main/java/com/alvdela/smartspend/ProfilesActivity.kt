@@ -92,7 +92,7 @@ class ProfilesActivity : AppCompatActivity() {
         if (member is Parent){
             goParentMain(user)
         }else if(member is Child){
-            goChildMain()
+            goChildMain(user)
         }
     }
 
@@ -103,7 +103,10 @@ class ProfilesActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun goChildMain() {
-        TODO("Not yet implemented")
+    private fun goChildMain(user: String) {
+        val intent = Intent(this, MainChildrenActivity::class.java).apply {
+            putExtra("USER_NAME", user)
+        }
+        startActivity(intent)
     }
 }
