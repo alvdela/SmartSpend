@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.domain.CashFlow
 
-class ExpenseAdapter(private val cashFlowList: List<CashFlow>) : RecyclerView.Adapter<ExpenseViewHolder>() {
+class ExpenseAdapter(private val cashFlowList: MutableList<CashFlow>) : RecyclerView.Adapter<ExpenseViewHolder>() {
 
     private var lastDate = cashFlowList[0].date
     private var showDate = true

@@ -41,13 +41,12 @@ class Child(user: String) : Member(user) {
 
     }
 
-    fun addExpense(cashFlow: CashFlow): Boolean {
-        return if (cashFlow.amount > getActualMoney()) {
-            false
+    fun addExpense(cashFlow: CashFlow) {
+        if (cashFlow.amount > getActualMoney()) {
+            //Do nothing
         } else {
             actualMoney -= cashFlow.amount
-            this.cashFlowList.add(cashFlow)
-            true
+            this.cashFlowList.add(0,cashFlow)
         }
     }
 

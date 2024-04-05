@@ -43,10 +43,10 @@
 
         <ImageView
             android:id="@+id/ivExpenseImage"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:maxWidth="70dp"
-            android:maxHeight="70dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:maxWidth="60dp"
+            android:maxHeight="60dp"
             android:background="@color/transparent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

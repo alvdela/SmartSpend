@@ -5,8 +5,8 @@
     android:id="@+id/main_children"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainChildrenActivity"
-    android:background="@color/background">
+    android:background="@color/background"
+    tools:context=".MainChildrenActivity">
 
     <!-- tools:openDrawer="start" -->
 
@@ -22,12 +22,11 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_marginBottom="65dp"
             android:background="@color/background"
+            android:translationX="0dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:translationX="0dp"
-            tools:translationX="-500dp">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tvmovimientos"
@@ -56,8 +55,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_marginStart="25dp"
-                android:layout_marginEnd="25dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="25dp"
                 android:background="@drawable/corners_green"
                 app:layout_constraintTop_toBottomOf="@+id/vDivideLine" />
 
@@ -80,47 +79,47 @@
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/andika_regular"
                 android:textColor="@color/black"
-                tools:text = "12,50€"
                 android:textSize="25sp"
                 app:layout_constraintStart_toEndOf="@+id/tvMensajeDinero"
-                app:layout_constraintTop_toBottomOf="@+id/tvMensajeDinero" />
+                app:layout_constraintTop_toBottomOf="@+id/tvMensajeDinero"
+                tools:text="12,50€" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/money_bag"
+                android:layout_marginEnd="10dp"
                 android:background="@color/transparent"
-                app:layout_constraintEnd_toEndOf="@+id/consultaContainer"
-                app:layout_constraintTop_toTopOf="@+id/consultaContainer"
+                android:src="@drawable/money_bag"
                 app:layout_constraintBottom_toBottomOf="@+id/consultaContainer"
-                android:layout_marginEnd="10dp"/>
+                app:layout_constraintEnd_toEndOf="@+id/consultaContainer"
+                app:layout_constraintTop_toTopOf="@+id/consultaContainer" />
 
             <Button
                 android:id="@+id/buttonAddSpent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/consultaContainer"
-                app:layout_constraintEnd_toEndOf="@+id/consultaContainer"
-                app:layout_constraintStart_toStartOf="@+id/consultaContainer"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:background="@color/cash"
+                android:drawableEnd="@drawable/cash_out"
+                android:fontFamily="@font/andika_bold"
+                android:padding="5dp"
                 android:text="@string/add_spent"
                 android:textColor="@color/black"
-                android:fontFamily="@font/andika_bold"
                 android:textSize="17sp"
-                android:padding="5dp"
-                android:drawableEnd="@drawable/cash_out"
-                />
+                app:layout_constraintEnd_toEndOf="@+id/consultaContainer"
+                app:layout_constraintStart_toStartOf="@+id/consultaContainer"
+                app:layout_constraintTop_toBottomOf="@+id/consultaContainer" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCashFlow"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="380dp"
+                android:layout_marginTop="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/buttonAddSpent"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="65dp"/>
+                app:layout_constraintVertical_bias="0.1" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -132,11 +131,11 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_marginBottom="65dp"
             android:background="@color/background"
+            android:translationX="500dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:translationX="500dp">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tvTareas"
@@ -160,34 +159,63 @@
                 android:background="@color/black"
                 app:layout_constraintTop_toBottomOf="@+id/tvTareas" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTask"
+            <TextView
+                android:id="@+id/tvTareasObligatorias"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="25dp"
+                android:background="@color/color11"
+                android:fontFamily="@font/andika_regular"
+                android:padding="2dp"
+                android:text="@string/tareas_obligatorias"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/vDivideLine2"
-                app:layout_constraintBottom_toTopOf="@+id/buttonAddTask"
-                android:layout_marginTop="5dp"
-                app:layout_constraintVertical_bias="0"
-                android:layout_marginBottom="65dp"/>
+                app:layout_constraintTop_toBottomOf="@+id/vDivideLine2" />
 
-            <Button
-                android:id="@+id/buttonAddTask"
-                android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTaskObligatorias"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/corners_white"
-                android:text="@string/nueva_tarea"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:fontFamily="@font/andika_bold"
-                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="65dp"
+                app:layout_constraintBottom_toTopOf="@+id/tvTareasExtra"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTareasObligatorias"
+                app:layout_constraintVertical_bias="0" />
+
+            <TextView
+                android:id="@+id/tvTareasExtra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="25dp"
+                android:background="@color/color2"
+                android:fontFamily="@font/andika_regular"
+                android:padding="2dp"
+                android:text="@string/tareas_extra"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rvTaskObligatorias" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTaskExtra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="20dp"/>
-
-
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTareasExtra" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -199,11 +227,11 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_marginBottom="65dp"
             android:background="@color/background"
+            android:translationX="1000dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:translationX="1000dp">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tvObjetivosAhorro"
@@ -231,27 +259,27 @@
                 android:id="@+id/rvAdminFamilia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 app:layout_constraintBottom_toTopOf="@+id/buttonAddGoal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vDivideLine3"
-                android:layout_marginTop="5dp"
                 app:layout_constraintVertical_bias="0" />
 
             <Button
                 android:id="@+id/buttonAddGoal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/corners_white"
+                android:fontFamily="@font/andika_bold"
+                android:padding="10dp"
                 android:text="@string/add_goal"
                 android:textColor="@color/black"
                 android:textSize="17sp"
-                android:fontFamily="@font/andika_bold"
-                android:padding="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="20dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -262,11 +290,11 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_marginBottom="65dp"
             android:background="@color/background"
+            android:translationX="1500dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:translationX="1500dp">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tvGames"
@@ -291,22 +319,22 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvGames" />
 
             <TextView
-                android:padding="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="55dp"
                 android:layout_marginStart="55dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginEnd="55dp"
                 android:background="@color/color11"
-                android:textAlignment="center"
-                android:text="@string/canguro"
                 android:fontFamily="@font/andika_regular"
+                android:padding="5dp"
+                android:text="@string/canguro"
+                android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="25sp"
-                app:layout_constraintTop_toBottomOf="@+id/vDivideLine4"
-                app:layout_constraintStart_toStartOf="parent"
+                app:drawableStartCompat="@drawable/calculator"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:drawableStartCompat="@drawable/calculator" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vDivideLine4" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -362,15 +390,249 @@
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        app:menu="@menu/activity_children_drawer"
-        />
+        app:menu="@menu/activity_children_drawer" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/popUpAddExpense"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_light_trans"
+        android:translationZ="5dp"
+        android:visibility="gone"
+        >
+
+        <View
+            android:id="@+id/addExpenseContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginBottom="85dp"
+            android:background="@drawable/corners_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPopUpAddExpense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_regular"
+            android:padding="5dp"
+            android:text="@string/add_spent"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/addExpenseContainer"
+            app:layout_constraintStart_toStartOf="@+id/addExpenseContainer"
+            app:layout_constraintTop_toTopOf="@+id/addExpenseContainer" />
+
+        <ImageView
+            android:id="@+id/closePopUpAddExpend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close"
+            app:layout_constraintEnd_toEndOf="@+id/addExpenseContainer"
+            app:layout_constraintTop_toTopOf="@+id/addExpenseContainer" />
+
+        <View
+            android:id="@+id/line5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            android:background="@color/black"
+            app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddExpense" />
+
+        <TextView
+            android:id="@+id/tvDescripcionGasto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_regular"
+            android:padding="5dp"
+            android:text="@string/descripcion"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/line5"
+            app:layout_constraintStart_toStartOf="@+id/line5"
+            app:layout_constraintTop_toBottomOf="@+id/line5" />
+
+        <EditText
+            android:id="@+id/inputDescripcionGasto"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp"
+            android:background="@drawable/corners_white"
+            android:fontFamily="@font/andika_regular"
+            android:inputType="textAutoCorrect"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvDescripcionGasto"
+            app:layout_constraintStart_toStartOf="@+id/tvDescripcionGasto"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescripcionGasto"
+            android:textCursorDrawable="@drawable/custom_cursor"
+            tools:text="aaaaa" />
+
+        <TextView
+            android:id="@+id/tvCantidadGasto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_regular"
+            android:padding="5dp"
+            android:text="@string/cantidad"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/addExpenseContainer"
+            app:layout_constraintStart_toStartOf="@+id/addExpenseContainer"
+            app:layout_constraintTop_toBottomOf="@+id/inputDescripcionGasto" />
+
+        <EditText
+            android:id="@+id/inputCantidadGasto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp"
+            android:background="@drawable/corners_white"
+            android:fontFamily="@font/andika_regular"
+            android:inputType="numberDecimal"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvCantidadGasto"
+            app:layout_constraintStart_toStartOf="@+id/tvCantidadGasto"
+            app:layout_constraintTop_toBottomOf="@+id/tvCantidadGasto"
+            android:textCursorDrawable="@drawable/custom_cursor"
+            tools:text="50,20" />
+
+        <TextView
+            android:id="@+id/tvTipoGasto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_regular"
+            android:padding="5dp"
+            android:text="@string/tipo_de_gasto"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/addExpenseContainer"
+            app:layout_constraintStart_toStartOf="@+id/addExpenseContainer"
+            app:layout_constraintTop_toBottomOf="@+id/inputCantidadGasto" />
+
+        <View
+            android:id="@+id/line6"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginStart="55dp"
+            android:layout_marginEnd="55dp"
+            android:background="@color/black"
+            app:layout_constraintTop_toBottomOf="@+id/tvTipoGasto" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/line6">
+
+            <RadioButton
+                android:id="@+id/radioButtonOptionComida"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
+                android:fontFamily="@font/andika_regular"
+                android:padding="5dp"
+                android:tag="1"
+                android:text="@string/comida"
+                android:textColor="@color/black" />
+
+            <RadioButton
+                android:id="@+id/radioButtonOptionCompras"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
+                android:fontFamily="@font/andika_regular"
+                android:padding="5dp"
+                android:tag="2"
+                android:text="@string/compras"
+                android:textColor="@color/black" />
+
+            <RadioButton
+                android:id="@+id/radioButtonOptionOcio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
+                android:drawablePadding="10dp"
+                android:fontFamily="@font/andika_regular"
+                android:padding="5dp"
+                android:tag="3"
+                android:text="@string/ocio"
+                android:textColor="@color/black" />
+
+            <RadioButton
+                android:id="@+id/radioButtonOptionOtros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
+                android:fontFamily="@font/andika_regular"
+                android:padding="5dp"
+                android:tag="4"
+                android:text="@string/otros"
+                android:textColor="@color/black" />
+        </RadioGroup>
+
+        <View
+            android:id="@+id/line7"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toTopOf="@id/cancelNewExpense"
+            app:layout_constraintEnd_toEndOf="@+id/addExpenseContainer"
+            app:layout_constraintStart_toStartOf="@+id/addExpenseContainer"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+        <Button
+            android:id="@+id/cancelNewExpense"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/corners_buttons"
+            android:fontFamily="@font/andika_bold"
+            android:text="@string/cancelar"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/addExpenseContainer"
+            app:layout_constraintStart_toStartOf="@id/addExpenseContainer" />
+
+        <Button
+            android:id="@+id/addNewExpense"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/corners_buttons_blue"
+            android:fontFamily="@font/andika_bold"
+            android:text="@string/add"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/addExpenseContainer"
+            app:layout_constraintEnd_toEndOf="@id/addExpenseContainer" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

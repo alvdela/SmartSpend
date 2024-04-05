@@ -135,5 +135,16 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="add_goal">Añadir objetivo</string>
     <string name="juegos">Juegos</string>
     <string name="canguro">Canguro matemático</string>
+    <string name="tareas_obligatorias">Tareas obligatorias</string>
+    <string name="tareas_extra">Tareas extra</string>
+    <string name="descripcion">Descripcion</string>
+    <string name="cantidad">Cantidad</string>
+    <string name="tipo_de_gasto">Tipo de gasto</string>
+    <string name="comida">Comida</string>
+    <string name="compras">Compras</string>
+    <string name="ocio">Ocio</string>
+    <string name="otros">Otros</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="add">Añadir</string>
 </resources>
 

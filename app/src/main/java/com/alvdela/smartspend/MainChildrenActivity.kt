@@ -6,8 +6,12 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -16,9 +20,20 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.alvdela.smartspend.adapter.ExpenseAdapter
+import com.alvdela.smartspend.domain.CashFlow
+import com.alvdela.smartspend.domain.CashFlowType
+import com.alvdela.smartspend.domain.Child
+import com.alvdela.smartspend.domain.Family
+import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.google.android.material.navigation.NavigationView
+import java.time.LocalDate
 
 class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private val MAX_DECIMALS = 2
 
     private lateinit var drawer: DrawerLayout
 
@@ -33,38 +48,38 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private lateinit var taskLayout: ConstraintLayout
     private lateinit var goalsLayout: ConstraintLayout
     private lateinit var gameLayout: ConstraintLayout
-
-    //TextView para mostrar el dinero disponible
-    private lateinit var tvDineroDisponible: TextView
     
     //Botones para añadir elementos
     private lateinit var addSpentButton: Button
-    private lateinit var addTaskButton: Button
     private lateinit var addGoalButton: Button
     
-    private var user : String? = null
+    private var user : String = ""
+    private lateinit var family: Family
+    private lateinit var child: Child
 
     private var expenses = true
     private var tareas = false
     private var goals = false
     private var games = false
 
+    private lateinit var adapter: ExpenseAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main_children)
-        user = intent.getStringExtra("USER_NAME")
+        user = intent.getStringExtra("USER_NAME").toString()
+        getFamily()
         initObjects()
         initToolBar()
         initNavView()
+        showMoney()
+        showCashFlow()
     }
 
     private fun initObjects() {
         expensesLayout = findViewById(R.id.expensesLayout)
-        tvDineroDisponible = findViewById(R.id.tvDineroDisponible)
         addSpentButton = findViewById(R.id.buttonAddSpent)
         taskLayout = findViewById(R.id.tareasLayout)
-        addTaskButton = findViewById(R.id.buttonAddTask)
         goalsLayout = findViewById(R.id.goalsLayout)
         addGoalButton = findViewById(R.id.buttonAddGoal)
         gameLayout = findViewById(R.id.gamesLayout)
@@ -105,19 +120,155 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 animateGames()
             }
         }
+
+        addSpentButton.setOnClickListener {
+            addSpent()
+        }
+    }
+
+    private fun addSpent() {
+        val popUp = findViewById<ConstraintLayout>(R.id.popUpAddExpense)
+        popUp.visibility = View.VISIBLE
+
+        val descripcion = findViewById<EditText>(R.id.inputDescripcionGasto)
+        descripcion.setText("")
+
+        val amount = findViewById<EditText>(R.id.inputCantidadGasto)
+        amount.setText("")
+        amount.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
+
+        val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
+        var tipo = 0
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val selectedRadioButton = findViewById<RadioButton>(checkedId)
+            tipo = selectedRadioButton.tag.toString().toInt()
+        }
+
+        val closeIcon = findViewById<ImageView>(R.id.closePopUpAddExpend)
+        closeIcon.setOnClickListener {
+            popUp.visibility = View.GONE
+        }
+
+        val cancelButton = findViewById<Button>(R.id.cancelNewExpense)
+        cancelButton.setOnClickListener {
+            popUp.visibility = View.GONE
+        }
+
+        val addButton = findViewById<Button>(R.id.addNewExpense)
+        addButton.setOnClickListener {
+            val descripcionText = descripcion.text.toString()
+            var amountNumber = 0f
+            if (descripcionText.isEmpty()){
+                descripcion.error = "Se necesita una descripción"
+                Toast.makeText(this,"Se necesita una descripción",Toast.LENGTH_SHORT).show()
+            }else if(amount.text.toString().isEmpty()){
+                amount.error = "La cantidad no puede quedar vacia"
+                Toast.makeText(this,"La cantidad no puede quedar vacia",Toast.LENGTH_SHORT).show()
+            }else if(amount.text.toString().toFloat() > child.getActualMoney()){
+                amount.error = "La cantidad no puede ser mayor que la cantidad disponible"
+                Toast.makeText(this,"La cantidad no puede ser mayor que la cantidad disponible",Toast.LENGTH_SHORT).show()
+            }else{
+                amountNumber = amount.text.toString().toFloat()
+                when(tipo){
+                    1-> {
+                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.COMIDA,
+                            LocalDate.now())
+                        child.addExpense(newExpense)
+                    }
+                    2-> {
+                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.COMPRAS,
+                            LocalDate.now())
+                        child.addExpense(newExpense)
+                    }
+                    3-> {
+                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.OCIO,
+                            LocalDate.now())
+                        child.addExpense(newExpense)
+                    }
+                    else -> {
+                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.OTROS,
+                            LocalDate.now())
+                        child.addExpense(newExpense)
+                    }
+                }
+                adapter.notifyDataSetChanged()
+                popUp.visibility = View.GONE
+                showMoney()
+            }
+        }
     }
 
     private fun animateExpenses() {
-        TODO("Not yet implemented")
+        if (tareas){
+            Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
+        }
+        if (goals){
+            Animations.animateViewOfFloat(goalsLayout, "translationX", 2000f, 300)
+        }
+        if (games){
+            Animations.animateViewOfFloat(gameLayout, "translationX", 2000f, 300)
+        }
+        expensesLayout.translationX = -2000f
+        Animations.animateViewOfFloat(expensesLayout, "translationX", 0f, 300)
+        expenses = true
+        tareas = false
+        goals = false
+        games = false
     }
     private fun animateTareas() {
-        TODO("Not yet implemented")
+        if (expenses){
+            Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
+            taskLayout.translationX = 2000f
+        }
+        if (goals){
+            Animations.animateViewOfFloat(goalsLayout, "translationX", 2000f, 300)
+            taskLayout.translationX = -2000f
+        }
+        if (games){
+            Animations.animateViewOfFloat(gameLayout, "translationX", 2000f, 300)
+            taskLayout.translationX = -2000f
+        }
+        Animations.animateViewOfFloat(taskLayout, "translationX", 0f, 300)
+        expenses = false
+        tareas = true
+        goals = false
+        games = false
     }
     private fun animateGoals() {
-        TODO("Not yet implemented")
+        if (expenses){
+            Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
+            goalsLayout.translationX = 2000f
+        }
+        if (tareas){
+            Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
+            goalsLayout.translationX = 2000f
+        }
+        if (games){
+            Animations.animateViewOfFloat(gameLayout, "translationX", 2000f, 300)
+            goalsLayout.translationX = -2000f
+        }
+        Animations.animateViewOfFloat(goalsLayout, "translationX", 0f, 300)
+        expenses = false
+        tareas = false
+        goals = true
+        games = false
     }
     private fun animateGames() {
-        TODO("Not yet implemented")
+        if (expenses){
+            Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
+        }
+        if (goals){
+            Animations.animateViewOfFloat(goalsLayout, "translationX", -2000f, 300)
+        }
+        if (tareas){
+            Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
+        }
+        gameLayout.translationX = 2000f
+        Animations.animateViewOfFloat(gameLayout, "translationX", 0f, 300)
+        expenses = false
+        tareas = false
+        goals = false
+        games = true
     }
 
     private fun changeButtonState(button: ImageView) {
@@ -137,11 +288,20 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         gameButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
     }
 
+    private fun getFamily() {
+        if (ContextFamily.mockFamily != null) {
+            family = ContextFamily.mockFamily!!
+            child = family.getMember(user) as Child
+        } else {
+            //TODO consulta a firebase
+        }
+    }
+
     private fun initToolBar() {
         val toolbar: Toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)
 
-        drawer = findViewById(R.id.main_parents)
+        drawer = findViewById(R.id.main_children)
         val toggle = ActionBarDrawerToggle(
             this, drawer, toolbar, R.string.bar_tittle,
             R.string.navigation_drawer_close
@@ -196,5 +356,21 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
         ContextFamily.mockFamily = null
+    }
+
+    private fun showMoney(){
+        val actualMoney = findViewById<TextView>(R.id.tvDineroDisponible)
+        actualMoney.text = "${child.getActualMoney()}€"
+    }
+
+    private fun showCashFlow() {
+        adapter = ExpenseAdapter(child.getCashFlow())
+        val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        if (child.getCashFlow().isNotEmpty()){
+            recyclerView.adapter = adapter
+        }else{
+            Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()
+        }
     }
 }

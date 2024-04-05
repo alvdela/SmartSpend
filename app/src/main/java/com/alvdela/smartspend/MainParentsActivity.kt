@@ -187,12 +187,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun showCashFlow(child: String) {
 
         val childSelected = family.getMember(child) as Child
-        val cashFlowList = childSelected.getCashFlow().toList()
-        println(cashFlowList)
         val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        if (cashFlowList.isNotEmpty()){
-            recyclerView.adapter = ExpenseAdapter(cashFlowList)
+        if (childSelected.getCashFlow().isNotEmpty()){
+            recyclerView.adapter = ExpenseAdapter(childSelected.getCashFlow())
         }else{
             Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()
         }
