@@ -24,6 +24,9 @@ class ExpenseViewHolder(val view: View): ViewHolder(view){
             tvShowDate.visibility = View.VISIBLE
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
             tvShowDate.text = cashFlowModel.date.format(formatter)
+        }else{
+            divideLine.visibility = View.GONE
+            tvShowDate.visibility = View.GONE
         }
         expenseDescription.text = cashFlowModel.description
         if (cashFlowModel.type == CashFlowType.INGRESO){

@@ -146,5 +146,11 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="otros">Otros</string>
     <string name="cancelar">Cancelar</string>
     <string name="add">Añadir</string>
+    <string name="adulto">Adulto</string>
+    <string name="menor">Menor</string>
+    <string name="crear_un_nuevo_miembro">Crear un nuevo miembro</string>
+    <string name="nombre_del_usuario">Nombre del usuario</string>
+    <string name="miembro_registrado">Este miembro ya está registrado</string>
+    <string name="opcional_pero_recomendado">Opcional pero recomendado</string>
 </resources>
 

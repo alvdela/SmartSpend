@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
         val parent = Parent("Invitado", "")
         family.addMember(parent)
         val child = Child("Hijo/a")
-        val expense1 = CashFlow("Gasto", 5.5F, CashFlowType.COMIDA, LocalDate.now())
+        val expense1 = CashFlow("Gasto", 5.5F, CashFlowType.COMIDA, LocalDate.now().minusDays(5))
         val expense2 = CashFlow("Gasto", 10F, CashFlowType.COMPRAS, LocalDate.now())
         //val expense3 = CashFlow("Gasto", 7.75F, CashFlowType.OCIO, LocalDate.of(2024,2,10))
 

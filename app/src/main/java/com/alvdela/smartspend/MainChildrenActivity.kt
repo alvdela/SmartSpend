@@ -12,7 +12,6 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -127,7 +126,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     private fun addSpent() {
-        val popUp = findViewById<ConstraintLayout>(R.id.popUpAddExpense)
+        val popUp = findViewById<ConstraintLayout>(R.id.popUpAddGoal)
         popUp.visibility = View.VISIBLE
 
         val descripcion = findViewById<EditText>(R.id.inputDescripcionGasto)
@@ -149,12 +148,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             popUp.visibility = View.GONE
         }
 
-        val cancelButton = findViewById<Button>(R.id.cancelNewExpense)
+        val cancelButton = findViewById<Button>(R.id.cancelNewMember)
         cancelButton.setOnClickListener {
             popUp.visibility = View.GONE
         }
 
-        val addButton = findViewById<Button>(R.id.addNewExpense)
+        val addButton = findViewById<Button>(R.id.addNewMember)
         addButton.setOnClickListener {
             val descripcionText = descripcion.text.toString()
             var amountNumber = 0f

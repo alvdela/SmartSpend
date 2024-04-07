@@ -19,6 +19,9 @@ class ExpenseAdapter(private val cashFlowList: MutableList<CashFlow>) : Recycler
     override fun getItemCount(): Int = cashFlowList.size
 
     override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
+        if (position == 0){
+            showDate = true
+        }
         if (cashFlowList[position].date != lastDate){
             showDate = true
         }
