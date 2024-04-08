@@ -1,5 +1,6 @@
 package com.alvdela.smartspend
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -125,8 +126,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun addSpent() {
-        val popUp = findViewById<ConstraintLayout>(R.id.popUpAddGoal)
+        val popUp = findViewById<ConstraintLayout>(R.id.popUpAddSpent)
         popUp.visibility = View.VISIBLE
 
         val descripcion = findViewById<EditText>(R.id.inputDescripcionGasto)
@@ -143,17 +145,17 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             tipo = selectedRadioButton.tag.toString().toInt()
         }
 
-        val closeIcon = findViewById<ImageView>(R.id.closePopUpAddExpend)
+        val closeIcon = findViewById<ImageView>(R.id.closePopUpAddSpent)
         closeIcon.setOnClickListener {
             popUp.visibility = View.GONE
         }
 
-        val cancelButton = findViewById<Button>(R.id.cancelNewMember)
+        val cancelButton = findViewById<Button>(R.id.cancelNewSpent)
         cancelButton.setOnClickListener {
             popUp.visibility = View.GONE
         }
 
-        val addButton = findViewById<Button>(R.id.addNewMember)
+        val addButton = findViewById<Button>(R.id.addNewSpent)
         addButton.setOnClickListener {
             val descripcionText = descripcion.text.toString()
             var amountNumber = 0f

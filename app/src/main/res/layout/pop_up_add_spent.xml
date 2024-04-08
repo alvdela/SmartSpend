@@ -2,14 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/popUpAddGoal"
+    android:id="@+id/popUpAddSpent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_light_trans"
     android:translationZ="5dp">
 
     <View
-        android:id="@+id/addGoalContainer"
+        android:id="@+id/addSpentContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,10 +23,10 @@
         android:background="@drawable/corners_white" />
 
     <TextView
-        android:id="@+id/tvPopUpAddExpense"
-        app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
-        app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
-        app:layout_constraintTop_toTopOf="@+id/addGoalContainer"
+        android:id="@+id/tvPopUpAddSpent"
+        app:layout_constraintEnd_toEndOf="@+id/addSpentContainer"
+        app:layout_constraintStart_toStartOf="@+id/addSpentContainer"
+        app:layout_constraintTop_toTopOf="@+id/addSpentContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
@@ -36,16 +36,16 @@
         android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/closePopUpAddExpend"
-        app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
-        app:layout_constraintTop_toTopOf="@+id/addGoalContainer"
+        android:id="@+id/closePopUpAddSpent"
+        app:layout_constraintEnd_toEndOf="@+id/addSpentContainer"
+        app:layout_constraintTop_toTopOf="@+id/addSpentContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_close" />
 
     <View
         android:id="@+id/line5"
-        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddExpense"
+        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddSpent"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="35dp"
@@ -85,8 +85,8 @@
 
     <TextView
         android:id="@+id/tvCantidadGasto"
-        app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
-        app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
+        app:layout_constraintEnd_toEndOf="@+id/addSpentContainer"
+        app:layout_constraintStart_toStartOf="@+id/addSpentContainer"
         app:layout_constraintTop_toBottomOf="@+id/inputDescripcionGasto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -116,8 +116,8 @@
 
     <TextView
         android:id="@+id/tvTipoGasto"
-        app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
-        app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
+        app:layout_constraintEnd_toEndOf="@+id/addSpentContainer"
+        app:layout_constraintStart_toStartOf="@+id/addSpentContainer"
         app:layout_constraintTop_toBottomOf="@+id/inputCantidadGasto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -194,9 +194,9 @@
 
     <View
         android:id="@+id/line7"
-        app:layout_constraintBottom_toTopOf="@id/cancelNewMember"
-        app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
-        app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
+        app:layout_constraintBottom_toTopOf="@id/cancelNewSpent"
+        app:layout_constraintEnd_toEndOf="@+id/addSpentContainer"
+        app:layout_constraintStart_toStartOf="@+id/addSpentContainer"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup"
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -205,9 +205,9 @@
         android:background="@color/black" />
 
     <Button
-        android:id="@+id/cancelNewMember"
-        app:layout_constraintBottom_toBottomOf="@id/addGoalContainer"
-        app:layout_constraintStart_toStartOf="@id/addGoalContainer"
+        android:id="@+id/cancelNewSpent"
+        app:layout_constraintBottom_toBottomOf="@id/addSpentContainer"
+        app:layout_constraintStart_toStartOf="@id/addSpentContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -220,9 +220,9 @@
         android:textColor="@color/black" />
 
     <Button
-        android:id="@+id/addNewMember"
-        app:layout_constraintBottom_toBottomOf="@id/addGoalContainer"
-        app:layout_constraintEnd_toEndOf="@id/addGoalContainer"
+        android:id="@+id/addNewSpent"
+        app:layout_constraintBottom_toBottomOf="@id/addSpentContainer"
+        app:layout_constraintEnd_toEndOf="@id/addSpentContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="25dp"

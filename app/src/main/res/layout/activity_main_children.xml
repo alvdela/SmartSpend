@@ -400,7 +400,7 @@
         app:menu="@menu/activity_children_drawer" />
 
     <include
-        layout="@layout/pop_up_add_expense"
+        layout="@layout/pop_up_add_spent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"

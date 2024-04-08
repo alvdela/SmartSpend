@@ -178,5 +178,12 @@
 
     </GridLayout>
 
+    <include
+        layout="@layout/pop_up_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

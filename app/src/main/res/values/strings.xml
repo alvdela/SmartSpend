@@ -152,5 +152,15 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="nombre_del_usuario">Nombre del usuario</string>
     <string name="miembro_registrado">Este miembro ya está registrado</string>
     <string name="opcional_pero_recomendado">Opcional pero recomendado</string>
+    <string name="objetivo">Objetivo</string>
+    <string name="nuevo_objetivo">Crear nuevo objetivo</string>
+    <string name="fecha_limite">Fecha limite</string>
+    <string name="obligatoria">Obligatoria</string>
+    <string name="recompensas">Recompensas</string>
+    <string name="add_recompensa">Añadir recompensa</string>
+    <string name="nueva_asignacion">Nueva asignación</string>
+    <string name="nombre_de_la_asignacion">Nombre de la asignación</string>
+    <string name="fecha_de_inicio">Fecha de inicio</string>
+    <string name="frecuencia">Frecuencia</string>
 </resources>
 

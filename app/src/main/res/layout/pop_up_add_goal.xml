@@ -17,13 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="35dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="125dp"
         android:layout_marginEnd="35dp"
-        android:layout_marginBottom="85dp"
+        android:layout_marginBottom="200dp"
         android:background="@drawable/corners_white" />
 
     <TextView
-        android:id="@+id/tvPopUpAddExpense"
+        android:id="@+id/tvPopUpAddGoal"
         app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
         app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
         app:layout_constraintTop_toTopOf="@+id/addGoalContainer"
@@ -31,12 +31,12 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:padding="5dp"
-        android:text="@string/add_spent"
+        android:text="@string/nuevo_objetivo"
         android:textColor="@color/black"
         android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/closePopUpAddExpend"
+        android:id="@+id/closePopUpAddGoal"
         app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
         app:layout_constraintTop_toTopOf="@+id/addGoalContainer"
         android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
 
     <View
         android:id="@+id/line5"
-        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddExpense"
+        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddGoal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="35dp"
@@ -53,7 +53,7 @@
         android:background="@color/black" />
 
     <TextView
-        android:id="@+id/tvDescripcionGasto"
+        android:id="@+id/tvDescripcionObjetivo"
         app:layout_constraintEnd_toEndOf="@+id/line5"
         app:layout_constraintStart_toStartOf="@+id/line5"
         app:layout_constraintTop_toBottomOf="@+id/line5"
@@ -66,10 +66,10 @@
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/inputDescripcionGasto"
-        app:layout_constraintEnd_toEndOf="@+id/tvDescripcionGasto"
-        app:layout_constraintStart_toStartOf="@+id/tvDescripcionGasto"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescripcionGasto"
+        android:id="@+id/inputDescripcionObjetivo"
+        app:layout_constraintEnd_toEndOf="@+id/tvDescripcionObjetivo"
+        app:layout_constraintStart_toStartOf="@+id/tvDescripcionObjetivo"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescripcionObjetivo"
         tools:text="aaaaa"
         android:layout_width="match_parent"
         android:layout_height="75dp"
@@ -84,23 +84,23 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tvCantidadGasto"
+        android:id="@+id/tvCantidadObjetivo"
         app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
         app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
-        app:layout_constraintTop_toBottomOf="@+id/inputDescripcionGasto"
+        app:layout_constraintTop_toBottomOf="@+id/inputDescripcionObjetivo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:padding="5dp"
-        android:text="@string/cantidad"
+        android:text="@string/objetivo"
         android:textColor="@color/black"
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/inputCantidadGasto"
-        app:layout_constraintEnd_toEndOf="@+id/tvCantidadGasto"
-        app:layout_constraintStart_toStartOf="@+id/tvCantidadGasto"
-        app:layout_constraintTop_toBottomOf="@+id/tvCantidadGasto"
+        android:id="@+id/inputCantidadObjetivo"
+        app:layout_constraintEnd_toEndOf="@+id/tvCantidadObjetivo"
+        app:layout_constraintStart_toStartOf="@+id/tvCantidadObjetivo"
+        app:layout_constraintTop_toBottomOf="@+id/tvCantidadObjetivo"
         tools:text="50,20"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,32 +114,21 @@
         android:textCursorDrawable="@drawable/custom_cursor"
         android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/tvTipoGasto"
-        app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
-        app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
-        app:layout_constraintTop_toBottomOf="@+id/inputCantidadGasto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/andika_regular"
-        android:padding="5dp"
-        android:text="@string/tipo_de_gasto"
-        android:textColor="@color/black"
-        android:textSize="20sp" />
 
     <View
         android:id="@+id/line7"
-        app:layout_constraintBottom_toTopOf="@id/cancelNewMember"
+        app:layout_constraintBottom_toTopOf="@id/cancelNewGoal"
         app:layout_constraintEnd_toEndOf="@+id/addGoalContainer"
         app:layout_constraintStart_toStartOf="@+id/addGoalContainer"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="35dp"
         android:layout_marginEnd="35dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/black" />
 
     <Button
-        android:id="@+id/cancelNewMember"
+        android:id="@+id/cancelNewGoal"
         app:layout_constraintBottom_toBottomOf="@id/addGoalContainer"
         app:layout_constraintStart_toStartOf="@id/addGoalContainer"
         android:layout_width="wrap_content"
@@ -154,7 +143,7 @@
         android:textColor="@color/black" />
 
     <Button
-        android:id="@+id/addNewMember"
+        android:id="@+id/addNewGoal"
         app:layout_constraintBottom_toBottomOf="@id/addGoalContainer"
         app:layout_constraintEnd_toEndOf="@id/addGoalContainer"
         android:layout_width="wrap_content"

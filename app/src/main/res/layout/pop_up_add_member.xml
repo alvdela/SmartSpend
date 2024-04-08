@@ -36,7 +36,7 @@
         android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/closePopUpAddExpend"
+        android:id="@+id/closePopUpAddMember"
         app:layout_constraintEnd_toEndOf="@+id/addMemberContainer"
         app:layout_constraintTop_toTopOf="@+id/addMemberContainer"
         android:layout_width="wrap_content"
@@ -89,7 +89,7 @@
     </RadioGroup>
 
     <TextView
-        android:id="@+id/tvDescripcionGasto"
+        android:id="@+id/tvNombreUsuario"
         app:layout_constraintEnd_toEndOf="@+id/addMemberContainer"
         app:layout_constraintStart_toStartOf="@+id/addMemberContainer"
         app:layout_constraintTop_toBottomOf="@+id/rgMemberButtons"
@@ -103,9 +103,9 @@
 
     <EditText
         android:id="@+id/inputNombreUsuario"
-        app:layout_constraintEnd_toEndOf="@+id/tvDescripcionGasto"
-        app:layout_constraintStart_toStartOf="@+id/tvDescripcionGasto"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescripcionGasto"
+        app:layout_constraintEnd_toEndOf="@+id/tvNombreUsuario"
+        app:layout_constraintStart_toStartOf="@+id/tvNombreUsuario"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombreUsuario"
         android:hint="@string/ejemplo_nombre_tutor"
         android:textColorHint="@color/dark_grey"
         android:layout_width="match_parent"
@@ -152,7 +152,7 @@
         android:layout_marginStart="70dp"
         android:layout_marginEnd="70dp"
         android:layout_height="40dp"
-        android:background="@drawable/text_box"
+        android:background="@drawable/corners_white"
         app:layout_constraintStart_toStartOf="@+id/addMemberContainer"
         app:layout_constraintEnd_toEndOf="@+id/addMemberContainer"
         app:layout_constraintTop_toBottomOf="@+id/tvPassword">
@@ -211,7 +211,7 @@
         android:layout_marginStart="70dp"
         android:layout_marginEnd="70dp"
         android:layout_height="40dp"
-        android:background="@drawable/text_box"
+        android:background="@drawable/corners_white"
         app:layout_constraintStart_toStartOf="@+id/addMemberContainer"
         app:layout_constraintEnd_toEndOf="@+id/addMemberContainer"
         app:layout_constraintTop_toBottomOf="@+id/tvPasswordAgain">
