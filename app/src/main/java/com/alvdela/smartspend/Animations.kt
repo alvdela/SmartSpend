@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 
 object Animations {
 
-    /* FUNCIONES DE ANIMACION Y CAMBIOs DE ATRIBUTOS */
+    /* FUNCIONES DE ANIMACION Y CAMBIOS DE ATRIBUTOS */
     fun animateViewOfInt(v: View, attr: String, value: Int, time: Long){
         ObjectAnimator.ofInt(v,attr,value).apply {
             duration = time

@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".MainChildrenActivity">
+    tools:context=".MainChildrenActivity"
+    >
 
     <!-- tools:openDrawer="start" -->
 
@@ -21,7 +22,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_marginBottom="65dp"
-            android:background="@color/background"
+            android:background="@color/mid_gray"
             android:translationX="0dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@color/cash"
+                android:background="@color/dark_gray"
                 android:drawableEnd="@drawable/cash_out"
                 android:fontFamily="@font/andika_bold"
                 android:padding="5dp"
@@ -113,8 +114,13 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCashFlow"
                 android:layout_width="match_parent"
-                android:layout_height="380dp"
-                android:layout_marginTop="5dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="235dp"
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@android:color/darker_gray"
+                android:scrollbarSize="5dp"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:fadeScrollbars="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -355,7 +361,7 @@
                 android:layout_weight="1"
                 android:background="@color/dark_blue"
                 android:src="@drawable/ic_trade"
-                app:tint="@color/dark_grey" />
+                app:tint="@color/dark_gray" />
 
             <ImageButton
                 android:id="@+id/task_button"
@@ -364,7 +370,7 @@
                 android:layout_weight="1"
                 android:background="@color/dark_blue"
                 android:src="@drawable/ic_list"
-                app:tint="@color/dark_grey" />
+                app:tint="@color/dark_gray" />
 
             <ImageButton
                 android:id="@+id/goals_button"
@@ -373,7 +379,7 @@
                 android:layout_weight="1"
                 android:background="@color/dark_blue"
                 android:src="@drawable/ic_piggy_bank"
-                app:tint="@color/dark_grey" />
+                app:tint="@color/dark_gray" />
 
             <ImageButton
                 android:id="@+id/games_button"
@@ -382,7 +388,7 @@
                 android:layout_weight="1"
                 android:background="@color/dark_blue"
                 android:src="@drawable/ic_game"
-                app:tint="@color/dark_grey" />
+                app:tint="@color/dark_gray" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -402,7 +408,14 @@
     <include
         layout="@layout/pop_up_add_spent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+    <include
+        layout="@layout/pop_up_back_profiles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone"
         />
 

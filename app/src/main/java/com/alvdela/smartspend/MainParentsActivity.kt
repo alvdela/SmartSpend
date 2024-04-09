@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
@@ -26,7 +24,6 @@ import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.adapter.ExpenseAdapter
 import com.alvdela.smartspend.domain.Child
 import com.alvdela.smartspend.domain.Family
-import com.alvdela.smartspend.domain.Parent
 import com.google.android.material.navigation.NavigationView
 
 class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -149,7 +146,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun changeButtonState(button: ImageView) {
         button.setBackgroundColor(ContextCompat.getColor(this,R.color.light_blue))
-        button.setColorFilter(ContextCompat.getColor(this,R.color.mid_grey))
+        button.setColorFilter(ContextCompat.getColor(this,R.color.mid_gray))
     }
 
     private fun restartButtons() {
@@ -157,9 +154,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         taskButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
         adminButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
 
-        seguimientoButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
-        taskButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
-        adminButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
+        seguimientoButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
+        taskButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
+        adminButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
     }
 
     private fun initSpinner(){
@@ -197,7 +194,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun getFamily() {
-        if (ContextFamily.mockFamily != null) {
+        if (ContextFamily.isMock) {
             family = ContextFamily.mockFamily!!
         } else {
             //TODO consulta a firebase
@@ -237,8 +234,17 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            //TODO mostrar mensaje si quiere salir
-            super.onBackPressed()
+            val popUpLogOut = findViewById<ConstraintLayout>(R.id.popUpBackProfiles)
+            popUpLogOut.visibility = View.VISIBLE
+            val cancelButton = findViewById<Button>(R.id.cancelButtonBackProfiles)
+            cancelButton.setOnClickListener {
+                popUpLogOut.visibility = View.GONE
+            }
+            val confirmButton = findViewById<Button>(R.id.confirmButtonBackProfiles)
+            confirmButton.setOnClickListener {
+                popUpLogOut.visibility = View.GONE
+                super.onBackPressed()
+            }
         }
     }
 

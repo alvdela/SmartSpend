@@ -71,20 +71,20 @@ class LoginActivity : AppCompatActivity() {
 
     private fun createMockFamily() {
         family = Family("Invitados", "email@email.com")
-        val parent = Parent("Invitado", "")
+        val parent = Parent("Invitado", "1234")
         family.addMember(parent)
         val child = Child("Hijo/a")
-        val expense1 = CashFlow("Gasto", 5.5F, CashFlowType.COMIDA, LocalDate.now().minusDays(5))
-        val expense2 = CashFlow("Gasto", 10F, CashFlowType.COMPRAS, LocalDate.now())
-        //val expense3 = CashFlow("Gasto", 7.75F, CashFlowType.OCIO, LocalDate.of(2024,2,10))
-
+        val expense1 = CashFlow("Gasto1", 5.5F, CashFlowType.COMIDA, LocalDate.now().minusDays(5))
+        val expense2 = CashFlow("Gasto2", 10F, CashFlowType.COMPRAS, LocalDate.now())
+        val expense3 = CashFlow("Gasto3", 7.75F, CashFlowType.OCIO, LocalDate.now())
         child.setActualMoney(100f)
         child.addExpense(expense1)
         child.addExpense(expense2)
-        //child.addExpense(expense3)
+        child.addExpense(expense3)
         family.addMember(child)
         println(child.getCashFlow().toList())
         ContextFamily.mockFamily = family
+        ContextFamily.isMock = true
     }
 
 

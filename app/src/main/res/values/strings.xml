@@ -162,5 +162,8 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="nombre_de_la_asignacion">Nombre de la asignación</string>
     <string name="fecha_de_inicio">Fecha de inicio</string>
     <string name="frecuencia">Frecuencia</string>
+    <string name="pop_up_log_out">¿Desea volver a la pantalla de inicio y cerrar sesión?</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="pop_up_back_profiles">¿Desea regresar a la selección de perfil?</string>
 </resources>
 

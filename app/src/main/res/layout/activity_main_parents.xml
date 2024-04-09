@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_marginBottom="65dp"
-            android:background="@color/background"
+            android:background="@color/mid_gray"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -116,6 +116,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="455dp"
                 android:layout_marginTop="5dp"
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@android:color/darker_gray"
+                android:scrollbarSize="5dp"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:fadeScrollbars="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -274,7 +279,7 @@
                 android:layout_weight="1"
                 android:background="@color/dark_blue"
                 android:src="@drawable/ic_seguimiento"
-                app:tint="@color/dark_grey" />
+                app:tint="@color/dark_gray" />
 
             <ImageButton
                 android:id="@+id/task_button"
@@ -283,7 +288,7 @@
                 android:layout_weight="1"
                 android:background="@color/dark_blue"
                 android:src="@drawable/ic_list"
-                app:tint="@color/dark_grey" />
+                app:tint="@color/dark_gray" />
 
             <ImageButton
                 android:id="@+id/admin_button"
@@ -292,7 +297,7 @@
                 android:layout_weight="1"
                 android:background="@color/dark_blue"
                 android:src="@drawable/ic_family"
-                app:tint="@color/dark_grey" />
+                app:tint="@color/dark_gray" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -309,6 +314,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         app:menu="@menu/activity_main_drawer"
+        />
+
+    <include
+        layout="@layout/pop_up_back_profiles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         />
 
 </androidx.drawerlayout.widget.DrawerLayout>

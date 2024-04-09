@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/familia"
+            android:text="@string/email"
             android:fontFamily="@font/andika_regular"
             android:textAlignment="center"
             android:textSize="27sp"
@@ -153,7 +153,7 @@
             android:id="@+id/mock_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/dark_grey"
+            android:backgroundTint="@color/dark_gray"
             android:layout_gravity="center"
             android:text="@string/acceder_como_invitado"
             android:textColor="@color/black"

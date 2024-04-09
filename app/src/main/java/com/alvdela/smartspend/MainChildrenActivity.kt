@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -22,6 +24,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.adapter.ExpenseAdapter
 import com.alvdela.smartspend.domain.CashFlow
 import com.alvdela.smartspend.domain.CashFlowType
@@ -131,8 +134,13 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val popUp = findViewById<ConstraintLayout>(R.id.popUpAddSpent)
         popUp.visibility = View.VISIBLE
 
-        val descripcion = findViewById<EditText>(R.id.inputDescripcionGasto)
+        val descripcion = findViewById<AutoCompleteTextView>(R.id.inputDescripcionGasto)
         descripcion.setText("")
+        val autoComplete = CustomSpinnerAdapter(this, ContextFamily.record.toList())
+        descripcion.setAdapter(autoComplete)
+        descripcion.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) descripcion.showDropDown()
+        }
 
         val amount = findViewById<EditText>(R.id.inputCantidadGasto)
         amount.setText("")
@@ -170,6 +178,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 Toast.makeText(this,"La cantidad no puede ser mayor que la cantidad disponible",Toast.LENGTH_SHORT).show()
             }else{
                 amountNumber = amount.text.toString().toFloat()
+                ContextFamily.addRecord(descripcionText)
                 when(tipo){
                     1-> {
                         val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.COMIDA,
@@ -274,7 +283,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     private fun changeButtonState(button: ImageView) {
         button.setBackgroundColor(ContextCompat.getColor(this,R.color.light_blue))
-        button.setColorFilter(ContextCompat.getColor(this,R.color.mid_grey))
+        button.setColorFilter(ContextCompat.getColor(this,R.color.mid_gray))
     }
 
     private fun restartButtons() {
@@ -283,14 +292,14 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goalsButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
         gameButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
 
-        expensesButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
-        taskButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
-        goalsButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
-        gameButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_grey))
+        expensesButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
+        taskButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
+        goalsButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
+        gameButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
     }
 
     private fun getFamily() {
-        if (ContextFamily.mockFamily != null) {
+        if (ContextFamily.isMock) {
             family = ContextFamily.mockFamily!!
             child = family.getMember(user) as Child
         } else {
@@ -331,8 +340,17 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            //TODO mostrar mensaje si quiere salir
-            super.onBackPressed()
+            val popUpLogOut = findViewById<ConstraintLayout>(R.id.popUpBackProfiles)
+            popUpLogOut.visibility = View.VISIBLE
+            val cancelButton = findViewById<Button>(R.id.cancelButtonBackProfiles)
+            cancelButton.setOnClickListener {
+                popUpLogOut.visibility = View.GONE
+            }
+            val confirmButton = findViewById<Button>(R.id.confirmButtonBackProfiles)
+            confirmButton.setOnClickListener {
+                popUpLogOut.visibility = View.GONE
+                super.onBackPressed()
+            }
         }
     }
 

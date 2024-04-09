@@ -8,6 +8,8 @@ class Family(
 ): Serializable{
     private var members: MutableMap<String, Member> = mutableMapOf()
 
+
+
     /**
      * Funcion para añadir miembros a la familia
      */

@@ -2,10 +2,13 @@ package com.alvdela.smartspend
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -21,10 +24,12 @@ class ProfilesActivity : AppCompatActivity() {
     private lateinit var profilesButtons: MutableList<Button>
     private lateinit var familyName: TextView
     private lateinit var popUpProfile: ConstraintLayout
+    private lateinit var passwordInput: EditText
 
     private lateinit var family: Family
 
     private var popUpShown = false
+    private var logOut = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +39,7 @@ class ProfilesActivity : AppCompatActivity() {
         initObjects()
         hideButtons()
         showFamilyData()
+        initShowButtons()
     }
 
     private fun getFamily() {
@@ -93,6 +99,7 @@ class ProfilesActivity : AppCompatActivity() {
             popUpProfile.visibility = View.GONE
             popUpShown = false
         }
+        passwordInput = findViewById(R.id.passwordProfile)
 
         familyName = findViewById(R.id.familyName)
         familyName.text = getString(R.string.familia_display, family.getName())
@@ -109,15 +116,15 @@ class ProfilesActivity : AppCompatActivity() {
         popUpShown = true
         val tvProfileName = findViewById<TextView>(R.id.tvProfile)
         tvProfileName.text = user
-        val passwordInput = findViewById<EditText>(R.id.passwordProfile)
         val unlockImage = findViewById<ImageView>(R.id.ivUnlock)
+        val passwordContainer = findViewById<RelativeLayout>(R.id.passwordContainer)
         if (member != null) {
             if (member.checkPassword("")){
                 acceder = true
-                passwordInput.visibility = View.GONE
+                passwordContainer.visibility = View.GONE
                 unlockImage.visibility = View.VISIBLE
             }else{
-                passwordInput.visibility = View.VISIBLE
+                passwordContainer.visibility = View.VISIBLE
                 unlockImage.visibility = View.GONE
                 passwordInput.setText("")
             }
@@ -126,6 +133,7 @@ class ProfilesActivity : AppCompatActivity() {
         }
         val accessButton = findViewById<Button>(R.id.accessButton)
         accessButton.setOnClickListener {
+            popUpProfile.visibility = View.GONE
             if (acceder){
                 if (member is Parent){
                     goParentMain(user)
@@ -163,8 +171,26 @@ class ProfilesActivity : AppCompatActivity() {
             popUpProfile.visibility = View.GONE
             popUpShown = false
         } else {
-            //TODO mostrar mensaje si quiere salir
-            super.onBackPressed()
+            val popUpLogOut = findViewById<ConstraintLayout>(R.id.popUpLogOut)
+            popUpLogOut.visibility = View.VISIBLE
+            val cancelButton = findViewById<Button>(R.id.cancelButtonLogOut)
+            cancelButton.setOnClickListener {
+                popUpLogOut.visibility = View.GONE
+            }
+            val confirmButton = findViewById<Button>(R.id.confirmButtonLogOut)
+            confirmButton.setOnClickListener {
+                ContextFamily.reset()
+                popUpLogOut.visibility = View.GONE
+                super.onBackPressed()
+            }
         }
     }
+
+    private fun initShowButtons() {
+        val passwordButton = findViewById<CheckBox>(R.id.show_password)
+        passwordButton.setOnCheckedChangeListener{ _, isChecked ->
+            passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+    }
+
 }

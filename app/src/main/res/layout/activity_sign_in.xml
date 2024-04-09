@@ -35,7 +35,7 @@
             android:inputType="text"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textColorHint="@color/dark_grey"
+            android:textColorHint="@color/dark_gray"
             android:textSize="20sp"
             android:textCursorDrawable="@drawable/custom_cursor"
             />
@@ -59,7 +59,7 @@
             android:inputType="text"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textColorHint="@color/dark_grey"
+            android:textColorHint="@color/dark_gray"
             android:textSize="20sp"
             android:textCursorDrawable="@drawable/custom_cursor"
             />
@@ -91,7 +91,7 @@
             android:inputType="textEmailAddress"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textColorHint="@color/dark_grey"
+            android:textColorHint="@color/dark_gray"
             android:textSize="20sp"
             android:textCursorDrawable="@drawable/custom_cursor"
             />
@@ -128,7 +128,7 @@
                 android:inputType="textPassword"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textColorHint="@color/dark_grey"
+                android:textColorHint="@color/dark_gray"
                 android:textSize="20sp"
                 android:textCursorDrawable="@drawable/custom_cursor"
 
@@ -177,7 +177,7 @@
                 android:inputType="textPassword"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textColorHint="@color/dark_grey"
+                android:textColorHint="@color/dark_gray"
                 android:textSize="20sp"
                 android:textCursorDrawable="@drawable/custom_cursor"
                 />
