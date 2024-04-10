@@ -1,9 +1,13 @@
 package com.alvdela.smartspend
 
+import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Point
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -30,6 +34,7 @@ class ProfilesActivity : AppCompatActivity() {
 
     private var popUpShown = false
     private var logOut = false
+    private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,13 +44,13 @@ class ProfilesActivity : AppCompatActivity() {
         initObjects()
         hideButtons()
         showFamilyData()
-        initShowButtons()
+
     }
 
     private fun getFamily() {
         if (ContextFamily.mockFamily != null) {
             family = ContextFamily.mockFamily!!
-        }else{
+        } else {
             //TODO consulta a firebase
         }
     }
@@ -93,13 +98,7 @@ class ProfilesActivity : AppCompatActivity() {
         val button11: Button = findViewById(R.id.button11)
         profilesButtons.add(button11)
         //Aqui finaliza la creación de los botones de inicio de seción
-        popUpProfile = findViewById(R.id.popUpProfile)
-        val closeButton = findViewById<ImageView>(R.id.closePopUpProfiles)
-        closeButton.setOnClickListener {
-            popUpProfile.visibility = View.GONE
-            popUpShown = false
-        }
-        passwordInput = findViewById(R.id.passwordProfile)
+        dialog = Dialog(this)
 
         familyName = findViewById(R.id.familyName)
         familyName.text = getString(R.string.familia_display, family.getName())
@@ -112,38 +111,42 @@ class ProfilesActivity : AppCompatActivity() {
     private fun goMain(user: String) {
         val member = family.getMember(user)
         var acceder = false
-        popUpProfile.visibility = View.VISIBLE
-        popUpShown = true
-        val tvProfileName = findViewById<TextView>(R.id.tvProfile)
+        showPopUp(R.layout.pop_up_profile)
+        initShowButtons()
+
+        val tvProfileName = dialog.findViewById<TextView>(R.id.tvProfile)
+        val unlockImage = dialog.findViewById<ImageView>(R.id.ivUnlock)
+        val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
+        val accessButton = dialog.findViewById<Button>(R.id.accessButton)
+        passwordInput = dialog.findViewById(R.id.passwordProfile)
+
         tvProfileName.text = user
-        val unlockImage = findViewById<ImageView>(R.id.ivUnlock)
-        val passwordContainer = findViewById<RelativeLayout>(R.id.passwordContainer)
+
         if (member != null) {
-            if (member.checkPassword("")){
+            if (member.checkPassword("")) {
                 acceder = true
                 passwordContainer.visibility = View.GONE
                 unlockImage.visibility = View.VISIBLE
-            }else{
+            } else {
                 passwordContainer.visibility = View.VISIBLE
                 unlockImage.visibility = View.GONE
                 passwordInput.setText("")
             }
-        }else{
-            Toast.makeText(this,"Error: Usuario no existente", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Error: Usuario no existente", Toast.LENGTH_SHORT).show()
         }
-        val accessButton = findViewById<Button>(R.id.accessButton)
         accessButton.setOnClickListener {
-            popUpProfile.visibility = View.GONE
-            if (acceder){
-                if (member is Parent){
+            dialog.dismiss()
+            if (acceder) {
+                if (member is Parent) {
                     goParentMain(user)
-                }else if(member is Child){
+                } else if (member is Child) {
                     goChildMain(user)
                 }
-            }else if (member!!.checkPassword(passwordInput.text.toString())){
-                if (member is Parent){
+            } else if (member!!.checkPassword(passwordInput.text.toString())) {
+                if (member is Parent) {
                     goParentMain(user)
-                }else if(member is Child){
+                } else if (member is Child) {
                     goChildMain(user)
                 }
             }
@@ -167,30 +170,31 @@ class ProfilesActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated")
     override fun onBackPressed() {
-        if (popUpShown) {
-            popUpProfile.visibility = View.GONE
-            popUpShown = false
-        } else {
-            val popUpLogOut = findViewById<ConstraintLayout>(R.id.popUpLogOut)
-            popUpLogOut.visibility = View.VISIBLE
-            val cancelButton = findViewById<Button>(R.id.cancelButtonLogOut)
-            cancelButton.setOnClickListener {
-                popUpLogOut.visibility = View.GONE
-            }
-            val confirmButton = findViewById<Button>(R.id.confirmButtonLogOut)
-            confirmButton.setOnClickListener {
-                ContextFamily.reset()
-                popUpLogOut.visibility = View.GONE
-                super.onBackPressed()
-            }
+        showPopUp(R.layout.pop_up_log_out)
+        val cancelButton = dialog.findViewById<Button>(R.id.cancelButtonLogOut)
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonLogOut)
+        confirmButton.setOnClickListener {
+            ContextFamily.reset()
+            super.onBackPressed()
         }
     }
 
     private fun initShowButtons() {
-        val passwordButton = findViewById<CheckBox>(R.id.show_password)
-        passwordButton.setOnCheckedChangeListener{ _, isChecked ->
-            passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        val passwordButton = dialog.findViewById<CheckBox>(R.id.show_password)
+        passwordButton.setOnCheckedChangeListener { _, isChecked ->
+            passwordInput.transformationMethod =
+                if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
+    }
+
+    private fun showPopUp(layout: Int) {
+        dialog = Dialog(this)
+        dialog.setContentView(layout)
+        dialog.setCancelable(true)
+        dialog.show()
     }
 
 }

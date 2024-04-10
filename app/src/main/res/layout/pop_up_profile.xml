@@ -3,24 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popUpProfile"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/gray_light_trans"
+    android:layout_width="350dp"
+    android:layout_height="300dp"
+    android:background="@drawable/corners_white"
+    android:layout_gravity="center"
     android:translationZ="5dp">
-
-    <View
-        android:id="@+id/profileContainer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="200dp"
-        android:background="@drawable/corners_white" />
 
     <ImageView
         android:id="@+id/ivProfilePicture"
@@ -28,18 +15,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:src="@drawable/ic_default_profile"
-        app:layout_constraintEnd_toEndOf="@+id/profileContainer"
-        app:layout_constraintStart_toStartOf="@+id/profileContainer"
-        app:layout_constraintTop_toTopOf="@+id/profileContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/black" />
 
-    <ImageView
-        android:id="@+id/closePopUpProfiles"
-        app:layout_constraintEnd_toEndOf="@+id/profileContainer"
-        app:layout_constraintTop_toTopOf="@+id/profileContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_close" />
 
     <TextView
         android:id="@+id/tvProfile"
@@ -48,8 +28,8 @@
         android:fontFamily="@font/andika_regular"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/profileContainer"
-        app:layout_constraintStart_toStartOf="@+id/profileContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture"
         tools:text="Padre" />
 
@@ -58,12 +38,12 @@
     <RelativeLayout
         android:id="@+id/passwordContainer"
         android:layout_width="match_parent"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_height="40dp"
         android:background="@drawable/corners_white"
-        app:layout_constraintEnd_toEndOf="@+id/profileContainer"
-        app:layout_constraintStart_toStartOf="@+id/profileContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvProfile">
         <EditText
             android:id="@+id/passwordProfile"
@@ -92,8 +72,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_lock_open"
-        app:layout_constraintEnd_toEndOf="@+id/profileContainer"
-        app:layout_constraintStart_toStartOf="@+id/profileContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvProfile"
         android:layout_marginTop="20dp"
         android:visibility="gone"/>
@@ -109,8 +89,8 @@
         android:paddingEnd="20dp"
         android:text="@string/acceder"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/profileContainer"
-        app:layout_constraintEnd_toEndOf="@id/profileContainer"
-        app:layout_constraintStart_toStartOf="@+id/profileContainer" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,25 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popUpBackProfiles"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/gray_light_trans"
+    android:layout_width="350dp"
+    android:layout_height="200dp"
+    android:layout_gravity="center"
+    android:background="@drawable/corners_white"
     android:translationZ="5dp"
     >
-
-    <View
-        android:id="@+id/backProfilesContainer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="35dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginTop="270dp"
-        android:layout_marginBottom="270dp"
-        android:background="@drawable/corners_white" />
 
     <TextView
         android:id="@+id/tvlogOut"
@@ -32,9 +19,9 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/backProfilesContainer"
-        app:layout_constraintStart_toStartOf="@+id/backProfilesContainer"
-        app:layout_constraintTop_toTopOf="@+id/backProfilesContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="20dp"/>
 
 
@@ -43,8 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_lock_open"
-        app:layout_constraintEnd_toEndOf="@+id/backProfilesContainer"
-        app:layout_constraintStart_toStartOf="@+id/backProfilesContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvlogOut"
         android:layout_marginTop="20dp"
         android:visibility="gone"/>
@@ -61,8 +48,8 @@
         android:paddingEnd="15dp"
         android:text="@string/confirmar"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/backProfilesContainer"
-        app:layout_constraintEnd_toEndOf="@id/backProfilesContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
 
     <Button
@@ -77,7 +64,7 @@
         android:paddingEnd="15dp"
         android:text="@string/cancelar"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@id/backProfilesContainer"
-        app:layout_constraintStart_toStartOf="@+id/backProfilesContainer" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

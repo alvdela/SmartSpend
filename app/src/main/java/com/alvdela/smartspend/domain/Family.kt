@@ -8,6 +8,7 @@ class Family(
 ): Serializable{
     private var members: MutableMap<String, Member> = mutableMapOf()
 
+    private val MAX_MEMBERS = 12
 
 
     /**

@@ -1,5 +1,6 @@
 package com.alvdela.smartspend
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -42,6 +43,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var seguimientoLayout: ConstraintLayout
     private lateinit var taskLayout: ConstraintLayout
     private lateinit var adminLayout: ConstraintLayout
+
+    private lateinit var dialog: Dialog
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -234,15 +237,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            val popUpLogOut = findViewById<ConstraintLayout>(R.id.popUpBackProfiles)
-            popUpLogOut.visibility = View.VISIBLE
-            val cancelButton = findViewById<Button>(R.id.cancelButtonBackProfiles)
+            showPopUp(R.layout.pop_up_back_profiles)
+
+            val cancelButton = dialog.findViewById<Button>(R.id.cancelButtonBackProfiles)
             cancelButton.setOnClickListener {
-                popUpLogOut.visibility = View.GONE
+                dialog.dismiss()
             }
-            val confirmButton = findViewById<Button>(R.id.confirmButtonBackProfiles)
+            val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonBackProfiles)
             confirmButton.setOnClickListener {
-                popUpLogOut.visibility = View.GONE
+                dialog.dismiss()
                 super.onBackPressed()
             }
         }
@@ -269,5 +272,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
         ContextFamily.mockFamily = null
+    }
+
+    private fun showPopUp(layout: Int) {
+        dialog = Dialog(this)
+        dialog.setContentView(layout)
+        dialog.setCancelable(true)
+        dialog.show()
     }
 }

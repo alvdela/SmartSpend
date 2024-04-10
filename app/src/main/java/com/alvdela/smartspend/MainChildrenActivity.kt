@@ -1,6 +1,7 @@
 package com.alvdela.smartspend
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -39,6 +40,8 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private val MAX_DECIMALS = 2
 
     private lateinit var drawer: DrawerLayout
+    private lateinit var adapter: ExpenseAdapter
+    private lateinit var dialog: Dialog
 
     //Botones para cambiar entre pantallas
     private lateinit var expensesButton: ImageView
@@ -64,8 +67,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private var tareas = false
     private var goals = false
     private var games = false
-
-    private lateinit var adapter: ExpenseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,10 +132,13 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     @SuppressLint("NotifyDataSetChanged")
     private fun addSpent() {
-        val popUp = findViewById<ConstraintLayout>(R.id.popUpAddSpent)
-        popUp.visibility = View.VISIBLE
+        showPopUp(R.layout.pop_up_add_spent)
 
-        val descripcion = findViewById<AutoCompleteTextView>(R.id.inputDescripcionGasto)
+        val descripcion = dialog.findViewById<AutoCompleteTextView>(R.id.inputDescripcionGasto)
+        val amount = dialog.findViewById<EditText>(R.id.inputCantidadGasto)
+        val radioGroup = dialog.findViewById<RadioGroup>(R.id.radioGroup)
+        val addButton = dialog.findViewById<Button>(R.id.addNewSpent)
+
         descripcion.setText("")
         val autoComplete = CustomSpinnerAdapter(this, ContextFamily.record.toList())
         descripcion.setAdapter(autoComplete)
@@ -142,28 +146,15 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             if (hasFocus) descripcion.showDropDown()
         }
 
-        val amount = findViewById<EditText>(R.id.inputCantidadGasto)
         amount.setText("")
         amount.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
 
-        val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
         var tipo = 0
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val selectedRadioButton = findViewById<RadioButton>(checkedId)
             tipo = selectedRadioButton.tag.toString().toInt()
         }
 
-        val closeIcon = findViewById<ImageView>(R.id.closePopUpAddSpent)
-        closeIcon.setOnClickListener {
-            popUp.visibility = View.GONE
-        }
-
-        val cancelButton = findViewById<Button>(R.id.cancelNewSpent)
-        cancelButton.setOnClickListener {
-            popUp.visibility = View.GONE
-        }
-
-        val addButton = findViewById<Button>(R.id.addNewSpent)
         addButton.setOnClickListener {
             val descripcionText = descripcion.text.toString()
             var amountNumber = 0f
@@ -202,7 +193,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     }
                 }
                 adapter.notifyDataSetChanged()
-                popUp.visibility = View.GONE
+                dialog.dismiss()
                 showMoney()
             }
         }
@@ -331,8 +322,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         navigationView.removeHeaderView(headerView)
         navigationView.addHeaderView(headerView)
 
-        /*val tvUser: TextView = findViewById(R.id.tvUserEmail)
-        tvUser.text = family.getEmail()*/
     }
 
     @Deprecated("Deprecated")
@@ -340,15 +329,15 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            val popUpLogOut = findViewById<ConstraintLayout>(R.id.popUpBackProfiles)
-            popUpLogOut.visibility = View.VISIBLE
-            val cancelButton = findViewById<Button>(R.id.cancelButtonBackProfiles)
+            showPopUp(R.layout.pop_up_back_profiles)
+
+            val cancelButton = dialog.findViewById<Button>(R.id.cancelButtonBackProfiles)
             cancelButton.setOnClickListener {
-                popUpLogOut.visibility = View.GONE
+                dialog.dismiss()
             }
-            val confirmButton = findViewById<Button>(R.id.confirmButtonBackProfiles)
+            val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonBackProfiles)
             confirmButton.setOnClickListener {
-                popUpLogOut.visibility = View.GONE
+                dialog.dismiss()
                 super.onBackPressed()
             }
         }
@@ -391,5 +380,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }else{
             Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showPopUp(layout: Int) {
+        dialog = Dialog(this)
+        dialog.setContentView(layout)
+        dialog.setCancelable(true)
+        dialog.show()
     }
 }
