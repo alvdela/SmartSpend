@@ -165,5 +165,7 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="pop_up_log_out">¿Desea volver a la pantalla de inicio y cerrar sesión?</string>
     <string name="confirmar">Confirmar</string>
     <string name="pop_up_back_profiles">¿Desea regresar a la selección de perfil?</string>
+    <string name="asignaciones">Asignaciones</string>
+    <string name="add_asignacion">Añadir asignación</string>
 </resources>
 

@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.adapter.ExpenseAdapter
+import com.alvdela.smartspend.adapter.MemberAdapter
 import com.alvdela.smartspend.domain.Child
 import com.alvdela.smartspend.domain.Family
 import com.google.android.material.navigation.NavigationView
@@ -30,7 +31,7 @@ import com.google.android.material.navigation.NavigationView
 class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var family: Family
-    private var user: String? = null
+    private var user: String = ""
     private var seguimiento = true
     private var tareas = false
     private var administracion = false
@@ -45,17 +46,19 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var adminLayout: ConstraintLayout
 
     private lateinit var dialog: Dialog
+    private lateinit var memberAdapter: MemberAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_parents)
-        user = intent.getStringExtra("USER_NAME")
+        user = intent.getStringExtra("USER_NAME").toString()
         getFamily()
         initObjects()
         initToolBar()
         initNavView()
         initSpinner()
+        showMembers()
     }
 
     private fun initObjects() {
@@ -194,6 +197,46 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }else{
             Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showMembers(){
+        memberAdapter = MemberAdapter(
+            memberMap = family.getMembers(),
+            editMember = {selectedMember -> editMember(selectedMember)},
+            deleteMember = {selectedMember -> deleteMember(selectedMember)},
+            addAllowance = { selectedMember -> addAsignacion(selectedMember)},
+            editAllowance = {allowanceId,selectedChild -> editAllowance(allowanceId,selectedChild)},
+            deleteAllowance = {allowanceId,selectedChild -> deleteAllowance(allowanceId,selectedChild)},
+            this
+        )
+        val recyclerView = findViewById<RecyclerView>(R.id.rvAdminFamilia)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        if (family.getMembers().isNotEmpty()){
+            recyclerView.adapter = memberAdapter
+        }else{
+            //TODO cerrar aplicacion y borrar familia
+        }
+    }
+
+    private fun deleteAllowance(allowanceId: Int, selectedChild: String) {
+        Toast.makeText(this,"Eliminar $allowanceId, $selectedChild", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun editAllowance(allowanceId: Int, selectedChild: String) {
+        Toast.makeText(this,"Editar $allowanceId, $selectedChild", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun addAsignacion(selectedMember: String) {
+        Toast.makeText(this,"Añadir asignación $selectedMember", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun deleteMember(selectedMember: String) {
+        Toast.makeText(this,"Eliminar miembro $selectedMember", Toast.LENGTH_SHORT).show()
+    }
+
+
+    private fun editMember(selectedMember: String) {
+        Toast.makeText(this,"Modificar miembro $selectedMember", Toast.LENGTH_SHORT).show()
     }
 
     private fun getFamily() {

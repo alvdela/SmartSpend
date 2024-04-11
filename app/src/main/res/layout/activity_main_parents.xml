@@ -14,7 +14,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background">
+        android:background="@color/background"
+        tools:translationX="-2000dp"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/consultarLayout"
@@ -125,7 +127,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/consultaContainer"
-                app:layout_constraintVertical_bias="0"
                 />
 
 
@@ -241,7 +242,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vDivideLine3"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="15dp"
                 app:layout_constraintVertical_bias="0" />
             <Button
                 android:id="@+id/buttonAddMember"
@@ -316,11 +317,5 @@
         app:menu="@menu/activity_main_drawer"
         />
 
-    <include
-        layout="@layout/pop_up_back_profiles"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        />
 
 </androidx.drawerlayout.widget.DrawerLayout>

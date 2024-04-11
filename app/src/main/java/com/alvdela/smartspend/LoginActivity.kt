@@ -9,6 +9,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.alvdela.smartspend.domain.Allowance
+import com.alvdela.smartspend.domain.AllowanceType
 import com.alvdela.smartspend.domain.CashFlow
 import com.alvdela.smartspend.domain.CashFlowType
 import com.alvdela.smartspend.domain.Child
@@ -81,6 +83,8 @@ class LoginActivity : AppCompatActivity() {
         child.addExpense(expense1)
         child.addExpense(expense2)
         child.addExpense(expense3)
+        val allowance = Allowance("Propina", LocalDate.now().plusDays(5),5f,AllowanceType.SEMANAL)
+        child.addAllowance(allowance)
         family.addMember(child)
         println(child.getCashFlow().toList())
         ContextFamily.mockFamily = family
