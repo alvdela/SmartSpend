@@ -1,12 +1,12 @@
-package com.alvdela.smartspend.adapter
+package com.alvdela.smartspend.ui.adapter
 
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.domain.Allowance
-import com.alvdela.smartspend.domain.AllowanceType
+import com.alvdela.smartspend.model.Allowance
+import com.alvdela.smartspend.model.AllowanceType
 
 class AllowanceViewHolder(val view: View): RecyclerView.ViewHolder(view) {
 

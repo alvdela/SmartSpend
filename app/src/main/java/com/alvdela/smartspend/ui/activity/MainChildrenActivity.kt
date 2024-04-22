@@ -1,4 +1,4 @@
-package com.alvdela.smartspend
+package com.alvdela.smartspend.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
@@ -25,12 +24,15 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
-import com.alvdela.smartspend.adapter.ExpenseAdapter
-import com.alvdela.smartspend.domain.CashFlow
-import com.alvdela.smartspend.domain.CashFlowType
-import com.alvdela.smartspend.domain.Child
-import com.alvdela.smartspend.domain.Family
+import com.alvdela.smartspend.ui.Animations
+import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.R
+import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
+import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
+import com.alvdela.smartspend.model.CashFlow
+import com.alvdela.smartspend.model.CashFlowType
+import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.google.android.material.navigation.NavigationView
 import java.time.LocalDate
@@ -273,20 +275,20 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     private fun changeButtonState(button: ImageView) {
-        button.setBackgroundColor(ContextCompat.getColor(this,R.color.light_blue))
-        button.setColorFilter(ContextCompat.getColor(this,R.color.mid_gray))
+        button.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue))
+        button.setColorFilter(ContextCompat.getColor(this, R.color.mid_gray))
     }
 
     private fun restartButtons() {
-        expensesButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
-        taskButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
-        goalsButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
-        gameButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
+        expensesButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        taskButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        goalsButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        gameButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
 
-        expensesButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
-        taskButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
-        goalsButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
-        gameButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
+        expensesButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        taskButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        goalsButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        gameButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
     }
 
     private fun getFamily() {
@@ -372,10 +374,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     private fun showCashFlow() {
-        adapter = ExpenseAdapter(child.getCashFlow())
         val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
         recyclerView.layoutManager = LinearLayoutManager(this)
         if (child.getCashFlow().isNotEmpty()){
+            adapter = ExpenseAdapter(child.getCashFlow())
             recyclerView.adapter = adapter
         }else{
             Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()

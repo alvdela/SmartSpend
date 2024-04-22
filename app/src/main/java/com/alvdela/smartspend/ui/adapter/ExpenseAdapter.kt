@@ -1,10 +1,10 @@
-package com.alvdela.smartspend.adapter
+package com.alvdela.smartspend.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.domain.CashFlow
+import com.alvdela.smartspend.model.CashFlow
 
 class ExpenseAdapter(private val cashFlowList: MutableList<CashFlow>) : RecyclerView.Adapter<ExpenseViewHolder>() {
 

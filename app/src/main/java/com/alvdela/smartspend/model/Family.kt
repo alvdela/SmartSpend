@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.domain
+package com.alvdela.smartspend.model
 
 import java.io.Serializable
 
@@ -14,8 +14,12 @@ class Family(
     /**
      * Funcion para añadir miembros a la familia
      */
-    fun addMember(member: Member){
-        this.members[member.getUser()] = member
+    fun addMember(member: Member): String{
+        if (this.members.size < MAX_MEMBERS){
+            this.members[member.getUser()] = member
+            return "Usuario añadido correctamente"
+        }
+        return "Numero máximo de usuarios alcanzado (12 miembros)"
     }
 
     /**
@@ -62,6 +66,11 @@ class Family(
         }
         return childList.toList()
     }
+
+    fun checkName(name: String): Boolean{
+        return this.members.containsKey(name)
+    }
+
 
     /* --- Metodos para asegurar la contraseña --- */
 

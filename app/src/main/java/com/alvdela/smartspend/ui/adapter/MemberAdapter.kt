@@ -1,11 +1,11 @@
-package com.alvdela.smartspend.adapter
+package com.alvdela.smartspend.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.domain.Member
+import com.alvdela.smartspend.model.Member
 
 class MemberAdapter(private val memberMap: MutableMap<String,Member>,
                     private val editMember: (String) -> Unit,
@@ -19,10 +19,10 @@ class MemberAdapter(private val memberMap: MutableMap<String,Member>,
         return MemberViewHolder(layoutInflater.inflate(R.layout.item_members, parent, false))
     }
 
-    override fun getItemCount(): Int = memberMap.size
+    override fun getItemCount(): Int = memberMap.size - 1
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
-        val key = memberMap.keys.toList()[position]
+        val key = memberMap.keys.toList()[position + 1]
         val member = memberMap[key]
         if (member != null) {
             holder.render(member,editMember,deleteMember,addAllowance,editAllowance,deleteAllowance, context)

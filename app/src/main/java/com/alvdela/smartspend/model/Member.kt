@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.domain
+package com.alvdela.smartspend.model
 
 open class Member(
     protected var user: String,
@@ -13,7 +13,7 @@ open class Member(
         this.user = user
     }
 
-    internal fun setPassword(user:String){
+    internal fun setPassword(password:String){
         this.password = password
     }
 

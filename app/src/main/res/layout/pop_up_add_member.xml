@@ -59,6 +59,7 @@
             android:fontFamily="@font/andika_regular"
             android:padding="5dp"
             android:tag="2"
+            android:checked="true"
             android:textSize="15sp"
             android:text="@string/menor"
             android:textColor="@color/black" />

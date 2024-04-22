@@ -1,10 +1,7 @@
-package com.alvdela.smartspend
+package com.alvdela.smartspend.ui
 
 import android.animation.ObjectAnimator
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.LinearLayout.LayoutParams
-import androidx.core.content.ContextCompat
 
 object Animations {
 

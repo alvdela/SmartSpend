@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.adapter
+package com.alvdela.smartspend.ui.adapter
 
 import android.content.Context
 import android.view.View
@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.domain.Child
-import com.alvdela.smartspend.domain.Member
-import com.alvdela.smartspend.domain.Parent
+import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.model.Member
+import com.alvdela.smartspend.model.Parent
 
 class MemberViewHolder(val view: View) : ViewHolder(view) {
 
@@ -40,8 +40,10 @@ class MemberViewHolder(val view: View) : ViewHolder(view) {
             asignacionesContainer.visibility = View.GONE
             line.visibility = View.GONE
         } else if (member is Child) {
+            asignacionesContainer.visibility = View.VISIBLE
+            line.visibility = View.VISIBLE
             addAsignacionButton.setOnClickListener { addAsignacion(member.getUser()) }
-            val child = member as Child
+            val child = member
             val adapter = AllowanceAdapter(
                 child.getUser(),
                 child.getAllowances(),

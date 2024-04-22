@@ -1,4 +1,4 @@
-package com.alvdela.smartspend
+package com.alvdela.smartspend.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.alvdela.smartspend.domain.Child
+import com.alvdela.smartspend.R
 
 class SignInActivity : AppCompatActivity() {
 

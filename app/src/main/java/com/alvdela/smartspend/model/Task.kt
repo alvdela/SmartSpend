@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.domain
+package com.alvdela.smartspend.model
 
 import java.time.LocalDate
 

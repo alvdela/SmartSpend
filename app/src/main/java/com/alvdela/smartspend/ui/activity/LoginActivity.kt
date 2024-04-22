@@ -1,4 +1,4 @@
-package com.alvdela.smartspend
+package com.alvdela.smartspend.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,13 +9,15 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.alvdela.smartspend.domain.Allowance
-import com.alvdela.smartspend.domain.AllowanceType
-import com.alvdela.smartspend.domain.CashFlow
-import com.alvdela.smartspend.domain.CashFlowType
-import com.alvdela.smartspend.domain.Child
-import com.alvdela.smartspend.domain.Family
-import com.alvdela.smartspend.domain.Parent
+import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.R
+import com.alvdela.smartspend.model.Allowance
+import com.alvdela.smartspend.model.AllowanceType
+import com.alvdela.smartspend.model.CashFlow
+import com.alvdela.smartspend.model.CashFlowType
+import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.model.Family
+import com.alvdela.smartspend.model.Parent
 import java.time.LocalDate
 
 
@@ -75,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
         family = Family("Invitados", "email@email.com")
         val parent = Parent("Invitado", "1234")
         family.addMember(parent)
-        val child = Child("Hijo/a")
+        val child = Child("Hijo/a", "")
         val expense1 = CashFlow("Gasto1", 5.5F, CashFlowType.COMIDA, LocalDate.now().minusDays(5))
         val expense2 = CashFlow("Gasto2", 10F, CashFlowType.COMPRAS, LocalDate.now())
         val expense3 = CashFlow("Gasto3", 7.75F, CashFlowType.OCIO, LocalDate.now())

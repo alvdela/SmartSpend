@@ -1,13 +1,10 @@
-package com.alvdela.smartspend
+package com.alvdela.smartspend.ui.activity
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
-import android.graphics.Point
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -18,10 +15,11 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.GravityCompat
-import com.alvdela.smartspend.domain.Child
-import com.alvdela.smartspend.domain.Family
-import com.alvdela.smartspend.domain.Parent
+import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.R
+import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.model.Family
+import com.alvdela.smartspend.model.Parent
 
 class ProfilesActivity : AppCompatActivity() {
 
@@ -44,7 +42,14 @@ class ProfilesActivity : AppCompatActivity() {
         initObjects()
         hideButtons()
         showFamilyData()
+    }
 
+    override fun onStart() {
+        super.onStart()
+        getFamily()
+        initObjects()
+        hideButtons()
+        showFamilyData()
     }
 
     private fun getFamily() {

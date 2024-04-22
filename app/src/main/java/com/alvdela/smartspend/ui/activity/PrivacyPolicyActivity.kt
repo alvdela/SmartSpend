@@ -1,12 +1,9 @@
-package com.alvdela.smartspend
+package com.alvdela.smartspend.ui.activity
 
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageButton
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.alvdela.smartspend.R
 
 class PrivacyPolicyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

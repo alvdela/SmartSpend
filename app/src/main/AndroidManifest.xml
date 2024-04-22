@@ -13,27 +13,27 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".MainChildrenActivity"
+            android:name=".ui.activity.MainChildrenActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".ProfilesActivity"
+            android:name=".ui.activity.ProfilesActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".PrivacyPolicyActivity"
+            android:name=".ui.activity.PrivacyPolicyActivity"
             android:exported="false" />
         <activity
-            android:name=".SignInActivity"
+            android:name=".ui.activity.SignInActivity"
             android:exported="false" />
         <activity
-            android:name=".MainParentsActivity"
+            android:name=".ui.activity.MainParentsActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.activity.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

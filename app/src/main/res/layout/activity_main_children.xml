@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".MainChildrenActivity"
+    tools:context=".ui.activity.MainChildrenActivity"
     >
 
     <!-- tools:openDrawer="start" -->
@@ -24,6 +24,7 @@
             android:layout_marginBottom="65dp"
             android:background="@color/mid_gray"
             android:translationX="0dp"
+            tools:translationX="2000dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -234,6 +235,7 @@
             android:layout_marginBottom="65dp"
             android:background="@color/background"
             android:translationX="1000dp"
+            tools:translationX="0dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -264,9 +266,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAdminFamilia"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="450dp"
                 android:layout_marginTop="5dp"
-                app:layout_constraintBottom_toTopOf="@+id/buttonAddGoal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vDivideLine3"

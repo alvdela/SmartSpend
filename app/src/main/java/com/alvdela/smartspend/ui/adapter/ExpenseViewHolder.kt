@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.adapter
+package com.alvdela.smartspend.ui.adapter
 
 import android.view.View
 import android.widget.ImageView
@@ -6,8 +6,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.domain.CashFlow
-import com.alvdela.smartspend.domain.CashFlowType
+import com.alvdela.smartspend.model.CashFlow
+import com.alvdela.smartspend.model.CashFlowType
 import java.time.format.DateTimeFormatter
 
 class ExpenseViewHolder(val view: View): ViewHolder(view){

@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.domain
+package com.alvdela.smartspend.model
 
 enum class TaskState {
     OPEN, COMPLETE, DELETED

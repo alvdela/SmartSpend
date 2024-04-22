@@ -1,8 +1,8 @@
-package com.alvdela.smartspend.domain
+package com.alvdela.smartspend.model
 
 import java.time.LocalDate
 
-class Child(user: String) : Member(user) {
+class Child(user: String, password: String) : Member(user, password) {
 
     private var actualMoney: Float = 0F
     private var allowanceList: MutableList<Allowance> = mutableListOf()

@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.adapter
+package com.alvdela.smartspend.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

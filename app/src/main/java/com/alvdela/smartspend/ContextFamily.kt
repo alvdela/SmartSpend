@@ -1,6 +1,6 @@
 package com.alvdela.smartspend
 
-import com.alvdela.smartspend.domain.Family
+import com.alvdela.smartspend.model.Family
 
 object ContextFamily {
 

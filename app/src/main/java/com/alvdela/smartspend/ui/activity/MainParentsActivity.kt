@@ -1,5 +1,6 @@
-package com.alvdela.smartspend
+package com.alvdela.smartspend.ui.activity
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +9,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -21,11 +25,15 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
-import com.alvdela.smartspend.adapter.ExpenseAdapter
-import com.alvdela.smartspend.adapter.MemberAdapter
-import com.alvdela.smartspend.domain.Child
-import com.alvdela.smartspend.domain.Family
+import com.alvdela.smartspend.ui.Animations
+import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.R
+import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
+import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
+import com.alvdela.smartspend.ui.adapter.MemberAdapter
+import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.model.Family
+import com.alvdela.smartspend.model.Parent
 import com.google.android.material.navigation.NavigationView
 
 class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +56,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var dialog: Dialog
     private lateinit var memberAdapter: MemberAdapter
 
+    private val MAX_USER_LENGHT = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +103,77 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 restartButtons()
                 changeButtonState(adminButton)
                 animateAdministracion()
+            }
+        }
+
+        val addMemberButton = findViewById<Button>(R.id.buttonAddMember)
+        addMemberButton.setOnClickListener {
+            addMember()
+        }
+    }
+
+    private fun addMember() {
+        showPopUp(R.layout.pop_up_add_member)
+
+        val memberNameWarning = dialog.findViewById<TextView>(R.id.tvMiembroExistente)
+        memberNameWarning.visibility = View.INVISIBLE
+        val passwordWarning = dialog.findViewById<TextView>(R.id.tv_advise_password2)
+        passwordWarning.visibility = View.INVISIBLE
+
+        var tipo = 2
+        val radioGroup = dialog.findViewById<RadioGroup>(R.id.rgMemberButtons)
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val selectedRadioButton = dialog.findViewById<RadioButton>(checkedId)
+            tipo = selectedRadioButton.tag.toString().toInt()
+        }
+        val userName = dialog.findViewById<EditText>(R.id.inputNombreUsuario)
+        userName.setText("")
+        val passwordInput = dialog.findViewById<EditText>(R.id.passwordAddMember)
+        passwordInput.setText("")
+        val passwordInputRepeat = dialog.findViewById<EditText>(R.id.passwordAddMemberAgain)
+        passwordInputRepeat.setText("")
+
+        val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val addNewMember = dialog.findViewById<Button>(R.id.addNewMember)
+        addNewMember.setOnClickListener {
+            memberNameWarning.visibility = View.INVISIBLE
+            passwordWarning.visibility = View.INVISIBLE
+            var memberName = ""
+            if (userName.text.isEmpty()){
+                userName.error = "Se necesita un nombre de usuario"
+            }else{
+                memberName = userName.text.toString()
+            }
+            if (memberName != ""){
+                if (family.checkName(userName.text.toString())){
+                    memberNameWarning.visibility = View.VISIBLE
+                }else if (userName.text.toString().length > MAX_USER_LENGHT){
+                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                }else if(passwordInput.text.toString() != passwordInputRepeat.text.toString()){
+                    passwordWarning.visibility = View.VISIBLE
+                }else{
+                    when(tipo){
+                        1 -> {
+                            val parent = Parent(memberName,passwordInput.text.toString())
+                            val result = family.addMember(parent)
+                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                        }
+                        2 -> {
+                            val child = Child(memberName, passwordInput.text.toString())
+                            val result = family.addMember(child)
+                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                        }
+                        else ->{
+                            Toast.makeText(this,"Ha ocurrido un error inesperado", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    dialog.dismiss()
+                    memberAdapter.notifyItemInserted(family.getMembers().size)
+                }
             }
         }
     }
@@ -151,18 +231,18 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun changeButtonState(button: ImageView) {
-        button.setBackgroundColor(ContextCompat.getColor(this,R.color.light_blue))
-        button.setColorFilter(ContextCompat.getColor(this,R.color.mid_gray))
+        button.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue))
+        button.setColorFilter(ContextCompat.getColor(this, R.color.mid_gray))
     }
 
     private fun restartButtons() {
-        seguimientoButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
-        taskButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
-        adminButton.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_blue))
+        seguimientoButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        taskButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        adminButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
 
-        seguimientoButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
-        taskButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
-        adminButton.setColorFilter(ContextCompat.getColor(this,R.color.dark_gray))
+        seguimientoButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        taskButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        adminButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
     }
 
     private fun initSpinner(){
@@ -204,7 +284,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             memberMap = family.getMembers(),
             editMember = {selectedMember -> editMember(selectedMember)},
             deleteMember = {selectedMember -> deleteMember(selectedMember)},
-            addAllowance = { selectedMember -> addAsignacion(selectedMember)},
+            addAllowance = { selectedMember -> addAllowance(selectedMember)},
             editAllowance = {allowanceId,selectedChild -> editAllowance(allowanceId,selectedChild)},
             deleteAllowance = {allowanceId,selectedChild -> deleteAllowance(allowanceId,selectedChild)},
             this
@@ -226,17 +306,83 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         Toast.makeText(this,"Editar $allowanceId, $selectedChild", Toast.LENGTH_SHORT).show()
     }
 
-    private fun addAsignacion(selectedMember: String) {
+    private fun addAllowance(selectedMember: String) {
         Toast.makeText(this,"Añadir asignación $selectedMember", Toast.LENGTH_SHORT).show()
     }
 
     private fun deleteMember(selectedMember: String) {
-        Toast.makeText(this,"Eliminar miembro $selectedMember", Toast.LENGTH_SHORT).show()
+        showPopUp(R.layout.pop_up_delete_member)
+
+        val cancel = dialog.findViewById<Button>(R.id.cancelDeleteMember)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val confirmButton = dialog.findViewById<Button>(R.id.confirmDeleteMember)
+        confirmButton.setOnClickListener {
+            family.deleteMember(selectedMember)
+            dialog.dismiss()
+            memberAdapter.notifyItemRemoved(family.getMembers().size)
+        }
     }
 
 
     private fun editMember(selectedMember: String) {
-        Toast.makeText(this,"Modificar miembro $selectedMember", Toast.LENGTH_SHORT).show()
+        showPopUp(R.layout.pop_up_add_member)
+        val member = family.getMember(selectedMember)!!
+
+        val memberNameWarning = dialog.findViewById<TextView>(R.id.tvMiembroExistente)
+        memberNameWarning.visibility = View.INVISIBLE
+        val passwordWarning = dialog.findViewById<TextView>(R.id.tv_advise_password2)
+        passwordWarning.visibility = View.INVISIBLE
+
+        val radioGroup = dialog.findViewById<RadioGroup>(R.id.rgMemberButtons)
+        radioGroup.visibility = View.GONE
+
+        val userName = dialog.findViewById<EditText>(R.id.inputNombreUsuario)
+        userName.setText(member.getUser())
+        val passwordInput = dialog.findViewById<EditText>(R.id.passwordAddMember)
+        passwordInput.setText("")
+        val passwordInputRepeat = dialog.findViewById<EditText>(R.id.passwordAddMemberAgain)
+        passwordInputRepeat.setText("")
+
+        val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val header = dialog.findViewById<TextView>(R.id.tvPopUpAddMember)
+        header.text = resources.getString(R.string.pop_up_edit_member)
+
+        val editMember = dialog.findViewById<Button>(R.id.addNewMember)
+        editMember.text = resources.getString(R.string.confirmar)
+        editMember.setOnClickListener {
+            memberNameWarning.visibility = View.INVISIBLE
+            passwordWarning.visibility = View.INVISIBLE
+            var memberName = ""
+            if (userName.text.isEmpty()){
+                userName.error = "Se necesita un nombre de usuario"
+            }else{
+                memberName = userName.text.toString()
+            }
+            if (memberName != ""){
+                if (family.checkName(userName.text.toString()) && userName.text.toString() != selectedMember){
+                    memberNameWarning.visibility = View.VISIBLE
+                }else if (userName.text.toString().length > MAX_USER_LENGHT){
+                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                }else if(passwordInput.text.toString() != passwordInputRepeat.text.toString()){
+                    passwordWarning.visibility = View.VISIBLE
+                }else{
+                    family.deleteMember(selectedMember)
+                    member.setUser(memberName)
+                    member.setPassword(passwordInput.text.toString())
+                    family.addMember(member)
+                    dialog.dismiss()
+                    memberAdapter.notifyDataSetChanged()
+                }
+            }
+
+        }
     }
 
     private fun getFamily() {
@@ -299,9 +445,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         when (item.itemId) {
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
-
         }
-
         drawer.closeDrawer(GravityCompat.START)
 
         return true
@@ -322,5 +466,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         dialog.setContentView(layout)
         dialog.setCancelable(true)
         dialog.show()
+    }
+
+    private fun showDatePickerDialog(text: EditText) {
+        val newFragment = DatePickerFragment.newInstance(DatePickerDialog.OnDateSetListener { _, year, month, day ->
+            // +1 because January is zero
+            val selectedDate = day.toString() + " / " + (month + 1) + " / " + year
+            text.setText(selectedDate)
+        })
+
+        newFragment.show(supportFragmentManager, "datePicker")
     }
 }

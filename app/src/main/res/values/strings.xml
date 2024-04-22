@@ -167,5 +167,8 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="pop_up_back_profiles">¿Desea regresar a la selección de perfil?</string>
     <string name="asignaciones">Asignaciones</string>
     <string name="add_asignacion">Añadir asignación</string>
+    <string name="pop_up_delete_member">¿Desea realmente eliminar este miembro de la familia?</string>
+    <string name="pop_up_edit_member">Editar datos del miembro</string>
+
 </resources>
 
