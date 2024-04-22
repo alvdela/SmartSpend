@@ -42,7 +42,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private val MAX_DECIMALS = 2
 
     private lateinit var drawer: DrawerLayout
-    private lateinit var adapter: ExpenseAdapter
+    private lateinit var expenseAdapter: ExpenseAdapter
     private lateinit var dialog: Dialog
 
     //Botones para cambiar entre pantallas
@@ -69,6 +69,8 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private var tareas = false
     private var goals = false
     private var games = false
+
+    private var isInitExpenseAdapter = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -194,7 +196,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                         child.addExpense(newExpense)
                     }
                 }
-                adapter.notifyDataSetChanged()
+                if (!isInitExpenseAdapter){
+                    showCashFlow()
+                }else{
+                    expenseAdapter.notifyDataSetChanged()
+                }
                 dialog.dismiss()
                 showMoney()
             }
@@ -377,8 +383,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
         recyclerView.layoutManager = LinearLayoutManager(this)
         if (child.getCashFlow().isNotEmpty()){
-            adapter = ExpenseAdapter(child.getCashFlow())
-            recyclerView.adapter = adapter
+            expenseAdapter = ExpenseAdapter(child.getCashFlow())
+            recyclerView.adapter = expenseAdapter
+            isInitExpenseAdapter = true
         }else{
             Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()
         }

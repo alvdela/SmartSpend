@@ -19,10 +19,10 @@ class MemberAdapter(private val memberMap: MutableMap<String,Member>,
         return MemberViewHolder(layoutInflater.inflate(R.layout.item_members, parent, false))
     }
 
-    override fun getItemCount(): Int = memberMap.size - 1
+    override fun getItemCount(): Int = memberMap.size
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
-        val key = memberMap.keys.toList()[position + 1]
+        val key = memberMap.keys.toList()[position]
         val member = memberMap[key]
         if (member != null) {
             holder.render(member,editMember,deleteMember,addAllowance,editAllowance,deleteAllowance, context)

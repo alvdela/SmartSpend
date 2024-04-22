@@ -28,11 +28,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
 import com.alvdela.smartspend.ui.adapter.MemberAdapter
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
+import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.google.android.material.navigation.NavigationView
 
@@ -40,6 +42,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private lateinit var family: Family
     private var user: String = ""
+    private lateinit var membersCopy : MutableMap<String,Member>
+
     private var seguimiento = true
     private var tareas = false
     private var administracion = false
@@ -57,6 +61,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var memberAdapter: MemberAdapter
 
     private val MAX_USER_LENGHT = 10
+    private val MAX_DECIMALS = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,12 +124,23 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         memberNameWarning.visibility = View.INVISIBLE
         val passwordWarning = dialog.findViewById<TextView>(R.id.tv_advise_password2)
         passwordWarning.visibility = View.INVISIBLE
+        val tvCantidadInicial = dialog.findViewById<TextView>(R.id.tvCantidadInicial)
+        val inputCantidadInicial = dialog.findViewById<EditText>(R.id.inputCantidadInicial)
+        inputCantidadInicial.setText("")
+        inputCantidadInicial.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
 
         var tipo = 2
         val radioGroup = dialog.findViewById<RadioGroup>(R.id.rgMemberButtons)
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val selectedRadioButton = dialog.findViewById<RadioButton>(checkedId)
             tipo = selectedRadioButton.tag.toString().toInt()
+            if (tipo == 2){
+                tvCantidadInicial.visibility = View.VISIBLE
+                inputCantidadInicial.visibility = View.VISIBLE
+            }else{
+                tvCantidadInicial.visibility = View.GONE
+                inputCantidadInicial.visibility = View.GONE
+            }
         }
         val userName = dialog.findViewById<EditText>(R.id.inputNombreUsuario)
         userName.setText("")
@@ -159,11 +175,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     when(tipo){
                         1 -> {
                             val parent = Parent(memberName,passwordInput.text.toString())
+                            membersCopy[memberName] = parent
                             val result = family.addMember(parent)
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
                         2 -> {
                             val child = Child(memberName, passwordInput.text.toString())
+                            if (inputCantidadInicial.text.toString().isNotBlank())
+                                child.setActualMoney(inputCantidadInicial.text.toString().toFloat())
+                            membersCopy[memberName] = child
                             val result = family.addMember(child)
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
@@ -172,7 +192,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         }
                     }
                     dialog.dismiss()
-                    memberAdapter.notifyItemInserted(family.getMembers().size)
+                    memberAdapter.notifyItemInserted(membersCopy.size)
                 }
             }
         }
@@ -280,8 +300,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun showMembers(){
+        membersCopy = family.getMembers().toMutableMap()
+        membersCopy.remove(user)
         memberAdapter = MemberAdapter(
-            memberMap = family.getMembers(),
+            memberMap = membersCopy,
             editMember = {selectedMember -> editMember(selectedMember)},
             deleteMember = {selectedMember -> deleteMember(selectedMember)},
             addAllowance = { selectedMember -> addAllowance(selectedMember)},
@@ -321,8 +343,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDeleteMember)
         confirmButton.setOnClickListener {
             family.deleteMember(selectedMember)
+            membersCopy.remove(selectedMember)
             dialog.dismiss()
-            memberAdapter.notifyItemRemoved(family.getMembers().size)
+            memberAdapter.notifyItemRemoved(membersCopy.size)
         }
     }
 
@@ -374,9 +397,11 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     passwordWarning.visibility = View.VISIBLE
                 }else{
                     family.deleteMember(selectedMember)
+                    membersCopy.remove(selectedMember)
                     member.setUser(memberName)
                     member.setPassword(passwordInput.text.toString())
                     family.addMember(member)
+                    membersCopy[memberName] = member
                     dialog.dismiss()
                     memberAdapter.notifyDataSetChanged()
                 }

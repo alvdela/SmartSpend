@@ -169,6 +169,7 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="add_asignacion">Añadir asignación</string>
     <string name="pop_up_delete_member">¿Desea realmente eliminar este miembro de la familia?</string>
     <string name="pop_up_edit_member">Editar datos del miembro</string>
+    <string name="cantidad_inicial">Cantidad inicial</string>
 
 </resources>
 

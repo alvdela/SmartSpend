@@ -183,6 +183,7 @@ class ProfilesActivity : AppCompatActivity() {
         val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonLogOut)
         confirmButton.setOnClickListener {
             ContextFamily.reset()
+            startActivity(Intent(this, LoginActivity::class.java))
             super.onBackPressed()
         }
     }
