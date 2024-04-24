@@ -37,7 +37,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
-        android:padding="5dp"
         android:text="@string/nombre_de_la_asignacion"
         android:textColor="@color/black"
         android:textSize="18sp" />
@@ -55,7 +54,7 @@
         android:background="@drawable/corners_white"
         android:fontFamily="@font/andika_regular"
         android:inputType="textAutoCorrect"
-        android:padding="10dp"
+        android:padding="5dp"
         android:textColor="@color/black"
         android:textCursorDrawable="@drawable/custom_cursor"
         android:textSize="18sp" />
@@ -68,7 +67,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
-        android:padding="5dp"
         android:text="@string/fecha_de_inicio"
         android:textColor="@color/black"
         android:textSize="18sp" />
@@ -86,68 +84,79 @@
 
         <EditText
             android:id="@+id/inputFechaLimite"
-            tools:text=""
+            tools:text="aaa"
+            android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/corners_white"
             android:fontFamily="@font/andika_regular"
             android:inputType="datetime"
-            android:padding="10dp"
+            android:padding="5dp"
             android:textColor="@color/black"
             android:textCursorDrawable="@drawable/custom_cursor"
             android:textSize="18sp" />
 
-        <CheckBox
+        <Button
             android:id="@+id/show_calendar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:layout_marginEnd="8dp"
-            android:button="@drawable/ic_calendar_blank" />
+            android:background="@color/transparent"
+            android:drawableEnd="@drawable/ic_calendar_blank" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvErrorFecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:padding="5dp"
+        android:text="@string/se_necesita_una_fecha_inicial"
+        android:textColor="@color/red"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateContainer" />
 
     <TextView
         android:id="@+id/tvFrecuencia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
-        android:padding="5dp"
         android:text="@string/frecuencia"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateContainer" />
+        app:layout_constraintTop_toBottomOf="@+id/tvErrorFecha" />
 
     <RelativeLayout
         android:id="@+id/spinnerContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvFrecuencia"
-        android:background="@drawable/spinner_background"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
+        android:background="@color/transparent"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/botonSeleccionarFecha"
+            android:id="@+id/botonSeleccionarFrecuencia"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center"
-            android:background="@color/white"
-            android:gravity="center"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="35dp"
+            android:layout_gravity="top|center"
+            android:background="@drawable/corners_white"
             android:fontFamily="@font/andika_regular"
             android:textColor="@color/black"
             android:spinnerMode="dropdown"
             android:overlapAnchor="false"
-            android:backgroundTint="@color/white"
+            tools:backgroundTint="@color/black"
             android:entries="@array/tipo_asignacion"
             />
 
@@ -157,22 +166,35 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
+            android:layout_marginEnd="5dp"
             android:src="@drawable/ic_extend_selector" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvErrorFrecuencia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:padding="5dp"
+        android:text="@string/error_frecuencia"
+        android:textColor="@color/red"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerContainer" />
 
     <TextView
         android:id="@+id/tvCantidadAsignacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
-        android:padding="5dp"
         android:text="@string/cantidad"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerContainer" />
+        app:layout_constraintTop_toBottomOf="@+id/tvErrorFrecuencia" />
 
     <EditText
         android:id="@+id/inputCantidadAsignacion"
@@ -181,7 +203,7 @@
         android:background="@drawable/corners_white"
         android:fontFamily="@font/andika_regular"
         android:inputType="numberDecimal"
-        android:padding="10dp"
+        android:padding="5dp"
         android:textColor="@color/black"
         android:textCursorDrawable="@drawable/custom_cursor"
         android:textSize="18sp"
@@ -194,7 +216,7 @@
 
     <View
         android:id="@+id/line7"
-        app:layout_constraintBottom_toTopOf="@id/cancelTask"
+        app:layout_constraintBottom_toTopOf="@id/cancelNewAllowance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="20dp"
@@ -203,7 +225,7 @@
         android:background="@color/black" />
 
     <Button
-        android:id="@+id/cancelTask"
+        android:id="@+id/cancelNewAllowance"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
@@ -218,7 +240,7 @@
         android:textColor="@color/black" />
 
     <Button
-        android:id="@+id/addTask"
+        android:id="@+id/addAllowance"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="wrap_content"

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -28,7 +29,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.Util
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
+import com.alvdela.smartspend.model.Allowance
+import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
 import com.alvdela.smartspend.ui.adapter.MemberAdapter
@@ -37,12 +41,14 @@ import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.google.android.material.navigation.NavigationView
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var family: Family
     private var user: String = ""
-    private lateinit var membersCopy : MutableMap<String,Member>
+    private lateinit var membersCopy: MutableMap<String, Member>
 
     private var seguimiento = true
     private var tareas = false
@@ -90,21 +96,21 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         changeButtonState(seguimientoButton)
 
         seguimientoButton.setOnClickListener {
-            if (!seguimiento){
+            if (!seguimiento) {
                 restartButtons()
                 changeButtonState(seguimientoButton)
                 animateSegimiento()
             }
         }
         taskButton.setOnClickListener {
-            if (!tareas){
+            if (!tareas) {
                 restartButtons()
                 changeButtonState(taskButton)
                 animateTareas()
             }
         }
         adminButton.setOnClickListener {
-            if (!administracion){
+            if (!administracion) {
                 restartButtons()
                 changeButtonState(adminButton)
                 animateAdministracion()
@@ -134,10 +140,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val selectedRadioButton = dialog.findViewById<RadioButton>(checkedId)
             tipo = selectedRadioButton.tag.toString().toInt()
-            if (tipo == 2){
+            if (tipo == 2) {
                 tvCantidadInicial.visibility = View.VISIBLE
                 inputCantidadInicial.visibility = View.VISIBLE
-            }else{
+            } else {
                 tvCantidadInicial.visibility = View.GONE
                 inputCantidadInicial.visibility = View.GONE
             }
@@ -159,26 +165,27 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             memberNameWarning.visibility = View.INVISIBLE
             passwordWarning.visibility = View.INVISIBLE
             var memberName = ""
-            if (userName.text.isEmpty()){
+            if (userName.text.isEmpty()) {
                 userName.error = "Se necesita un nombre de usuario"
-            }else{
+            } else {
                 memberName = userName.text.toString()
             }
-            if (memberName != ""){
-                if (family.checkName(userName.text.toString())){
+            if (memberName != "") {
+                if (family.checkName(userName.text.toString())) {
                     memberNameWarning.visibility = View.VISIBLE
-                }else if (userName.text.toString().length > MAX_USER_LENGHT){
+                } else if (userName.text.toString().length > MAX_USER_LENGHT) {
                     userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
-                }else if(passwordInput.text.toString() != passwordInputRepeat.text.toString()){
+                } else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
                     passwordWarning.visibility = View.VISIBLE
-                }else{
-                    when(tipo){
+                } else {
+                    when (tipo) {
                         1 -> {
-                            val parent = Parent(memberName,passwordInput.text.toString())
+                            val parent = Parent(memberName, passwordInput.text.toString())
                             membersCopy[memberName] = parent
                             val result = family.addMember(parent)
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
+
                         2 -> {
                             val child = Child(memberName, passwordInput.text.toString())
                             if (inputCantidadInicial.text.toString().isNotBlank())
@@ -187,8 +194,13 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             val result = family.addMember(child)
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
-                        else ->{
-                            Toast.makeText(this,"Ha ocurrido un error inesperado", Toast.LENGTH_SHORT).show()
+
+                        else -> {
+                            Toast.makeText(
+                                this,
+                                "Ha ocurrido un error inesperado",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                     dialog.dismiss()
@@ -199,11 +211,11 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun animateAdministracion() {
-        if (tareas){
+        if (tareas) {
             Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
             //taskLayout.visibility = View.GONE
         }
-        if (seguimiento){
+        if (seguimiento) {
             Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
             //seguimientoLayout.visibility = View.GONE
         }
@@ -216,12 +228,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun animateTareas() {
-        if (seguimiento){
+        if (seguimiento) {
             Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
             //seguimientoLayout.visibility = View.GONE
             taskLayout.translationX = 2000f
         }
-        if (administracion){
+        if (administracion) {
             Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
             //adminLayout.visibility = View.GONE
             taskLayout.translationX = -2000f
@@ -234,11 +246,11 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun animateSegimiento() {
-        if (tareas){
+        if (tareas) {
             Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
             //taskLayout.visibility = View.GONE
         }
-        if (administracion){
+        if (administracion) {
             Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
             //adminLayout.visibility = View.GONE
         }
@@ -265,7 +277,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         adminButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
     }
 
-    private fun initSpinner(){
+    private fun initSpinner() {
         val options = family.getChildrenNames()
         println(options)
         val adapter = CustomSpinnerAdapter(this, options)
@@ -292,55 +304,272 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val childSelected = family.getMember(child) as Child
         val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        if (childSelected.getCashFlow().isNotEmpty()){
+        if (childSelected.getCashFlow().isNotEmpty()) {
             recyclerView.adapter = ExpenseAdapter(childSelected.getCashFlow())
-        }else{
-            Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "No existen movimientos", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun showMembers(){
+    private fun showMembers() {
         membersCopy = family.getMembers().toMutableMap()
         membersCopy.remove(user)
         memberAdapter = MemberAdapter(
             memberMap = membersCopy,
-            editMember = {selectedMember -> editMember(selectedMember)},
-            deleteMember = {selectedMember -> deleteMember(selectedMember)},
-            addAllowance = { selectedMember -> addAllowance(selectedMember)},
-            editAllowance = {allowanceId,selectedChild -> editAllowance(allowanceId,selectedChild)},
-            deleteAllowance = {allowanceId,selectedChild -> deleteAllowance(allowanceId,selectedChild)},
+            editMember = { selectedMember -> editMember(selectedMember) },
+            deleteMember = { selectedMember -> deleteMember(selectedMember) },
+            addAllowance = { selectedMember -> addAllowance(selectedMember) },
+            editAllowance = { allowanceId, selectedChild ->
+                editAllowance(
+                    allowanceId,
+                    selectedChild
+                )
+            },
+            deleteAllowance = { allowanceId, selectedChild ->
+                deleteAllowance(
+                    allowanceId,
+                    selectedChild
+                )
+            },
             this
         )
         val recyclerView = findViewById<RecyclerView>(R.id.rvAdminFamilia)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        if (family.getMembers().isNotEmpty()){
+        if (family.getMembers().isNotEmpty()) {
             recyclerView.adapter = memberAdapter
-        }else{
+        } else {
             //TODO cerrar aplicacion y borrar familia
         }
     }
 
     private fun deleteAllowance(allowanceId: Int, selectedChild: String) {
-        Toast.makeText(this,"Eliminar $allowanceId, $selectedChild", Toast.LENGTH_SHORT).show()
-    }
+        showPopUp(R.layout.pop_up_delete)
+        val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
+        tvDelete.text = resources.getString(R.string.pop_up_delete_allowance)
 
-    private fun editAllowance(allowanceId: Int, selectedChild: String) {
-        Toast.makeText(this,"Editar $allowanceId, $selectedChild", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun addAllowance(selectedMember: String) {
-        Toast.makeText(this,"Añadir asignación $selectedMember", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun deleteMember(selectedMember: String) {
-        showPopUp(R.layout.pop_up_delete_member)
-
-        val cancel = dialog.findViewById<Button>(R.id.cancelDeleteMember)
+        val cancel = dialog.findViewById<Button>(R.id.cancelDelete)
         cancel.setOnClickListener {
             dialog.dismiss()
         }
 
-        val confirmButton = dialog.findViewById<Button>(R.id.confirmDeleteMember)
+        val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
+        confirmButton.setOnClickListener {
+            val child = family.getMember(selectedChild) as Child
+            child.getAllowances().removeAt(allowanceId)
+            dialog.dismiss()
+            memberAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun editAllowance(allowanceId: Int, selectedChild: String) {
+        showPopUp(R.layout.pop_up_add_allowance)
+        val child = family.getMember(selectedChild) as Child
+        var allowance = child.getAllowances().get(allowanceId)
+
+        /*Inicialización de los elementos*/
+        val inputNombreAsignacion = dialog.findViewById<EditText>(R.id.inputNombreAsignacion)
+        inputNombreAsignacion.setText(allowance.getName())
+
+        val inputDate = dialog.findViewById<EditText>(R.id.inputFechaLimite)
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        inputDate.setText(allowance.getNextPayment().format(formatter))
+        val showCalendar = dialog.findViewById<Button>(R.id.show_calendar)
+        showCalendar.setOnClickListener {
+            showDatePickerDialog(inputDate)
+        }
+
+        val inputFrecuencia = dialog.findViewById<Spinner>(R.id.botonSeleccionarFrecuencia)
+        val adapter: ArrayAdapter<*> = ArrayAdapter.createFromResource(
+            this, R.array.tipo_asignacion, R.layout.item_spinner_layout
+        )
+        inputFrecuencia.adapter = adapter
+        var selected = 0
+        when (allowance.getType()) {
+            AllowanceType.PUNTUAL -> selected = 0
+            AllowanceType.SEMANAL -> selected = 1
+            AllowanceType.MENSUAL -> selected = 2
+            AllowanceType.TRIMESTRAL -> selected = 3
+            AllowanceType.SEMESTRAL -> selected = 4
+            AllowanceType.ANUAL -> selected = 5
+        }
+        inputFrecuencia.setSelection(selected)
+
+        val inputCantidadAsignacion = dialog.findViewById<EditText>(R.id.inputCantidadAsignacion)
+        inputCantidadAsignacion.setText(allowance.getAmount().toString())
+        inputCantidadAsignacion.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
+
+        /* Mensajes de errores */
+        val tvErrorFecha = dialog.findViewById<TextView>(R.id.tvErrorFecha)
+        val tvErrorFrecuencia = dialog.findViewById<TextView>(R.id.tvErrorFrecuencia)
+        tvErrorFecha.visibility = View.GONE
+        tvErrorFrecuencia.visibility = View.GONE
+        /* Botones de añadir y cancelar */
+        val cancelNewAllowance = dialog.findViewById<Button>(R.id.cancelNewAllowance)
+        cancelNewAllowance.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val addAllowance = dialog.findViewById<Button>(R.id.addAllowance)
+        addAllowance.text = resources.getString(R.string.confirmar)
+        addAllowance.setOnClickListener {
+            var isCorrect = true
+            var frecuencia: AllowanceType? = null
+            var fecha: LocalDate? = null
+            when (inputFrecuencia.selectedItem.toString()) {
+                "Puntual" -> frecuencia = AllowanceType.PUNTUAL
+                "Semanal" -> frecuencia = AllowanceType.SEMANAL
+                "Mensual" -> frecuencia = AllowanceType.MENSUAL
+                "Trimestral" -> frecuencia = AllowanceType.TRIMESTRAL
+                "Semestral" -> frecuencia = AllowanceType.SEMESTRAL
+                "Anual" -> frecuencia = AllowanceType.ANUAL
+            }
+            if (Util.isValidDate(inputDate.text.toString(), formatter)) {
+                fecha = LocalDate.parse(inputDate.text.toString(), formatter)
+            } else {
+                isCorrect = false
+                tvErrorFecha.visibility = View.VISIBLE
+                tvErrorFecha.text = resources.getString(R.string.mal_formato_fecha)
+            }
+            if (inputNombreAsignacion.text.toString().isBlank()) {
+                isCorrect = false
+                inputNombreAsignacion.error = "Falta un nombre para la asignación"
+            }
+            if (inputNombreAsignacion.text.toString().length > 10) {
+                isCorrect = false
+                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 10)"
+            }
+            if (fecha != null) {
+                if (fecha.isBefore(LocalDate.now())) {
+                    isCorrect = false
+                    tvErrorFecha.visibility = View.VISIBLE
+                    tvErrorFecha.text = resources.getString(R.string.mal_formato_fecha)
+                }
+            }
+            if (frecuencia == null) {
+                isCorrect = false
+                tvErrorFrecuencia.visibility = View.VISIBLE
+            }
+            if (inputCantidadAsignacion.text.toString().isBlank()) {
+                isCorrect = false
+                inputCantidadAsignacion.error = "Se necesita una cantidad"
+            }
+            if (isCorrect) {
+                allowance = Allowance(
+                    inputNombreAsignacion.text.toString(),
+                    fecha!!,
+                    inputCantidadAsignacion.text.toString().toFloat(),
+                    frecuencia!!
+                )
+                child.updateAllowance(allowance,allowanceId)
+                memberAdapter.notifyDataSetChanged()
+                dialog.dismiss()
+            }
+        }
+    }
+
+    private fun addAllowance(selectedMember: String) {
+        showPopUp(R.layout.pop_up_add_allowance)
+        /*Inicialización de los elementos*/
+        val inputNombreAsignacion = dialog.findViewById<EditText>(R.id.inputNombreAsignacion)
+        inputNombreAsignacion.setText("")
+
+        val inputDate = dialog.findViewById<EditText>(R.id.inputFechaLimite)
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        inputDate.setText(LocalDate.now().format(formatter))
+        val showCalendar = dialog.findViewById<Button>(R.id.show_calendar)
+        showCalendar.setOnClickListener {
+            showDatePickerDialog(inputDate)
+        }
+
+        val inputFrecuencia = dialog.findViewById<Spinner>(R.id.botonSeleccionarFrecuencia)
+        val adapter: ArrayAdapter<*> = ArrayAdapter.createFromResource(
+            this, R.array.tipo_asignacion, R.layout.item_spinner_layout
+        )
+        inputFrecuencia.adapter = adapter
+
+        val inputCantidadAsignacion = dialog.findViewById<EditText>(R.id.inputCantidadAsignacion)
+        inputCantidadAsignacion.setText("")
+        inputCantidadAsignacion.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
+
+        /* Mensajes de errores */
+        val tvErrorFecha = dialog.findViewById<TextView>(R.id.tvErrorFecha)
+        val tvErrorFrecuencia = dialog.findViewById<TextView>(R.id.tvErrorFrecuencia)
+        tvErrorFecha.visibility = View.GONE
+        tvErrorFrecuencia.visibility = View.GONE
+        /* Botones de añadir y cancelar */
+        val cancelNewAllowance = dialog.findViewById<Button>(R.id.cancelNewAllowance)
+        cancelNewAllowance.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val addAllowance = dialog.findViewById<Button>(R.id.addAllowance)
+        addAllowance.setOnClickListener {
+            var isCorrect = true
+            var frecuencia: AllowanceType? = null
+            var fecha: LocalDate? = null
+            when (inputFrecuencia.selectedItem.toString()) {
+                "Puntual" -> frecuencia = AllowanceType.PUNTUAL
+                "Semanal" -> frecuencia = AllowanceType.SEMANAL
+                "Mensual" -> frecuencia = AllowanceType.MENSUAL
+                "Trimestral" -> frecuencia = AllowanceType.TRIMESTRAL
+                "Semestral" -> frecuencia = AllowanceType.SEMESTRAL
+                "Anual" -> frecuencia = AllowanceType.ANUAL
+            }
+            if (Util.isValidDate(inputDate.text.toString(), formatter)) {
+                fecha = LocalDate.parse(inputDate.text.toString(), formatter)
+            } else {
+                isCorrect = false
+                tvErrorFecha.visibility = View.VISIBLE
+                tvErrorFecha.text = resources.getString(R.string.mal_formato_fecha)
+            }
+            if (inputNombreAsignacion.text.toString().isBlank()) {
+                isCorrect = false
+                inputNombreAsignacion.error = "Falta un nombre para la asignación"
+            }
+            if (inputNombreAsignacion.text.toString().length > 10) {
+                isCorrect = false
+                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 10)"
+            }
+            if (fecha != null) {
+                if (fecha.isBefore(LocalDate.now())) {
+                    isCorrect = false
+                    tvErrorFecha.visibility = View.VISIBLE
+                    tvErrorFecha.text = resources.getString(R.string.mal_formato_fecha)
+                }
+            }
+            if (frecuencia == null) {
+                isCorrect = false
+                tvErrorFrecuencia.visibility = View.VISIBLE
+            }
+            if (inputCantidadAsignacion.text.toString().isBlank()) {
+                isCorrect = false
+                inputCantidadAsignacion.error = "Se necesita una cantidad"
+            }
+            if (isCorrect) {
+                val child = family.getMember(selectedMember) as Child
+
+                val allowance = Allowance(
+                    inputNombreAsignacion.text.toString(),
+                    fecha!!,
+                    inputCantidadAsignacion.text.toString().toFloat(),
+                    frecuencia!!
+                )
+                child.addAllowance(allowance)
+                memberAdapter.notifyDataSetChanged()
+                dialog.dismiss()
+            }
+        }
+    }
+
+    private fun deleteMember(selectedMember: String) {
+        showPopUp(R.layout.pop_up_delete)
+
+        val cancel = dialog.findViewById<Button>(R.id.cancelDelete)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
             family.deleteMember(selectedMember)
             membersCopy.remove(selectedMember)
@@ -383,19 +612,19 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             memberNameWarning.visibility = View.INVISIBLE
             passwordWarning.visibility = View.INVISIBLE
             var memberName = ""
-            if (userName.text.isEmpty()){
+            if (userName.text.isEmpty()) {
                 userName.error = "Se necesita un nombre de usuario"
-            }else{
+            } else {
                 memberName = userName.text.toString()
             }
-            if (memberName != ""){
-                if (family.checkName(userName.text.toString()) && userName.text.toString() != selectedMember){
+            if (memberName != "") {
+                if (family.checkName(userName.text.toString()) && userName.text.toString() != selectedMember) {
                     memberNameWarning.visibility = View.VISIBLE
-                }else if (userName.text.toString().length > MAX_USER_LENGHT){
+                } else if (userName.text.toString().length > MAX_USER_LENGHT) {
                     userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
-                }else if(passwordInput.text.toString() != passwordInputRepeat.text.toString()){
+                } else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
                     passwordWarning.visibility = View.VISIBLE
-                }else{
+                } else {
                     family.deleteMember(selectedMember)
                     membersCopy.remove(selectedMember)
                     member.setUser(memberName)
@@ -493,12 +722,25 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         dialog.show()
     }
 
-    private fun showDatePickerDialog(text: EditText) {
-        val newFragment = DatePickerFragment.newInstance(DatePickerDialog.OnDateSetListener { _, year, month, day ->
-            // +1 because January is zero
-            val selectedDate = day.toString() + " / " + (month + 1) + " / " + year
-            text.setText(selectedDate)
-        })
+    private fun showDatePickerDialog(inputDate: EditText) {
+        val newFragment =
+            DatePickerFragment.newInstance(DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                var dayString = ""
+                var monthString = ""
+                val yearString = year.toString()
+                dayString = if (day.toString().toInt() < 10) {
+                    "0$day"
+                } else {
+                    day.toString()
+                }
+                monthString = if (month.toString().toInt() + 1 < 10) {
+                    "0${month.toString().toInt() + 1}"
+                } else {
+                    "${month.toString().toInt() + 1}"
+                }
+                val selectedDate = "$dayString/$monthString/$yearString"
+                inputDate.setText(selectedDate)
+            })
 
         newFragment.show(supportFragmentManager, "datePicker")
     }

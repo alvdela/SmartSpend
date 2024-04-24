@@ -170,6 +170,12 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="pop_up_delete_member">¿Desea realmente eliminar este miembro de la familia?</string>
     <string name="pop_up_edit_member">Editar datos del miembro</string>
     <string name="cantidad_inicial">Cantidad inicial</string>
+    <string name="error_frecuencia">Es necesario especificar la frecuencia</string>
+    <string name="se_necesita_una_fecha_inicial">Se necesita una fecha inicial</string>
+    <string name="fecha_anterior_a_hoy">La fecha debe ser posterior a hoy</string>
+    <string name="mal_formato_fecha">El formato de la fecha debe ser dd/mm/yyyy</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="pop_up_delete_allowance">¿Desea realmente eliminar esta asignación?</string>
 
 </resources>
 

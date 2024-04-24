@@ -25,7 +25,7 @@ class AllowanceViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val money = allowance.getAmount()
         val type = allowance.getType()
         when(type){
-            AllowanceType.PUNTUAL -> tvAllowanceType.text = money.toString()
+            AllowanceType.PUNTUAL -> tvAllowanceType.text = "$money€"
             AllowanceType.SEMANAL -> tvAllowanceType.text = "$money€ X Semana"
             AllowanceType.MENSUAL -> tvAllowanceType.text = "$money€ X Mes"
             AllowanceType.TRIMESTRAL -> tvAllowanceType.text = "$money€ X Trimestre"

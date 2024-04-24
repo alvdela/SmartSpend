@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:textColor="@color/black"
+        android:layout_marginStart="10dp"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,10 +29,10 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:textColor="@color/black"
-        android:layout_marginStart="10dp"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvAllowanceName"
+        app:layout_constraintEnd_toStartOf="@+id/divider2"
+        app:layout_constraintStart_toEndOf="@+id/divider"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="15€ x Mes" />
 
@@ -63,9 +64,9 @@
         android:id="@+id/divider"
         android:layout_width="1dp"
         android:layout_height="56dp"
+        android:layout_marginStart="10dp"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tvAllowanceType"
         app:layout_constraintStart_toEndOf="@+id/tvAllowanceName"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -77,6 +78,6 @@
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/modifyAllowanceButton"
-        app:layout_constraintStart_toEndOf="@+id/tvAllowanceType" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

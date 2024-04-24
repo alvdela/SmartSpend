@@ -90,15 +90,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAsignaciones"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
-            android:scrollbars="vertical"
-            android:scrollbarThumbVertical="@android:color/darker_gray"
-            android:scrollbarSize="5dp"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:fadeScrollbars="false"/>
+            />
 
         <TextView
             android:id="@+id/addAsignacionButton"

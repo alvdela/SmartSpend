@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background"
-        tools:translationX="-2000dp"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -82,7 +81,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tvMiembro"
                 app:layout_constraintTop_toTopOf="@+id/consultaContainer"
                 app:layout_constraintBottom_toBottomOf="@+id/consultaContainer"                android:layout_weight=".28"
-                android:background="@drawable/spinner_background"
+                android:background="@color/transparent"
                 android:layout_marginStart="15dp"
                 android:orientation="horizontal">
 
@@ -92,14 +91,13 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:background="@android:color/transparent"
+                    android:background="@drawable/corners_buttons_white"
                     android:gravity="center"
                     android:layout_marginStart="5dp"
                     android:fontFamily="@font/andika_regular"
                     android:textColor="@color/black"
                     android:spinnerMode="dropdown"
                     android:overlapAnchor="false"
-                    android:backgroundTint="@color/white"
                     />
 
                 <ImageView

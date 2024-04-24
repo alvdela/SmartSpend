@@ -42,6 +42,7 @@ class ProfilesActivity : AppCompatActivity() {
         initObjects()
         hideButtons()
         showFamilyData()
+        family.checkChildrenPayments()
     }
 
     override fun onStart() {
@@ -50,6 +51,7 @@ class ProfilesActivity : AppCompatActivity() {
         initObjects()
         hideButtons()
         showFamilyData()
+        family.checkChildrenPayments()
     }
 
     private fun getFamily() {

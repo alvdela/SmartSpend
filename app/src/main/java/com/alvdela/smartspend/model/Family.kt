@@ -71,6 +71,13 @@ class Family(
         return this.members.containsKey(name)
     }
 
+    fun checkChildrenPayments(){
+        for ((userName,member) in members){
+            if (member is Child){
+                member.getPayment()
+            }
+        }
+    }
 
     /* --- Metodos para asegurar la contraseña --- */
 

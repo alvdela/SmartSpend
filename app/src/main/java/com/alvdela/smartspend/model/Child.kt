@@ -21,6 +21,11 @@ class Child(user: String, password: String) : Member(user, password) {
         this.allowanceList.add(allowance)
     }
 
+    fun updateAllowance(allowance: Allowance, id: Int) {
+        this.allowanceList.removeAt(id)
+        this.allowanceList.add(id,allowance)
+    }
+
     fun getAllowances(): MutableList<Allowance> {
         return allowanceList
     }
@@ -45,8 +50,14 @@ class Child(user: String, password: String) : Member(user, password) {
         if (cashFlow.amount > getActualMoney()) {
             //Do nothing
         } else {
-            actualMoney -= cashFlow.amount
-            this.cashFlowList.add(0,cashFlow)
+            if (cashFlow.type != CashFlowType.INGRESO && cashFlow.type != CashFlowType.RECOMPENSA){
+                actualMoney -= cashFlow.amount
+            }
+            var index = 0
+            while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
+                index++
+            }
+            this.cashFlowList.add(index, cashFlow)
         }
     }
 

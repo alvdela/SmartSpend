@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/popUpBackProfiles"
+    android:id="@+id/popUpDelete"
     android:layout_width="350dp"
     android:layout_height="200dp"
     android:layout_gravity="center"
@@ -11,9 +11,10 @@
     >
 
     <TextView
-        android:id="@+id/tvdeleteMember"
+        android:id="@+id/tvDelete"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/andika_regular"
         android:text="@string/pop_up_delete_member"
         android:textAlignment="center"
@@ -21,23 +22,11 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-    <ImageView
-        android:id="@+id/ivUnlock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_lock_open"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvdeleteMember"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"/>
 
     <Button
-        android:id="@+id/confirmDeleteMember"
+        android:id="@+id/confirmDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -46,14 +35,14 @@
         android:fontFamily="@font/andika_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:text="Eliminar"
+        android:text="@string/eliminar"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
 
     <Button
-        android:id="@+id/cancelDeleteMember"
+        android:id="@+id/cancelDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -66,5 +55,15 @@
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="348dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDelete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
