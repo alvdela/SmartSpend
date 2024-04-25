@@ -6,9 +6,12 @@ class Task (
     private var description: String,
     private var limitDate: LocalDate?,
     private var mandatory: Boolean = false,
-    private var price: Int = 0,
+    private var price: Float = 0f,
     private var state: TaskState
 ){
+    private var expired = false
+    private lateinit var child: Child
+
     fun getDescription(): String {
         return description
     }
@@ -33,11 +36,11 @@ class Task (
         this.mandatory = mandatory
     }
 
-    fun getPrice(): Int {
+    fun getPrice(): Float {
         return price
     }
 
-    fun setPrice(price: Int) {
+    fun setPrice(price: Float) {
         this.price = price
     }
 
@@ -50,4 +53,18 @@ class Task (
         this.state = state
     }
 
+    fun isExpired(): Boolean {
+        return expired
+    }
+
+    fun setChild(child: Child){
+        this.child = child
+    }
+
+    fun givePrice(){
+        if (this.state == TaskState.COMPLETE){
+            this.child.claimPrice(getDescription(),getPrice())
+            setState(TaskState.DELETED)
+        }
+    }
 }

@@ -167,7 +167,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:layout_marginEnd="5dp"
-            android:src="@drawable/ic_extend_selector" />
+            android:src="@drawable/ic_extend" />
 
     </RelativeLayout>
 

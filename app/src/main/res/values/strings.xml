@@ -156,7 +156,7 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="nuevo_objetivo">Crear nuevo objetivo</string>
     <string name="fecha_limite">Fecha limite</string>
     <string name="obligatoria">Obligatoria</string>
-    <string name="recompensas">Recompensas</string>
+    <string name="recompensa">Recompensa</string>
     <string name="add_recompensa">Añadir recompensa</string>
     <string name="nueva_asignacion">Nueva asignación</string>
     <string name="nombre_de_la_asignacion">Nombre de la asignación</string>
@@ -176,6 +176,8 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="mal_formato_fecha">El formato de la fecha debe ser dd/mm/yyyy</string>
     <string name="eliminar">Eliminar</string>
     <string name="pop_up_delete_allowance">¿Desea realmente eliminar esta asignación?</string>
+    <string name="pendientes">Pendientes</string>
+    <string name="completadas">Completadas</string>
 
 </resources>
 

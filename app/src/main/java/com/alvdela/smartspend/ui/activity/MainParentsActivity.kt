@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,6 +55,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private var seguimiento = true
     private var tareas = false
     private var administracion = false
+    private var isPendientesShow = true
+    private var isCompletadasShow = true
 
     private lateinit var drawer: DrawerLayout
     private lateinit var seleccionarMiembro: Spinner
@@ -62,6 +66,14 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var seguimientoLayout: ConstraintLayout
     private lateinit var taskLayout: ConstraintLayout
     private lateinit var adminLayout: ConstraintLayout
+
+    private lateinit var extendPendientes: ImageView
+    private lateinit var containerPendientes: RelativeLayout
+    private lateinit var rvTaskPendientes: RecyclerView
+
+    private lateinit var extendCompletadas: ImageView
+    private lateinit var containerCompletadas: RelativeLayout
+    private lateinit var rvTaskCompletadas: RecyclerView
 
     private lateinit var dialog: Dialog
     private lateinit var memberAdapter: MemberAdapter
@@ -89,6 +101,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         seguimientoLayout = findViewById(R.id.consultarLayout)
         taskLayout = findViewById(R.id.tareasLayout)
         adminLayout = findViewById(R.id.adminLayout)
+        extendPendientes = findViewById(R.id.ivExtendPendientes)
+        containerPendientes = findViewById(R.id.containerPendientes)
+        rvTaskPendientes = findViewById(R.id.rvTaskPendientes)
+        extendCompletadas = findViewById(R.id.ivExtendCompletadas)
+        containerCompletadas = findViewById(R.id.containerCompletadas)
+        rvTaskCompletadas = findViewById(R.id.rvTaskCompletadas)
 
         //val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
         val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
@@ -114,6 +132,26 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 restartButtons()
                 changeButtonState(adminButton)
                 animateAdministracion()
+            }
+        }
+
+        extendPendientes.setOnClickListener {
+            if (isPendientesShow){
+                Animations.compactView(extendPendientes,containerPendientes,rvTaskPendientes)
+                isPendientesShow = false
+            }else{
+                Animations.extendView(extendPendientes,containerPendientes,rvTaskPendientes)
+                isPendientesShow = true
+            }
+        }
+
+        extendCompletadas.setOnClickListener {
+            if (isCompletadasShow){
+                Animations.compactView(extendCompletadas,containerCompletadas,rvTaskCompletadas)
+                isCompletadasShow = false
+            }else{
+                Animations.extendView(extendCompletadas,containerCompletadas,rvTaskCompletadas)
+                isCompletadasShow = true
             }
         }
 

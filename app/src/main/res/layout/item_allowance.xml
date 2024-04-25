@@ -11,12 +11,13 @@
 
     <TextView
         android:id="@+id/tvAllowanceName"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:textColor="@color/black"
         android:layout_marginStart="10dp"
         android:textSize="18sp"
+        android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,17 +31,19 @@
         android:fontFamily="@font/andika_regular"
         android:textColor="@color/black"
         android:textSize="18sp"
+        android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/divider2"
         app:layout_constraintStart_toEndOf="@+id/divider"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="15€ x Mes" />
+        tools:text="15€ x Semana" />
 
     <ImageButton
         android:id="@+id/deleteAllowanceButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="5dp"
+        android:padding="5dp"
         android:background="@color/transparent"
         android:src="@drawable/ic_delete"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -52,7 +55,8 @@
         android:id="@+id/modifyAllowanceButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="5dp"
+        android:padding="5dp"
         android:background="@color/transparent"
         android:src="@drawable/ic_edit"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -64,8 +68,7 @@
         android:id="@+id/divider"
         android:layout_width="1dp"
         android:layout_height="56dp"
-        android:layout_marginStart="10dp"
-        android:background="@color/black"
+        android:background="@color/dark_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvAllowanceName"
         app:layout_constraintTop_toTopOf="parent"
@@ -73,9 +76,11 @@
 
     <View
         android:id="@+id/divider2"
+        android:layout_marginEnd="5dp"
+
         android:layout_width="1dp"
         android:layout_height="56dp"
-        android:background="@color/black"
+        android:background="@color/dark_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/modifyAllowanceButton"
         app:layout_constraintTop_toTopOf="parent" />

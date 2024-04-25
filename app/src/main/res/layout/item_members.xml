@@ -63,7 +63,7 @@
         app:layout_constraintTop_toBottomOf="@+id/ivMemberPicture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/black"/>
+        android:background="@color/darker_gray"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/asignacionesContainer"

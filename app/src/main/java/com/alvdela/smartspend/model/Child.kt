@@ -76,11 +76,17 @@ class Child(user: String, password: String) : Member(user, password) {
     fun claimGoal(i: Int){
         val goal = getGoals()[i]
         if (goal.isArchived()){
-            this.actualMoney += goal.getSaving()
             val payment = CashFlow(goal.getDescription(), goal.getSaving(), CashFlowType.INGRESO, LocalDate.now())
             addExpense(payment)
+            this.actualMoney += goal.getSaving()
             this.goalList.removeAt(i)
         }
+    }
+
+    fun claimPrice(description: String, money: Float){
+        val payment = CashFlow(description, money, CashFlowType.RECOMPENSA, LocalDate.now())
+        addExpense(payment)
+        this.actualMoney += money
     }
 
 }

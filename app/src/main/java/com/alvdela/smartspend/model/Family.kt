@@ -7,13 +7,11 @@ class Family(
     private var emailFamily: String
 ): Serializable{
     private var members: MutableMap<String, Member> = mutableMapOf()
+    private val taskList = TaskList()
 
     private val MAX_MEMBERS = 12
 
 
-    /**
-     * Funcion para añadir miembros a la familia
-     */
     fun addMember(member: Member): String{
         if (this.members.size < MAX_MEMBERS){
             this.members[member.getUser()] = member
@@ -22,16 +20,10 @@ class Family(
         return "Numero máximo de usuarios alcanzado (12 miembros)"
     }
 
-    /**
-     * Funcion para eliminar un miembro de la familia
-     */
     fun deleteMember(user: String){
         this.members.remove(user)
     }
 
-    /**
-     * Funcion que devuelve los datos de un miembro de la familia
-     */
     fun getMember(user: String): Member? {
         return this.members[user]
     }
@@ -77,6 +69,10 @@ class Family(
                 member.getPayment()
             }
         }
+    }
+
+    fun getTaskList(): TaskList{
+        return this.taskList
     }
 
     /* --- Metodos para asegurar la contraseña --- */
