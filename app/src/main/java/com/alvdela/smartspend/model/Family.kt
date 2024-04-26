@@ -7,7 +7,8 @@ class Family(
     private var emailFamily: String
 ): Serializable{
     private var members: MutableMap<String, Member> = mutableMapOf()
-    private val taskList = TaskList()
+    private val taskList: MutableList<Task> = mutableListOf()
+    private var oldTask: MutableList<Task> = mutableListOf()
 
     private val MAX_MEMBERS = 12
 
@@ -71,8 +72,27 @@ class Family(
         }
     }
 
-    fun getTaskList(): TaskList{
+    /* Funciones para las tareas */
+
+    fun getTaskList(): MutableList<Task>{
         return this.taskList
+    }
+
+    fun getTask(indexTask: Int): Task{
+        return this.taskList[indexTask]
+    }
+
+    fun addTask(task: Task){
+        this.taskList.add(task)
+    }
+
+    fun removeTask(indexTask: Int){
+        this.oldTask.add(getTaskList()[indexTask])
+        this.taskList.removeAt(indexTask)
+    }
+
+    fun removeTaskFromHistoric(indexTask: Int){
+        this.oldTask.removeAt(indexTask)
     }
 
     /* --- Metodos para asegurar la contraseña --- */

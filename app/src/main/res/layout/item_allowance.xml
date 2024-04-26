@@ -11,11 +11,11 @@
 
     <TextView
         android:id="@+id/tvAllowanceName"
-        android:layout_width="125dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:textColor="@color/black"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
         android:textSize="18sp"
         android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"

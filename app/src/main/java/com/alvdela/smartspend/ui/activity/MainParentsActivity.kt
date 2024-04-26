@@ -3,6 +3,7 @@ package com.alvdela.smartspend.ui.activity
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -10,7 +11,9 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -23,7 +26,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +44,13 @@ import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
+import com.alvdela.smartspend.model.Task
+import com.alvdela.smartspend.model.TaskState
+import com.alvdela.smartspend.ui.adapter.TaskCompleteAdapter
+import com.alvdela.smartspend.ui.adapter.TaskOpenAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import java.lang.Thread.sleep
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -77,6 +85,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private lateinit var dialog: Dialog
     private lateinit var memberAdapter: MemberAdapter
+    private lateinit var openTaskAdapter: TaskOpenAdapter
+    private lateinit var completeTaskAdapter: TaskCompleteAdapter
 
     private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
@@ -90,7 +100,13 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initToolBar()
         initNavView()
         initSpinner()
+        showTasks()
         showMembers()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showTasks()
     }
 
     private fun initObjects() {
@@ -107,6 +123,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         extendCompletadas = findViewById(R.id.ivExtendCompletadas)
         containerCompletadas = findViewById(R.id.containerCompletadas)
         rvTaskCompletadas = findViewById(R.id.rvTaskCompletadas)
+
+
 
         //val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
         val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
@@ -158,6 +176,124 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val addMemberButton = findViewById<Button>(R.id.buttonAddMember)
         addMemberButton.setOnClickListener {
             addMember()
+        }
+
+        val addTaskButton = findViewById<FloatingActionButton>(R.id.buttonAddTask)
+        addTaskButton.setOnClickListener {
+            createNewTask()
+        }
+    }
+
+    private fun showTasks() {
+        if (family.getTaskList().isNotEmpty()){
+            openTaskAdapter = TaskOpenAdapter(
+                tasks = family.getTaskList(),
+                completeTask = {selectedTask -> closeTask(selectedTask)}
+            )
+            rvTaskPendientes.layoutManager = LinearLayoutManager(this)
+            rvTaskPendientes.adapter = openTaskAdapter
+            rvTaskPendientes.visibility = View.VISIBLE
+        }else{
+            rvTaskPendientes.visibility = View.INVISIBLE
+        }
+        if (family.getTaskList().isNotEmpty()){
+            completeTaskAdapter = TaskCompleteAdapter(
+                tasks = family.getTaskList(),
+                completeTask = {selectedTask -> completeTask(selectedTask)}
+            )
+            rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
+            rvTaskCompletadas.adapter = completeTaskAdapter
+            rvTaskCompletadas.visibility = View.VISIBLE
+        }else{
+            rvTaskCompletadas.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun closeTask(selectedTask: Int) {
+        showPopUp(R.layout.pop_up_delete)
+        val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
+        tvDelete.text = resources.getString(R.string.delete_task)
+        val cancel = dialog.findViewById<Button>(R.id.cancelDelete)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+            openTaskAdapter.notifyItemChanged(selectedTask)
+        }
+
+        val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
+        confirmButton.setOnClickListener {
+            family.removeTask(selectedTask)
+            dialog.dismiss()
+            openTaskAdapter.notifyItemRemoved(selectedTask)
+        }
+
+    }
+
+    private fun completeTask(selectedTask: Int){
+        Toast.makeText(this,"Tarea $selectedTask completada!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun createNewTask() {
+        showPopUp(R.layout.pop_up_add_task)
+
+        val inputDescripcionTarea = dialog.findViewById<EditText>(R.id.inputDescripcionTarea)
+        inputDescripcionTarea.setText("")
+
+        val inputFechaLimite = dialog.findViewById<EditText>(R.id.inputFechaLimiteTarea)
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val showCalendar = dialog.findViewById<Button>(R.id.show_calendar)
+        showCalendar.setOnClickListener {
+            showDatePickerDialog(inputFechaLimite)
+        }
+
+        val cbObligatoria = dialog.findViewById<CheckBox>(R.id.cbObligatoria)
+
+        val inputRecompensa =  dialog.findViewById<EditText>(R.id.recompensa)
+        inputRecompensa.setText("")
+        inputRecompensa.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
+
+        val tvAdviseDate = dialog.findViewById<TextView>(R.id.tv_advise_date)
+
+        val cancelTask = dialog.findViewById<Button>(R.id.cancelTask)
+        cancelTask.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val addTask = dialog.findViewById<Button>(R.id.addTask)
+        addTask.setOnClickListener {
+            var allOk = true
+            var fecha: LocalDate? = null
+            if(inputDescripcionTarea.text.toString().isBlank()){
+                inputDescripcionTarea.error = "Es necesaria una descripciónd de la tarea"
+                allOk = false
+            }
+            if (inputFechaLimite.text.toString().isNotBlank()){
+                if (Util.isValidDate(inputFechaLimite.text.toString(), formatter)) {
+                    fecha = LocalDate.parse(inputFechaLimite.text.toString(), formatter)
+                } else {
+                    allOk = false
+                    tvAdviseDate.setTextColor(Color.RED)
+                    tvAdviseDate.text = resources.getString(R.string.mal_formato_fecha)
+                }
+            }
+            if (allOk){
+                var createAdapter = false
+                if (family.getTaskList().isEmpty()){
+                    createAdapter = true
+                }
+                val description = inputDescripcionTarea.text.toString()
+                var recompensa = 0f
+                if (inputRecompensa.text.toString().isNotBlank()){
+                    recompensa = inputRecompensa.text.toString().toFloat()
+                }
+                val task = Task(description,fecha,cbObligatoria.isChecked,recompensa,TaskState.OPEN)
+                family.addTask(task)
+                if (createAdapter){
+                    showTasks()
+                }else{
+                    openTaskAdapter.notifyItemInserted(family.getTaskList().size)
+                }
+                dialog.dismiss()
+            }
         }
     }
 
@@ -564,10 +700,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 isCorrect = false
                 inputNombreAsignacion.error = "Falta un nombre para la asignación"
             }
-            if (inputNombreAsignacion.text.toString().length > 10) {
+            /*if (inputNombreAsignacion.text.toString().length > 10) {
                 isCorrect = false
                 inputNombreAsignacion.error = "Nombre demasiado largo (Max. 10)"
-            }
+            }*/
             if (fecha != null) {
                 if (fecha.isBefore(LocalDate.now())) {
                     isCorrect = false

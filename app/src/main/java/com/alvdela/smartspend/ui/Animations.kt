@@ -33,15 +33,15 @@ object Animations {
             RotateAnimation.RELATIVE_TO_SELF, 0.5f,
             RotateAnimation.RELATIVE_TO_SELF, 0.5f
         )
-        animation.setDuration(350)
+        animation.setDuration(300)
         view.startAnimation(animation)
     }
 
     fun compactView(button: ImageView, container: RelativeLayout, recycler: RecyclerView) {
         rotarImagen(button)
-        sleep(350)
+        sleep(300)
         button.setImageResource(R.drawable.ic_compact)
-        animateViewOfFloat(recycler, "translationY", 1000f, 350)
+        animateViewOfFloat(recycler, "translationY", -1000f, 200)
         container.visibility = View.GONE
     }
 
@@ -50,7 +50,7 @@ object Animations {
         sleep(300)
         button.setImageResource(R.drawable.ic_extend)
         container.visibility = View.VISIBLE
-        animateViewOfFloat(recycler, "translationY", 0f, 350)
+        animateViewOfFloat(recycler, "translationY", 0f, 200)
     }
 
 }

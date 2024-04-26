@@ -178,6 +178,8 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="pop_up_delete_allowance">¿Desea realmente eliminar esta asignación?</string>
     <string name="pendientes">Pendientes</string>
     <string name="completadas">Completadas</string>
+    <string name="opcional">Opcional</string>
+    <string name="delete_task">Nadie ha completado esta tarea ¿Esta seguro de que desea marcarla como completada?</string>
 
 </resources>
 

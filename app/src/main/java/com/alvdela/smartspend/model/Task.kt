@@ -1,6 +1,7 @@
 package com.alvdela.smartspend.model
 
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 class Task (
     private var description: String,
@@ -9,7 +10,7 @@ class Task (
     private var price: Float = 0f,
     private var state: TaskState
 ){
-    private var expired = false
+    private lateinit var completedDate: LocalDate
     private lateinit var child: Child
 
     fun getDescription(): String {
@@ -53,10 +54,6 @@ class Task (
         this.state = state
     }
 
-    fun isExpired(): Boolean {
-        return expired
-    }
-
     fun setChild(child: Child){
         this.child = child
     }
@@ -64,7 +61,13 @@ class Task (
     fun givePrice(){
         if (this.state == TaskState.COMPLETE){
             this.child.claimPrice(getDescription(),getPrice())
-            setState(TaskState.DELETED)
         }
+    }
+
+    fun getDaysLeft():Int{
+        if (getLimitDate() != null){
+            return ChronoUnit.DAYS.between(LocalDate.now(), getLimitDate()).toInt()
+        }
+        return -10000
     }
 }

@@ -2,11 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="15dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/cash_box"
-    android:layout_marginStart="30dp"
-    android:layout_marginEnd="30dp">
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp">
 
     <ImageButton
         android:id="@+id/checkTask"
@@ -21,7 +22,8 @@
 
     <TextView
         android:id="@+id/descripcionTarea"
-        android:layout_width="125dp"
+        android:layout_width="wrap_content"
+        android:maxWidth="100dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         tools:text="Tarea"
@@ -36,16 +38,16 @@
         android:id="@+id/recompensaTarea"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:background="@drawable/corners_green"
         android:fontFamily="@font/andika_regular"
-        android:paddingStart="10dp"
         android:padding="2dp"
+        android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fechaLimiteTarea"
-        app:layout_constraintStart_toEndOf="@+id/descripcionTarea"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="10€" />
 

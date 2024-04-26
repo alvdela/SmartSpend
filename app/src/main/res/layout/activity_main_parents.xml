@@ -202,16 +202,22 @@
             <RelativeLayout
                 android:id="@+id/containerPendientes"
                 android:layout_width="match_parent"
-                android:layout_height="185dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                app:layout_constraintHeight_max="500dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTaskPendientes"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    android:scrollbarThumbVertical="@android:color/darker_gray"
+                    android:scrollbarSize="5dp"
+                    android:scrollbarAlwaysDrawVerticalTrack="true"
+                    android:fadeScrollbars="false"
                     tools:background="@color/dark_gray"
                     />
             </RelativeLayout>
@@ -248,17 +254,22 @@
             <RelativeLayout
                 android:id="@+id/containerCompletadas"
                 android:layout_width="match_parent"
-                android:layout_height="185dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                app:layout_constraintHeight_max="500dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTaskCompletadas"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:background="@color/dark_gray"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    android:scrollbarThumbVertical="@android:color/darker_gray"
+                    android:scrollbarSize="5dp"
+                    android:scrollbarAlwaysDrawVerticalTrack="true"
+                    android:fadeScrollbars="false"                    tools:background="@color/dark_gray"
                     />
             </RelativeLayout>
 
@@ -272,9 +283,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginBottom="35dp"
                 android:layout_marginEnd="35dp"/>
-
-
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
