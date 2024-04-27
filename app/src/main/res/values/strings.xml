@@ -180,6 +180,10 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="completadas">Completadas</string>
     <string name="opcional">Opcional</string>
     <string name="delete_task">Nadie ha completado esta tarea ¿Esta seguro de que desea marcarla como completada?</string>
+    <string name="complete_task">¿Desea marcar esta tarea como completada?</string>
+    <string name="close_task">Cerrar\n la tarea</string>
+    <string name="re_open_task">Reabrir\n la tarea</string>
+    <string name="complete_task_note">Nota: se dara automaticamente la recompensa al niño que la realizó</string>
 
 </resources>
 

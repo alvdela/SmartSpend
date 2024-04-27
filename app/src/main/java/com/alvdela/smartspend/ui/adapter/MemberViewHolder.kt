@@ -43,10 +43,9 @@ class MemberViewHolder(val view: View) : ViewHolder(view) {
             asignacionesContainer.visibility = View.VISIBLE
             line.visibility = View.VISIBLE
             addAsignacionButton.setOnClickListener { addAsignacion(member.getUser()) }
-            val child = member
             val adapter = AllowanceAdapter(
-                child.getUser(),
-                child.getAllowances(),
+                member.getUser(),
+                member.getAllowances(),
                 editAllowance,
                 deleteAllowance
             )

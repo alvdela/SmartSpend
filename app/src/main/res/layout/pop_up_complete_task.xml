@@ -2,21 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/popUpDelete"
+    android:id="@+id/popUpCompleteTask"
     android:layout_width="350dp"
-    android:layout_height="200dp"
+    android:layout_height="225dp"
     android:layout_gravity="center"
     android:background="@drawable/corners_white"
     android:translationZ="5dp"
     >
 
     <TextView
-        android:id="@+id/tvDelete"
+        android:id="@+id/tvCloseTask"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/andika_regular"
-        android:text="@string/pop_up_delete_member"
+        android:text="@string/complete_task"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="20sp"
@@ -24,35 +24,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+    <TextView
+        android:id="@+id/tvNota"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/complete_task_note"
+        android:textAlignment="center"
+        android:textColor="@color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCloseTask" />
+    
     <Button
-        android:id="@+id/confirmDelete"
+        android:id="@+id/closeTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/corners_buttons_red"
+        android:background="@drawable/corners_buttons_blue"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:text="@string/eliminar"
+        android:text="@string/close_task"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
 
     <Button
-        android:id="@+id/cancelDelete"
+        android:id="@+id/reOpenTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:layout_marginStart="20dp"
-        android:background="@drawable/corners_buttons_white"
+        android:background="@drawable/corners_buttons_red"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:text="@string/cancelar"
-        android:textColor="@color/black"
+        android:text="@string/re_open_task"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -60,10 +72,11 @@
         android:id="@+id/divider3"
         android:layout_width="350dp"
         android:layout_height="1dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="12dp"
         android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/reOpenTask"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDelete" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

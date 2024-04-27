@@ -8,7 +8,7 @@ import com.alvdela.smartspend.model.Allowance
 
 class AllowanceAdapter(
     private val selectedChild: String,
-    private val allowanceList: MutableList<Allowance>,
+    private val allowanceList: MutableList<Allowance> = mutableListOf(),
     private val editAllowance: (Int, String) -> Unit,
     private val deleteAllowance: (Int, String) -> Unit,
 ) :

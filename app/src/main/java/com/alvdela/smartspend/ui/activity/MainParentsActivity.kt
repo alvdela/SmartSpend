@@ -1,5 +1,7 @@
 package com.alvdela.smartspend.ui.activity
 
+import TaskCompleteAdapter
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
@@ -13,7 +15,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -46,7 +47,6 @@ import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
-import com.alvdela.smartspend.ui.adapter.TaskCompleteAdapter
 import com.alvdela.smartspend.ui.adapter.TaskOpenAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -104,11 +104,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         showMembers()
     }
 
-    override fun onStart() {
-        super.onStart()
-        showTasks()
-    }
-
     private fun initObjects() {
         seleccionarMiembro = findViewById(R.id.botonSeleccionarMiembro)
         seguimientoButton = findViewById(R.id.seguimiento_button)
@@ -123,7 +118,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         extendCompletadas = findViewById(R.id.ivExtendCompletadas)
         containerCompletadas = findViewById(R.id.containerCompletadas)
         rvTaskCompletadas = findViewById(R.id.rvTaskCompletadas)
-
 
 
         //val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
@@ -154,22 +148,22 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
 
         extendPendientes.setOnClickListener {
-            if (isPendientesShow){
-                Animations.compactView(extendPendientes,containerPendientes,rvTaskPendientes)
-                isPendientesShow = false
-            }else{
-                Animations.extendView(extendPendientes,containerPendientes,rvTaskPendientes)
-                isPendientesShow = true
+            isPendientesShow = if (isPendientesShow) {
+                Animations.compactView(extendPendientes, containerPendientes, rvTaskPendientes)
+                false
+            } else {
+                Animations.extendView(extendPendientes, containerPendientes, rvTaskPendientes)
+                true
             }
         }
 
         extendCompletadas.setOnClickListener {
-            if (isCompletadasShow){
-                Animations.compactView(extendCompletadas,containerCompletadas,rvTaskCompletadas)
-                isCompletadasShow = false
-            }else{
-                Animations.extendView(extendCompletadas,containerCompletadas,rvTaskCompletadas)
-                isCompletadasShow = true
+            isCompletadasShow = if (isCompletadasShow) {
+                Animations.compactView(extendCompletadas, containerCompletadas, rvTaskCompletadas)
+                false
+            } else {
+                Animations.extendView(extendCompletadas, containerCompletadas, rvTaskCompletadas)
+                true
             }
         }
 
@@ -185,28 +179,19 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun showTasks() {
-        if (family.getTaskList().isNotEmpty()){
-            openTaskAdapter = TaskOpenAdapter(
-                tasks = family.getTaskList(),
-                completeTask = {selectedTask -> closeTask(selectedTask)}
-            )
-            rvTaskPendientes.layoutManager = LinearLayoutManager(this)
-            rvTaskPendientes.adapter = openTaskAdapter
-            rvTaskPendientes.visibility = View.VISIBLE
-        }else{
-            rvTaskPendientes.visibility = View.INVISIBLE
-        }
-        if (family.getTaskList().isNotEmpty()){
-            completeTaskAdapter = TaskCompleteAdapter(
-                tasks = family.getTaskList(),
-                completeTask = {selectedTask -> completeTask(selectedTask)}
-            )
-            rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
-            rvTaskCompletadas.adapter = completeTaskAdapter
-            rvTaskCompletadas.visibility = View.VISIBLE
-        }else{
-            rvTaskCompletadas.visibility = View.INVISIBLE
-        }
+        openTaskAdapter = TaskOpenAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> closeTask(selectedTask) }
+        )
+        rvTaskPendientes.layoutManager = LinearLayoutManager(this)
+        rvTaskPendientes.adapter = openTaskAdapter
+
+        completeTaskAdapter = TaskCompleteAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> completeTask(selectedTask) }
+        )
+        rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
+        rvTaskCompletadas.adapter = completeTaskAdapter
     }
 
     private fun closeTask(selectedTask: Int) {
@@ -216,7 +201,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val cancel = dialog.findViewById<Button>(R.id.cancelDelete)
         cancel.setOnClickListener {
             dialog.dismiss()
-            openTaskAdapter.notifyItemChanged(selectedTask)
+            updateTasks()
         }
 
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
@@ -228,8 +213,34 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     }
 
-    private fun completeTask(selectedTask: Int){
-        Toast.makeText(this,"Tarea $selectedTask completada!", Toast.LENGTH_SHORT).show()
+    private fun completeTask(selectedTask: Int) {
+        showPopUp(R.layout.pop_up_complete_task)
+        val task = family.getTask(selectedTask)
+        val tvNota = dialog.findViewById<TextView>(R.id.tvNota)
+        if (task.getPrice() <= 0f) {
+            tvNota.visibility = View.GONE
+        }
+        val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
+        reOpenTask.setOnClickListener {
+            task.setState(TaskState.OPEN)
+            updateTasks()
+            dialog.dismiss()
+        }
+        val closeTask = dialog.findViewById<Button>(R.id.closeTask)
+        closeTask.setOnClickListener {
+            task.givePrice()
+            family.removeTask(selectedTask)
+            updateTasks()
+            dialog.dismiss()
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun updateTasks() {
+        openTaskAdapter.filterTasks()
+        openTaskAdapter.notifyDataSetChanged()
+        completeTaskAdapter.filterTasks()
+        completeTaskAdapter.notifyDataSetChanged()
     }
 
     private fun createNewTask() {
@@ -247,7 +258,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val cbObligatoria = dialog.findViewById<CheckBox>(R.id.cbObligatoria)
 
-        val inputRecompensa =  dialog.findViewById<EditText>(R.id.recompensa)
+        val inputRecompensa = dialog.findViewById<EditText>(R.id.recompensa)
         inputRecompensa.setText("")
         inputRecompensa.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
 
@@ -262,11 +273,11 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         addTask.setOnClickListener {
             var allOk = true
             var fecha: LocalDate? = null
-            if(inputDescripcionTarea.text.toString().isBlank()){
+            if (inputDescripcionTarea.text.toString().isBlank()) {
                 inputDescripcionTarea.error = "Es necesaria una descripciónd de la tarea"
                 allOk = false
             }
-            if (inputFechaLimite.text.toString().isNotBlank()){
+            if (inputFechaLimite.text.toString().isNotBlank()) {
                 if (Util.isValidDate(inputFechaLimite.text.toString(), formatter)) {
                     fecha = LocalDate.parse(inputFechaLimite.text.toString(), formatter)
                 } else {
@@ -275,23 +286,16 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     tvAdviseDate.text = resources.getString(R.string.mal_formato_fecha)
                 }
             }
-            if (allOk){
-                var createAdapter = false
-                if (family.getTaskList().isEmpty()){
-                    createAdapter = true
-                }
+            if (allOk) {
                 val description = inputDescripcionTarea.text.toString()
                 var recompensa = 0f
-                if (inputRecompensa.text.toString().isNotBlank()){
+                if (inputRecompensa.text.toString().isNotBlank()) {
                     recompensa = inputRecompensa.text.toString().toFloat()
                 }
-                val task = Task(description,fecha,cbObligatoria.isChecked,recompensa,TaskState.OPEN)
+                val task =
+                    Task(description, fecha, cbObligatoria.isChecked, recompensa, TaskState.OPEN)
                 family.addTask(task)
-                if (createAdapter){
-                    showTasks()
-                }else{
-                    openTaskAdapter.notifyItemInserted(family.getTaskList().size)
-                }
+                updateTasks()
                 dialog.dismiss()
             }
         }
@@ -634,7 +638,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     inputCantidadAsignacion.text.toString().toFloat(),
                     frecuencia!!
                 )
-                child.updateAllowance(allowance,allowanceId)
+                child.updateAllowance(allowance, allowanceId)
                 memberAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }

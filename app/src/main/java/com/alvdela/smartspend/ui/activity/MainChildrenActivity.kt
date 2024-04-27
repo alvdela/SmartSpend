@@ -34,7 +34,11 @@ import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
+import com.alvdela.smartspend.model.TaskState
+import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
+import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
 import com.google.android.material.navigation.NavigationView
+import java.lang.Thread.sleep
 import java.time.LocalDate
 
 class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -42,8 +46,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private val MAX_DECIMALS = 2
 
     private lateinit var drawer: DrawerLayout
-    private lateinit var expenseAdapter: ExpenseAdapter
     private lateinit var dialog: Dialog
+
+    private lateinit var expenseAdapter: ExpenseAdapter
+    private lateinit var mandatoryTaskAdapter: TaskMandatoryAdapter
+    private lateinit var noMandatoryTaskAdapter: TaskNoMandatoryAdapter
 
     //Botones para cambiar entre pantallas
     private lateinit var expensesButton: ImageView
@@ -56,12 +63,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private lateinit var taskLayout: ConstraintLayout
     private lateinit var goalsLayout: ConstraintLayout
     private lateinit var gameLayout: ConstraintLayout
-    
+
     //Botones para añadir elementos
     private lateinit var addSpentButton: Button
     private lateinit var addGoalButton: Button
-    
-    private var user : String = ""
+
+    private var user: String = ""
     private lateinit var family: Family
     private lateinit var child: Child
 
@@ -69,8 +76,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private var tareas = false
     private var goals = false
     private var games = false
-
-    private var isInitExpenseAdapter = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +87,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         initNavView()
         showMoney()
         showCashFlow()
+        showTask()
     }
 
     private fun initObjects() {
@@ -101,28 +107,28 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         changeButtonState(expensesButton)
 
         expensesButton.setOnClickListener {
-            if (!expenses){
+            if (!expenses) {
                 restartButtons()
                 changeButtonState(expensesButton)
                 animateExpenses()
             }
         }
         taskButton.setOnClickListener {
-            if (!tareas){
+            if (!tareas) {
                 restartButtons()
                 changeButtonState(taskButton)
                 animateTareas()
             }
         }
         goalsButton.setOnClickListener {
-            if (!goals){
+            if (!goals) {
                 restartButtons()
                 changeButtonState(goalsButton)
                 animateGoals()
             }
         }
         gameButton.setOnClickListener {
-            if (!games){
+            if (!games) {
                 restartButtons()
                 changeButtonState(gameButton)
                 animateGames()
@@ -132,6 +138,40 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addSpentButton.setOnClickListener {
             addSpent()
         }
+    }
+
+    private fun showTask() {
+        mandatoryTaskAdapter = TaskMandatoryAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> completeTask(selectedTask) }
+        )
+        val rvTaskObligatorias = findViewById<RecyclerView>(R.id.rvTaskObligatorias)
+        rvTaskObligatorias.layoutManager = LinearLayoutManager(this)
+        rvTaskObligatorias.adapter = mandatoryTaskAdapter
+
+        noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> completeTask(selectedTask) }
+        )
+        val rvTaskExtra = findViewById<RecyclerView>(R.id.rvTaskExtra)
+        rvTaskExtra.layoutManager = LinearLayoutManager(this)
+        rvTaskExtra.adapter = noMandatoryTaskAdapter
+    }
+
+    private fun completeTask(selectedTask: Int) {
+        updateTasks()
+        val task = family.getTask(selectedTask)
+        task.setState(TaskState.COMPLETE)
+        task.setChild(child)
+        updateTasks()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun updateTasks() {
+        mandatoryTaskAdapter.filterTasks()
+        mandatoryTaskAdapter.notifyDataSetChanged()
+        noMandatoryTaskAdapter.filterTasks()
+        noMandatoryTaskAdapter.notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -162,45 +202,56 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addButton.setOnClickListener {
             val descripcionText = descripcion.text.toString()
             var amountNumber = 0f
-            if (descripcionText.isEmpty()){
+            if (descripcionText.isEmpty()) {
                 descripcion.error = "Se necesita una descripción"
-                Toast.makeText(this,"Se necesita una descripción",Toast.LENGTH_SHORT).show()
-            }else if(amount.text.toString().isEmpty()){
+                Toast.makeText(this, "Se necesita una descripción", Toast.LENGTH_SHORT).show()
+            } else if (amount.text.toString().isEmpty()) {
                 amount.error = "La cantidad no puede quedar vacia"
-                Toast.makeText(this,"La cantidad no puede quedar vacia",Toast.LENGTH_SHORT).show()
-            }else if(amount.text.toString().toFloat() > child.getActualMoney()){
+                Toast.makeText(this, "La cantidad no puede quedar vacia", Toast.LENGTH_SHORT).show()
+            } else if (amount.text.toString().toFloat() > child.getActualMoney()) {
                 amount.error = "La cantidad no puede ser mayor que la cantidad disponible"
-                Toast.makeText(this,"La cantidad no puede ser mayor que la cantidad disponible",Toast.LENGTH_SHORT).show()
-            }else{
+                Toast.makeText(
+                    this,
+                    "La cantidad no puede ser mayor que la cantidad disponible",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
                 amountNumber = amount.text.toString().toFloat()
                 ContextFamily.addRecord(descripcionText)
-                when(tipo){
-                    1-> {
-                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.COMIDA,
-                            LocalDate.now())
+                when (tipo) {
+                    1 -> {
+                        val newExpense = CashFlow(
+                            descripcionText, amountNumber, CashFlowType.COMIDA,
+                            LocalDate.now()
+                        )
                         child.addExpense(newExpense)
                     }
-                    2-> {
-                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.COMPRAS,
-                            LocalDate.now())
+
+                    2 -> {
+                        val newExpense = CashFlow(
+                            descripcionText, amountNumber, CashFlowType.COMPRAS,
+                            LocalDate.now()
+                        )
                         child.addExpense(newExpense)
                     }
-                    3-> {
-                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.OCIO,
-                            LocalDate.now())
+
+                    3 -> {
+                        val newExpense = CashFlow(
+                            descripcionText, amountNumber, CashFlowType.OCIO,
+                            LocalDate.now()
+                        )
                         child.addExpense(newExpense)
                     }
+
                     else -> {
-                        val newExpense = CashFlow(descripcionText,amountNumber,CashFlowType.OTROS,
-                            LocalDate.now())
+                        val newExpense = CashFlow(
+                            descripcionText, amountNumber, CashFlowType.OTROS,
+                            LocalDate.now()
+                        )
                         child.addExpense(newExpense)
                     }
                 }
-                if (!isInitExpenseAdapter){
-                    showCashFlow()
-                }else{
-                    expenseAdapter.notifyDataSetChanged()
-                }
+                expenseAdapter.notifyItemInserted(0)
                 dialog.dismiss()
                 showMoney()
             }
@@ -208,13 +259,13 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     private fun animateExpenses() {
-        if (tareas){
+        if (tareas) {
             Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
         }
-        if (goals){
+        if (goals) {
             Animations.animateViewOfFloat(goalsLayout, "translationX", 2000f, 300)
         }
-        if (games){
+        if (games) {
             Animations.animateViewOfFloat(gameLayout, "translationX", 2000f, 300)
         }
         expensesLayout.translationX = -2000f
@@ -224,16 +275,17 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = false
         games = false
     }
+
     private fun animateTareas() {
-        if (expenses){
+        if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
             taskLayout.translationX = 2000f
         }
-        if (goals){
+        if (goals) {
             Animations.animateViewOfFloat(goalsLayout, "translationX", 2000f, 300)
             taskLayout.translationX = -2000f
         }
-        if (games){
+        if (games) {
             Animations.animateViewOfFloat(gameLayout, "translationX", 2000f, 300)
             taskLayout.translationX = -2000f
         }
@@ -243,16 +295,17 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = false
         games = false
     }
+
     private fun animateGoals() {
-        if (expenses){
+        if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
             goalsLayout.translationX = 2000f
         }
-        if (tareas){
+        if (tareas) {
             Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
             goalsLayout.translationX = 2000f
         }
-        if (games){
+        if (games) {
             Animations.animateViewOfFloat(gameLayout, "translationX", 2000f, 300)
             goalsLayout.translationX = -2000f
         }
@@ -262,14 +315,15 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = true
         games = false
     }
+
     private fun animateGames() {
-        if (expenses){
+        if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
         }
-        if (goals){
+        if (goals) {
             Animations.animateViewOfFloat(goalsLayout, "translationX", -2000f, 300)
         }
-        if (tareas){
+        if (tareas) {
             Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
         }
         gameLayout.translationX = 2000f
@@ -374,7 +428,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         ContextFamily.mockFamily = null
     }
 
-    private fun showMoney(){
+    private fun showMoney() {
         val actualMoney = findViewById<TextView>(R.id.tvDineroDisponible)
         actualMoney.text = "${child.getActualMoney()}€"
     }
@@ -382,13 +436,8 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private fun showCashFlow() {
         val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        if (child.getCashFlow().isNotEmpty()){
-            expenseAdapter = ExpenseAdapter(child.getCashFlow())
-            recyclerView.adapter = expenseAdapter
-            isInitExpenseAdapter = true
-        }else{
-            Toast.makeText(this,"No existen movimientos", Toast.LENGTH_SHORT).show()
-        }
+        expenseAdapter = ExpenseAdapter(child.getCashFlow())
+        recyclerView.adapter = expenseAdapter
     }
 
     private fun showPopUp(layout: Int) {

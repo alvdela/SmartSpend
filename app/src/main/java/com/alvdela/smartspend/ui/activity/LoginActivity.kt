@@ -75,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun createMockFamily() {
         family = Family("Invitados", "email@email.com")
-        val parent = Parent("Invitado", "1234")
+        val parent = Parent("Invitado", "")
         family.addMember(parent)
         val child = Child("Hijo/a", "")
         val expense1 = CashFlow("Gasto1", 5.5F, CashFlowType.COMIDA, LocalDate.now().minusDays(5))

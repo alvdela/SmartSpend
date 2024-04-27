@@ -29,7 +29,7 @@ class ExpenseViewHolder(val view: View): ViewHolder(view){
             tvShowDate.visibility = View.GONE
         }
         expenseDescription.text = cashFlowModel.description
-        if (cashFlowModel.type == CashFlowType.INGRESO){
+        if (cashFlowModel.type == CashFlowType.INGRESO || cashFlowModel.type == CashFlowType.RECOMPENSA){
             expenseAmount.setTextColor(ContextCompat.getColor(view.context, R.color.green))
             expenseAmount.text = view.context.getString(R.string.ingreso, cashFlowModel.amount.toString())
         }else{

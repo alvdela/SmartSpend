@@ -33,7 +33,7 @@ object Animations {
             RotateAnimation.RELATIVE_TO_SELF, 0.5f,
             RotateAnimation.RELATIVE_TO_SELF, 0.5f
         )
-        animation.setDuration(300)
+        animation.setDuration(200)
         view.startAnimation(animation)
     }
 
