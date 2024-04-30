@@ -27,8 +27,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
@@ -48,6 +53,8 @@ import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.TaskOpenAdapter
+import com.alvdela.smartspend.ui.fragment.ProfileFragment
+import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import java.time.LocalDate
@@ -66,6 +73,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private var administracion = false
     private var isPendientesShow = true
     private var isCompletadasShow = true
+    //Menu emergente y toolbar
+    private lateinit var toolbar: Toolbar
     private lateinit var drawer: DrawerLayout
     // Difrentes botones
     private lateinit var seleccionarMiembro: Spinner
@@ -849,7 +858,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     /* Metodos de control del activity */
 
     private fun initToolBar() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar_main)
+        toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)
 
         drawer = findViewById(R.id.main_parents)
@@ -880,6 +889,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
+        } else if(ProfileFragment.configProfileOpen){
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
+            supportFragmentManager.beginTransaction().remove(fragment!!).commit()
         } else {
             showPopUp(R.layout.pop_up_back_profiles)
 
@@ -896,8 +908,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-
         when (item.itemId) {
+            R.id.nav_item_settings -> showEditProfile()
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
         }
@@ -936,5 +948,17 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 //Do nothing
             }
         }
+    }
+
+    private fun showEditProfile(){
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf(USER_BUNDLE to user)
+        ProfileFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f,300)
     }
 }

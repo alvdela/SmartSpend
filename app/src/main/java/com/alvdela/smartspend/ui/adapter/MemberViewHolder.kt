@@ -2,6 +2,7 @@ package com.alvdela.smartspend.ui.adapter
 
 import android.content.Context
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -55,6 +56,7 @@ class MemberViewHolder(val view: View) : ViewHolder(view) {
         modifyMemberButton.setOnClickListener { editMember(member.getUser()) }
         deleteMemberButton.setOnClickListener { deleteMember(member.getUser()) }
 
-
+        val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.fade_anim)
+        itemView.startAnimation(animation)
     }
 }

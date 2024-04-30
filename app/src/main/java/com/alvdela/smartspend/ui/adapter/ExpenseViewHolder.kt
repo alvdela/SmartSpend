@@ -1,6 +1,7 @@
 package com.alvdela.smartspend.ui.adapter
 
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -44,5 +45,6 @@ class ExpenseViewHolder(val view: View): ViewHolder(view){
             CashFlowType.INGRESO -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.money))
             CashFlowType.RECOMPENSA -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.spent_gift))
         }
+
     }
 }

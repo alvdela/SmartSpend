@@ -1,6 +1,7 @@
 package com.alvdela.smartspend.ui.adapter
 
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -41,6 +42,9 @@ class GoalViewHolder(val view: View): ViewHolder(view) {
         btSaveMoney.setOnClickListener { saveMoney(position) }
 
         btExtractMoney.setOnClickListener { extractTask(position) }
+
+        val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.fade_anim)
+        itemView.startAnimation(animation)
     }
 
 }

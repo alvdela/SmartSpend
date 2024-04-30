@@ -45,8 +45,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     fun showPrivacyTerms(view: View) {
-        val intent = Intent(this, PrivacyPolicyActivity::class.java)
-        startActivity(intent)
+        //TODO
     }
 
     private fun initShowButtons() {

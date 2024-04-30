@@ -52,5 +52,4 @@ object Animations {
         container.visibility = View.VISIBLE
         animateViewOfFloat(recycler, "translationY", 0f, 200)
     }
-
 }

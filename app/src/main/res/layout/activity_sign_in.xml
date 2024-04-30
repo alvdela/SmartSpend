@@ -11,9 +11,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="35dp"
+        android:layout_marginEnd="25dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -242,7 +242,6 @@
             android:text="@string/registrame"
             android:textColor="@color/white"
             android:textSize="22sp" />
-
     </LinearLayout>
 
 </ScrollView>

@@ -12,7 +12,7 @@
         android:fitsSystemWindows="true">
         
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_main"
+            android:id="@+id/toolbar_profile"
             app:title="Mi perfil"
             app:titleTextColor="@color/black"
             android:layout_width="match_parent"

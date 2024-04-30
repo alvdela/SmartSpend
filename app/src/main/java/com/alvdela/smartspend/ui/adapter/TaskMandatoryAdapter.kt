@@ -2,6 +2,7 @@ package com.alvdela.smartspend.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R

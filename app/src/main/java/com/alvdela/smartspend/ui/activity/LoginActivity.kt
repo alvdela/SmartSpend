@@ -95,8 +95,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     fun showPrivacyTerms(view: View) {
-        val intent = Intent(this, PrivacyPolicyActivity::class.java)
-        startActivity(intent)
+        //TODO
     }
 
     override fun onBackPressed() {

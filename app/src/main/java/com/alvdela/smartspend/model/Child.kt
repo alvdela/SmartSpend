@@ -36,7 +36,7 @@ class Child(user: String, password: String) : Member(user, password) {
             val allowance = iterator.next()
             if (allowance.checkPaymentDay()) {
                 val payment = CashFlow(allowance.getName(), allowance.getAmount(), CashFlowType.INGRESO, LocalDate.now())
-                addExpense(payment)
+                addIncome(payment)
                 actualMoney += allowance.getPayment()
             }
             if (allowance.allowanceExpired()){
@@ -46,19 +46,25 @@ class Child(user: String, password: String) : Member(user, password) {
 
     }
 
-    fun addExpense(cashFlow: CashFlow) {
-        if (cashFlow.amount > getActualMoney()) {
-            //Do nothing
-        } else {
-            if (cashFlow.type != CashFlowType.INGRESO && cashFlow.type != CashFlowType.RECOMPENSA){
-                actualMoney -= cashFlow.amount
-            }
+    fun addExpense(cashFlow: CashFlow): Int {
+        if (cashFlow.amount <= getActualMoney()) {
+            actualMoney -= cashFlow.amount
             var index = 0
             while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
                 index++
             }
             this.cashFlowList.add(index, cashFlow)
+            return index
         }
+        return -1
+    }
+
+    private fun addIncome(cashFlow: CashFlow){
+        var index = 0
+        while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
+            index++
+        }
+        this.cashFlowList.add(index, cashFlow)
     }
 
     fun getCashFlow(): MutableList<CashFlow> {
@@ -77,7 +83,7 @@ class Child(user: String, password: String) : Member(user, password) {
         val goal = getGoals()[i]
         if (goal.isArchived()){
             val payment = CashFlow(goal.getDescription(), goal.getSaving(), CashFlowType.INGRESO, LocalDate.now())
-            addExpense(payment)
+            addIncome(payment)
             this.actualMoney += goal.getSaving()
             this.goalList.removeAt(i)
         }
@@ -85,7 +91,7 @@ class Child(user: String, password: String) : Member(user, password) {
 
     fun claimPrice(description: String, money: Float){
         val payment = CashFlow(description, money, CashFlowType.RECOMPENSA, LocalDate.now())
-        addExpense(payment)
+        addIncome(payment)
         this.actualMoney += money
     }
 

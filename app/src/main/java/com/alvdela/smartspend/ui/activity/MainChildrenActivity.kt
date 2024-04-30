@@ -254,7 +254,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                         child.addExpense(newExpense)
                     }
                 }
-                expenseAdapter.notifyItemInserted(0)
+                expenseAdapter.notifyDataSetChanged()
                 dialog.dismiss()
                 showMoney()
             }

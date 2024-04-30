@@ -2,6 +2,7 @@ package com.alvdela.smartspend.ui.adapter
 
 import android.graphics.Color
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
 import android.widget.TextView
 import android.widget.ToggleButton
@@ -39,6 +40,8 @@ class TaskViewHolder(val view: View): ViewHolder(view) {
             checkTask.isChecked = false
             completeTask(position)
         }
+        val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.fade_anim)
+        itemView.startAnimation(animation)
     }
 
 }

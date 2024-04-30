@@ -1,6 +1,7 @@
 package com.alvdela.smartspend.ui.adapter
 
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -34,5 +35,8 @@ class AllowanceViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         }
         modifyAllowanceButton.setOnClickListener { editAllowance(adapterPosition,selectedChild) }
         deleteAllowanceButton.setOnClickListener { deleteAllowance(adapterPosition,selectedChild) }
+
+        val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.fade_anim)
+        itemView.startAnimation(animation)
     }
 }
