@@ -34,7 +34,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.Util
+import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
@@ -50,31 +50,33 @@ import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.TaskOpenAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import java.lang.Thread.sleep
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    //Informacion de la familia y miembro actual
     private lateinit var family: Family
     private var user: String = ""
-    private lateinit var membersCopy: MutableMap<String, Member>
 
+    private lateinit var membersCopy: MutableMap<String, Member>
+    // Variables para el control de la interfaz
     private var seguimiento = true
     private var tareas = false
     private var administracion = false
     private var isPendientesShow = true
     private var isCompletadasShow = true
-
     private lateinit var drawer: DrawerLayout
+    // Difrentes botones
     private lateinit var seleccionarMiembro: Spinner
     private lateinit var seguimientoButton: ImageView
     private lateinit var taskButton: ImageView
     private lateinit var adminButton: ImageView
+    // Layouts
     private lateinit var seguimientoLayout: ConstraintLayout
     private lateinit var taskLayout: ConstraintLayout
     private lateinit var adminLayout: ConstraintLayout
-
+    // Variables para menus desplegables
     private lateinit var extendPendientes: ImageView
     private lateinit var containerPendientes: RelativeLayout
     private lateinit var rvTaskPendientes: RecyclerView
@@ -82,12 +84,13 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var extendCompletadas: ImageView
     private lateinit var containerCompletadas: RelativeLayout
     private lateinit var rvTaskCompletadas: RecyclerView
-
+    // Pop up
     private lateinit var dialog: Dialog
+    // Adapters para los RecycleView
     private lateinit var memberAdapter: MemberAdapter
     private lateinit var openTaskAdapter: TaskOpenAdapter
     private lateinit var completeTaskAdapter: TaskCompleteAdapter
-
+    //Constantes
     private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
 
@@ -178,21 +181,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
-    private fun showTasks() {
-        openTaskAdapter = TaskOpenAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask -> closeTask(selectedTask) }
-        )
-        rvTaskPendientes.layoutManager = LinearLayoutManager(this)
-        rvTaskPendientes.adapter = openTaskAdapter
-
-        completeTaskAdapter = TaskCompleteAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask -> completeTask(selectedTask) }
-        )
-        rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
-        rvTaskCompletadas.adapter = completeTaskAdapter
-    }
+    /* Metodo para la gestion de las tareas */
 
     private fun closeTask(selectedTask: Int) {
         showPopUp(R.layout.pop_up_delete)
@@ -278,7 +267,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 allOk = false
             }
             if (inputFechaLimite.text.toString().isNotBlank()) {
-                if (Util.isValidDate(inputFechaLimite.text.toString(), formatter)) {
+                if (Utility.isValidDate(inputFechaLimite.text.toString(), formatter)) {
                     fecha = LocalDate.parse(inputFechaLimite.text.toString(), formatter)
                 } else {
                     allOk = false
@@ -301,225 +290,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
-    private fun addMember() {
-        showPopUp(R.layout.pop_up_add_member)
-
-        val memberNameWarning = dialog.findViewById<TextView>(R.id.tvMiembroExistente)
-        memberNameWarning.visibility = View.INVISIBLE
-        val passwordWarning = dialog.findViewById<TextView>(R.id.tv_advise_password2)
-        passwordWarning.visibility = View.INVISIBLE
-        val tvCantidadInicial = dialog.findViewById<TextView>(R.id.tvCantidadInicial)
-        val inputCantidadInicial = dialog.findViewById<EditText>(R.id.inputCantidadInicial)
-        inputCantidadInicial.setText("")
-        inputCantidadInicial.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
-
-        var tipo = 2
-        val radioGroup = dialog.findViewById<RadioGroup>(R.id.rgMemberButtons)
-        radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            val selectedRadioButton = dialog.findViewById<RadioButton>(checkedId)
-            tipo = selectedRadioButton.tag.toString().toInt()
-            if (tipo == 2) {
-                tvCantidadInicial.visibility = View.VISIBLE
-                inputCantidadInicial.visibility = View.VISIBLE
-            } else {
-                tvCantidadInicial.visibility = View.GONE
-                inputCantidadInicial.visibility = View.GONE
-            }
-        }
-        val userName = dialog.findViewById<EditText>(R.id.inputNombreUsuario)
-        userName.setText("")
-        val passwordInput = dialog.findViewById<EditText>(R.id.passwordAddMember)
-        passwordInput.setText("")
-        val passwordInputRepeat = dialog.findViewById<EditText>(R.id.passwordAddMemberAgain)
-        passwordInputRepeat.setText("")
-
-        val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
-        cancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        val addNewMember = dialog.findViewById<Button>(R.id.addNewMember)
-        addNewMember.setOnClickListener {
-            memberNameWarning.visibility = View.INVISIBLE
-            passwordWarning.visibility = View.INVISIBLE
-            var memberName = ""
-            if (userName.text.isEmpty()) {
-                userName.error = "Se necesita un nombre de usuario"
-            } else {
-                memberName = userName.text.toString()
-            }
-            if (memberName != "") {
-                if (family.checkName(userName.text.toString())) {
-                    memberNameWarning.visibility = View.VISIBLE
-                } else if (userName.text.toString().length > MAX_USER_LENGHT) {
-                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
-                } else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
-                    passwordWarning.visibility = View.VISIBLE
-                } else {
-                    when (tipo) {
-                        1 -> {
-                            val parent = Parent(memberName, passwordInput.text.toString())
-                            membersCopy[memberName] = parent
-                            val result = family.addMember(parent)
-                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
-                        }
-
-                        2 -> {
-                            val child = Child(memberName, passwordInput.text.toString())
-                            if (inputCantidadInicial.text.toString().isNotBlank())
-                                child.setActualMoney(inputCantidadInicial.text.toString().toFloat())
-                            membersCopy[memberName] = child
-                            val result = family.addMember(child)
-                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
-                        }
-
-                        else -> {
-                            Toast.makeText(
-                                this,
-                                "Ha ocurrido un error inesperado",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                    dialog.dismiss()
-                    memberAdapter.notifyItemInserted(membersCopy.size)
-                }
-            }
-        }
-    }
-
-    private fun animateAdministracion() {
-        if (tareas) {
-            Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
-            //taskLayout.visibility = View.GONE
-        }
-        if (seguimiento) {
-            Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
-            //seguimientoLayout.visibility = View.GONE
-        }
-        //adminLayout.visibility = View.VISIBLE
-        adminLayout.translationX = 2000f
-        Animations.animateViewOfFloat(adminLayout, "translationX", 0f, 300)
-        seguimiento = false
-        tareas = false
-        administracion = true
-    }
-
-    private fun animateTareas() {
-        if (seguimiento) {
-            Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
-            //seguimientoLayout.visibility = View.GONE
-            taskLayout.translationX = 2000f
-        }
-        if (administracion) {
-            Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
-            //adminLayout.visibility = View.GONE
-            taskLayout.translationX = -2000f
-        }
-        //taskLayout.visibility = View.VISIBLE
-        Animations.animateViewOfFloat(taskLayout, "translationX", 0f, 300)
-        seguimiento = false
-        tareas = true
-        administracion = false
-    }
-
-    private fun animateSegimiento() {
-        if (tareas) {
-            Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
-            //taskLayout.visibility = View.GONE
-        }
-        if (administracion) {
-            Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
-            //adminLayout.visibility = View.GONE
-        }
-        seguimientoLayout.translationX = -2000f
-        //seguimientoLayout.visibility = View.VISIBLE
-        Animations.animateViewOfFloat(seguimientoLayout, "translationX", 0f, 300)
-        seguimiento = true
-        tareas = false
-        administracion = false
-    }
-
-    private fun changeButtonState(button: ImageView) {
-        button.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue))
-        button.setColorFilter(ContextCompat.getColor(this, R.color.mid_gray))
-    }
-
-    private fun restartButtons() {
-        seguimientoButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
-        taskButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
-        adminButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
-
-        seguimientoButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
-        taskButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
-        adminButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
-    }
-
-    private fun initSpinner() {
-        val options = family.getChildrenNames()
-        println(options)
-        val adapter = CustomSpinnerAdapter(this, options)
-        seleccionarMiembro.adapter = adapter
-        seleccionarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: android.view.View?,
-                position: Int,
-                id: Long
-            ) {
-                val selectedOption = options[position]
-                if (selectedOption != "") showCashFlow(selectedOption)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                //Do nothing
-            }
-        }
-    }
-
-    private fun showCashFlow(child: String) {
-
-        val childSelected = family.getMember(child) as Child
-        val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        if (childSelected.getCashFlow().isNotEmpty()) {
-            recyclerView.adapter = ExpenseAdapter(childSelected.getCashFlow())
-        } else {
-            Toast.makeText(this, "No existen movimientos", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun showMembers() {
-        membersCopy = family.getMembers().toMutableMap()
-        membersCopy.remove(user)
-        memberAdapter = MemberAdapter(
-            memberMap = membersCopy,
-            editMember = { selectedMember -> editMember(selectedMember) },
-            deleteMember = { selectedMember -> deleteMember(selectedMember) },
-            addAllowance = { selectedMember -> addAllowance(selectedMember) },
-            editAllowance = { allowanceId, selectedChild ->
-                editAllowance(
-                    allowanceId,
-                    selectedChild
-                )
-            },
-            deleteAllowance = { allowanceId, selectedChild ->
-                deleteAllowance(
-                    allowanceId,
-                    selectedChild
-                )
-            },
-            this
-        )
-        val recyclerView = findViewById<RecyclerView>(R.id.rvAdminFamilia)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        if (family.getMembers().isNotEmpty()) {
-            recyclerView.adapter = memberAdapter
-        } else {
-            //TODO cerrar aplicacion y borrar familia
-        }
-    }
-
+    /* Metodos para gestionar las propinas */
     private fun deleteAllowance(allowanceId: Int, selectedChild: String) {
         showPopUp(R.layout.pop_up_delete)
         val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
@@ -601,7 +372,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 "Semestral" -> frecuencia = AllowanceType.SEMESTRAL
                 "Anual" -> frecuencia = AllowanceType.ANUAL
             }
-            if (Util.isValidDate(inputDate.text.toString(), formatter)) {
+            if (Utility.isValidDate(inputDate.text.toString(), formatter)) {
                 fecha = LocalDate.parse(inputDate.text.toString(), formatter)
             } else {
                 isCorrect = false
@@ -693,7 +464,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 "Semestral" -> frecuencia = AllowanceType.SEMESTRAL
                 "Anual" -> frecuencia = AllowanceType.ANUAL
             }
-            if (Util.isValidDate(inputDate.text.toString(), formatter)) {
+            if (Utility.isValidDate(inputDate.text.toString(), formatter)) {
                 fecha = LocalDate.parse(inputDate.text.toString(), formatter)
             } else {
                 isCorrect = false
@@ -739,6 +510,95 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
+    /* Metodos para gestionar los miembros de la familia */
+
+    private fun addMember() {
+        showPopUp(R.layout.pop_up_add_member)
+
+        val memberNameWarning = dialog.findViewById<TextView>(R.id.tvMiembroExistente)
+        memberNameWarning.visibility = View.INVISIBLE
+        val passwordWarning = dialog.findViewById<TextView>(R.id.tv_advise_password2)
+        passwordWarning.visibility = View.INVISIBLE
+        val tvCantidadInicial = dialog.findViewById<TextView>(R.id.tvCantidadInicial)
+        val inputCantidadInicial = dialog.findViewById<EditText>(R.id.inputCantidadInicial)
+        inputCantidadInicial.setText("")
+        inputCantidadInicial.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
+
+        var tipo = 2
+        val radioGroup = dialog.findViewById<RadioGroup>(R.id.rgMemberButtons)
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val selectedRadioButton = dialog.findViewById<RadioButton>(checkedId)
+            tipo = selectedRadioButton.tag.toString().toInt()
+            if (tipo == 2) {
+                tvCantidadInicial.visibility = View.VISIBLE
+                inputCantidadInicial.visibility = View.VISIBLE
+            } else {
+                tvCantidadInicial.visibility = View.GONE
+                inputCantidadInicial.visibility = View.GONE
+            }
+        }
+        val userName = dialog.findViewById<EditText>(R.id.inputNombreUsuario)
+        userName.setText("")
+        val passwordInput = dialog.findViewById<EditText>(R.id.passwordAddMember)
+        passwordInput.setText("")
+        val passwordInputRepeat = dialog.findViewById<EditText>(R.id.passwordAddMemberAgain)
+        passwordInputRepeat.setText("")
+
+        val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val addNewMember = dialog.findViewById<Button>(R.id.addNewMember)
+        addNewMember.setOnClickListener {
+            memberNameWarning.visibility = View.INVISIBLE
+            passwordWarning.visibility = View.INVISIBLE
+            var memberName = ""
+            if (userName.text.isEmpty()) {
+                userName.error = "Se necesita un nombre de usuario"
+            } else {
+                memberName = userName.text.toString()
+            }
+            if (memberName != "") {
+                if (family.checkName(userName.text.toString())) {
+                    memberNameWarning.visibility = View.VISIBLE
+                } else if (userName.text.toString().length > MAX_USER_LENGHT) {
+                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                } else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
+                    passwordWarning.visibility = View.VISIBLE
+                } else {
+                    when (tipo) {
+                        1 -> {
+                            val parent = Parent(memberName, passwordInput.text.toString())
+                            membersCopy[memberName] = parent
+                            val result = family.addMember(parent)
+                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                        }
+
+                        2 -> {
+                            val child = Child(memberName, passwordInput.text.toString())
+                            if (inputCantidadInicial.text.toString().isNotBlank())
+                                child.setActualMoney(inputCantidadInicial.text.toString().toFloat())
+                            membersCopy[memberName] = child
+                            val result = family.addMember(child)
+                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                        }
+
+                        else -> {
+                            Toast.makeText(
+                                this,
+                                "Ha ocurrido un error inesperado",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    dialog.dismiss()
+                    memberAdapter.notifyItemInserted(membersCopy.size)
+                }
+            }
+        }
+    }
+
     private fun deleteMember(selectedMember: String) {
         showPopUp(R.layout.pop_up_delete)
 
@@ -755,7 +615,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             memberAdapter.notifyItemRemoved(membersCopy.size)
         }
     }
-
 
     private fun editMember(selectedMember: String) {
         showPopUp(R.layout.pop_up_add_member)
@@ -817,13 +676,177 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
+    /* Obtenemos los datos de la familia */
     private fun getFamily() {
         if (ContextFamily.isMock) {
-            family = ContextFamily.mockFamily!!
+            family = ContextFamily.family!!
         } else {
             //TODO consulta a firebase
         }
     }
+
+    /* Metodos para inicializar los RecycleView */
+    private fun showCashFlow(child: String) {
+
+        val childSelected = family.getMember(child) as Child
+        val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        if (childSelected.getCashFlow().isNotEmpty()) {
+            recyclerView.adapter = ExpenseAdapter(childSelected.getCashFlow())
+        } else {
+            Toast.makeText(this, "No existen movimientos", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showMembers() {
+        membersCopy = family.getMembers().toMutableMap()
+        membersCopy.remove(user)
+        memberAdapter = MemberAdapter(
+            memberMap = membersCopy,
+            editMember = { selectedMember -> editMember(selectedMember) },
+            deleteMember = { selectedMember -> deleteMember(selectedMember) },
+            addAllowance = { selectedMember -> addAllowance(selectedMember) },
+            editAllowance = { allowanceId, selectedChild ->
+                editAllowance(
+                    allowanceId,
+                    selectedChild
+                )
+            },
+            deleteAllowance = { allowanceId, selectedChild ->
+                deleteAllowance(
+                    allowanceId,
+                    selectedChild
+                )
+            },
+            this
+        )
+        val recyclerView = findViewById<RecyclerView>(R.id.rvAdminFamilia)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        if (family.getMembers().isNotEmpty()) {
+            recyclerView.adapter = memberAdapter
+        } else {
+            //TODO cerrar aplicacion y borrar familia
+        }
+    }
+
+    private fun showTasks() {
+        openTaskAdapter = TaskOpenAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> closeTask(selectedTask) }
+        )
+        rvTaskPendientes.layoutManager = LinearLayoutManager(this)
+        rvTaskPendientes.adapter = openTaskAdapter
+
+        completeTaskAdapter = TaskCompleteAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> completeTask(selectedTask) }
+        )
+        rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
+        rvTaskCompletadas.adapter = completeTaskAdapter
+    }
+
+    /* Metodos para animar la interfaz */
+
+    private fun animateAdministracion() {
+        if (tareas) {
+            Animations.animateViewOfFloat(taskLayout, "translationX", -2000f, 300)
+            //taskLayout.visibility = View.GONE
+        }
+        if (seguimiento) {
+            Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
+            //seguimientoLayout.visibility = View.GONE
+        }
+        //adminLayout.visibility = View.VISIBLE
+        adminLayout.translationX = 2000f
+        Animations.animateViewOfFloat(adminLayout, "translationX", 0f, 300)
+        seguimiento = false
+        tareas = false
+        administracion = true
+    }
+
+    private fun animateTareas() {
+        if (seguimiento) {
+            Animations.animateViewOfFloat(seguimientoLayout, "translationX", -2000f, 300)
+            //seguimientoLayout.visibility = View.GONE
+            taskLayout.translationX = 2000f
+        }
+        if (administracion) {
+            Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
+            //adminLayout.visibility = View.GONE
+            taskLayout.translationX = -2000f
+        }
+        //taskLayout.visibility = View.VISIBLE
+        Animations.animateViewOfFloat(taskLayout, "translationX", 0f, 300)
+        seguimiento = false
+        tareas = true
+        administracion = false
+    }
+
+    private fun animateSegimiento() {
+        if (tareas) {
+            Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
+            //taskLayout.visibility = View.GONE
+        }
+        if (administracion) {
+            Animations.animateViewOfFloat(adminLayout, "translationX", 2000f, 300)
+            //adminLayout.visibility = View.GONE
+        }
+        seguimientoLayout.translationX = -2000f
+        //seguimientoLayout.visibility = View.VISIBLE
+        Animations.animateViewOfFloat(seguimientoLayout, "translationX", 0f, 300)
+        seguimiento = true
+        tareas = false
+        administracion = false
+    }
+
+    private fun changeButtonState(button: ImageView) {
+        button.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue))
+        button.setColorFilter(ContextCompat.getColor(this, R.color.mid_gray))
+    }
+
+    private fun restartButtons() {
+        seguimientoButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        taskButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        adminButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+
+        seguimientoButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        taskButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        adminButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+    }
+
+    /* Elementos emergentes o pop ups */
+
+    private fun showPopUp(layout: Int) {
+        dialog = Dialog(this)
+        dialog.setContentView(layout)
+        dialog.setCancelable(true)
+        dialog.show()
+    }
+
+    private fun showDatePickerDialog(inputDate: EditText) {
+        val newFragment =
+            DatePickerFragment.newInstance(DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                var dayString = ""
+                var monthString = ""
+                val yearString = year.toString()
+                dayString = if (day.toString().toInt() < 10) {
+                    "0$day"
+                } else {
+                    day.toString()
+                }
+                monthString = if (month.toString().toInt() + 1 < 10) {
+                    "0${month.toString().toInt() + 1}"
+                } else {
+                    "${month.toString().toInt() + 1}"
+                }
+                val selectedDate = "$dayString/$monthString/$yearString"
+                inputDate.setText(selectedDate)
+            })
+
+        newFragment.show(supportFragmentManager, "datePicker")
+    }
+
+    /* Metodos de control del activity */
 
     private fun initToolBar() {
         val toolbar: Toolbar = findViewById(R.id.toolbar_main)
@@ -890,36 +913,28 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun signOut() {
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.mockFamily = null
+        ContextFamily.family = null
     }
 
-    private fun showPopUp(layout: Int) {
-        dialog = Dialog(this)
-        dialog.setContentView(layout)
-        dialog.setCancelable(true)
-        dialog.show()
-    }
+    private fun initSpinner() {
+        val options = family.getChildrenNames()
+        println(options)
+        val adapter = CustomSpinnerAdapter(this, options)
+        seleccionarMiembro.adapter = adapter
+        seleccionarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: android.view.View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedOption = options[position]
+                if (selectedOption != "") showCashFlow(selectedOption)
+            }
 
-    private fun showDatePickerDialog(inputDate: EditText) {
-        val newFragment =
-            DatePickerFragment.newInstance(DatePickerDialog.OnDateSetListener { _, year, month, day ->
-                var dayString = ""
-                var monthString = ""
-                val yearString = year.toString()
-                dayString = if (day.toString().toInt() < 10) {
-                    "0$day"
-                } else {
-                    day.toString()
-                }
-                monthString = if (month.toString().toInt() + 1 < 10) {
-                    "0${month.toString().toInt() + 1}"
-                } else {
-                    "${month.toString().toInt() + 1}"
-                }
-                val selectedDate = "$dayString/$monthString/$yearString"
-                inputDate.setText(selectedDate)
-            })
-
-        newFragment.show(supportFragmentManager, "datePicker")
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                //Do nothing
+            }
+        }
     }
 }

@@ -3,7 +3,8 @@ package com.alvdela.smartspend.model
 class SavingGoal(
     private var description: String,
     private var goal: Float,
-    private var saving: Float = 0f
+    private var saving: Float = 0f,
+    private var type: GoalType
 ) {
     private var archived = false
 
@@ -21,6 +22,10 @@ class SavingGoal(
 
     fun getSaving(): Float{
         return this.saving
+    }
+
+    fun getType(): GoalType{
+        return this.type
     }
 
     fun saveMoney(money: Float): Float{

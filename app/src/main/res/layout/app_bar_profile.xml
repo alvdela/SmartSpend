@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.activity.MainParentsActivity">
+    
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+        
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_main"
+            app:title="Mi perfil"
+            app:titleTextColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/light_blue"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+        </androidx.appcompat.widget.Toolbar>
+        
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

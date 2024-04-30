@@ -89,7 +89,7 @@ class LoginActivity : AppCompatActivity() {
         child.addAllowance(allowance)
         family.addMember(child)
         println(child.getCashFlow().toList())
-        ContextFamily.mockFamily = family
+        ContextFamily.family = family
         ContextFamily.isMock = true
     }
 

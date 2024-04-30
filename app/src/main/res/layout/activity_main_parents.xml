@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:background="@drawable/corners_buttons_white"
+                    android:background="@drawable/edge_white"
                     android:gravity="center"
                     android:layout_marginStart="5dp"
                     android:fontFamily="@font/andika_regular"

@@ -154,7 +154,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:layout_marginEnd="8dp"
-            android:button="@drawable/checkbox_selector" />
+            android:button="@drawable/password_selector" />
     </RelativeLayout>
 
     <TextView
@@ -213,7 +213,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:layout_marginEnd="8dp"
-            android:button="@drawable/checkbox_selector" />
+            android:button="@drawable/password_selector" />
     </RelativeLayout>
 
     <TextView
@@ -279,7 +279,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/corners_buttons_white"
+        android:background="@drawable/edge_white"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
@@ -294,7 +294,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/corners_buttons_blue"
+        android:background="@drawable/edge_blue"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"

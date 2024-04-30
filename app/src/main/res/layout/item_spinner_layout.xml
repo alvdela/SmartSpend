@@ -7,4 +7,4 @@
     android:fontFamily="@font/andika_regular"
     android:textSize="16sp"
     android:padding="5dp"
-    android:background="@drawable/corners_buttons_white"/>
+    android:background="@drawable/edge_white"/>

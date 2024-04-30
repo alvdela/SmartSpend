@@ -4,7 +4,7 @@ import com.alvdela.smartspend.model.Family
 
 object ContextFamily {
 
-    var mockFamily: Family? = null
+    var family: Family? = null
     var familyEmail: String? = null
 
     var isMock = false
@@ -12,7 +12,7 @@ object ContextFamily {
     var record = mutableListOf("Gasto")
 
     fun reset() {
-        mockFamily = null
+        family = null
         familyEmail = null
         isMock = false
     }

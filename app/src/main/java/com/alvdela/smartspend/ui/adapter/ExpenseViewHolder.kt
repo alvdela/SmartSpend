@@ -37,12 +37,12 @@ class ExpenseViewHolder(val view: View): ViewHolder(view){
             expenseAmount.text = view.context.getString(R.string.spent, cashFlowModel.amount.toString())
         }
         when(cashFlowModel.type){
-            CashFlowType.COMIDA -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.food))
-            CashFlowType.OCIO -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.cinema))
-            CashFlowType.COMPRAS -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.shopping))
-            CashFlowType.OTROS -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.receipt))
+            CashFlowType.COMIDA -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.spent_food))
+            CashFlowType.OCIO -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.spent_cinema))
+            CashFlowType.COMPRAS -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.spent_shopping))
+            CashFlowType.OTROS -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.spent_receipt))
             CashFlowType.INGRESO -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.money))
-            CashFlowType.RECOMPENSA -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.gift))
+            CashFlowType.RECOMPENSA -> expenseType.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.spent_gift))
         }
     }
 }

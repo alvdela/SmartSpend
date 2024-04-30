@@ -24,14 +24,12 @@ import com.alvdela.smartspend.model.Parent
 class ProfilesActivity : AppCompatActivity() {
 
     private lateinit var profilesButtons: MutableList<Button>
+
     private lateinit var familyName: TextView
-    private lateinit var popUpProfile: ConstraintLayout
     private lateinit var passwordInput: EditText
 
     private lateinit var family: Family
 
-    private var popUpShown = false
-    private var logOut = false
     private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +53,8 @@ class ProfilesActivity : AppCompatActivity() {
     }
 
     private fun getFamily() {
-        if (ContextFamily.mockFamily != null) {
-            family = ContextFamily.mockFamily!!
+        if (ContextFamily.family != null) {
+            family = ContextFamily.family!!
         } else {
             //TODO consulta a firebase
         }
@@ -125,6 +123,8 @@ class ProfilesActivity : AppCompatActivity() {
         val unlockImage = dialog.findViewById<ImageView>(R.id.ivUnlock)
         val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
         val accessButton = dialog.findViewById<Button>(R.id.accessButton)
+        val passwordWrong = dialog.findViewById<TextView>(R.id.tvWrongPassword)
+        passwordWrong.visibility = View.GONE
         passwordInput = dialog.findViewById(R.id.passwordProfile)
 
         tvProfileName.text = user
@@ -143,19 +143,24 @@ class ProfilesActivity : AppCompatActivity() {
             Toast.makeText(this, "Error: Usuario no existente", Toast.LENGTH_SHORT).show()
         }
         accessButton.setOnClickListener {
-            dialog.dismiss()
             if (acceder) {
                 if (member is Parent) {
+                    dialog.dismiss()
                     goParentMain(user)
                 } else if (member is Child) {
+                    dialog.dismiss()
                     goChildMain(user)
                 }
             } else if (member!!.checkPassword(passwordInput.text.toString())) {
                 if (member is Parent) {
+                    dialog.dismiss()
                     goParentMain(user)
                 } else if (member is Child) {
+                    dialog.dismiss()
                     goChildMain(user)
                 }
+            }else{
+                passwordWrong.visibility = View.VISIBLE
             }
         }
 

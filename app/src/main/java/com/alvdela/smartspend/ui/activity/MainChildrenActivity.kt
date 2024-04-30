@@ -35,22 +35,26 @@ import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.model.TaskState
+import com.alvdela.smartspend.ui.adapter.GoalAdapter
 import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
 import com.google.android.material.navigation.NavigationView
-import java.lang.Thread.sleep
 import java.time.LocalDate
 
 class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val MAX_DECIMALS = 2
 
+    //Menu emergente
     private lateinit var drawer: DrawerLayout
+    //Pop up
     private lateinit var dialog: Dialog
 
+    //Adapters de los RecycleView
     private lateinit var expenseAdapter: ExpenseAdapter
     private lateinit var mandatoryTaskAdapter: TaskMandatoryAdapter
     private lateinit var noMandatoryTaskAdapter: TaskNoMandatoryAdapter
+    private lateinit var goalAdapter: GoalAdapter
 
     //Botones para cambiar entre pantallas
     private lateinit var expensesButton: ImageView
@@ -68,10 +72,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private lateinit var addSpentButton: Button
     private lateinit var addGoalButton: Button
 
+    //Informacion de la familia y miembro actual
     private var user: String = ""
     private lateinit var family: Family
     private lateinit var child: Child
 
+    //Control de la interfaz
     private var expenses = true
     private var tareas = false
     private var goals = false
@@ -106,6 +112,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         currentUserName.text = user
         changeButtonState(expensesButton)
 
+        initButtons()
+    }
+
+    private fun initButtons() {
         expensesButton.setOnClickListener {
             if (!expenses) {
                 restartButtons()
@@ -138,26 +148,18 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addSpentButton.setOnClickListener {
             addSpent()
         }
+        addGoalButton.setOnClickListener {
+            addSaveGoal()
+        }
     }
 
-    private fun showTask() {
-        mandatoryTaskAdapter = TaskMandatoryAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask -> completeTask(selectedTask) }
-        )
-        val rvTaskObligatorias = findViewById<RecyclerView>(R.id.rvTaskObligatorias)
-        rvTaskObligatorias.layoutManager = LinearLayoutManager(this)
-        rvTaskObligatorias.adapter = mandatoryTaskAdapter
+    /* Metodos para los objetivos de ahorro */
 
-        noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask -> completeTask(selectedTask) }
-        )
-        val rvTaskExtra = findViewById<RecyclerView>(R.id.rvTaskExtra)
-        rvTaskExtra.layoutManager = LinearLayoutManager(this)
-        rvTaskExtra.adapter = noMandatoryTaskAdapter
+    private fun addSaveGoal() {
+        TODO("Not yet implemented")
     }
 
+    /* Metodos para las tareas */
     private fun completeTask(selectedTask: Int) {
         updateTasks()
         val task = family.getTask(selectedTask)
@@ -174,6 +176,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         noMandatoryTaskAdapter.notifyDataSetChanged()
     }
 
+    /* Metodos para los gastos*/
     @SuppressLint("NotifyDataSetChanged")
     private fun addSpent() {
         showPopUp(R.layout.pop_up_add_spent)
@@ -258,6 +261,94 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
     }
 
+    /* Metodos para los objetivos de ahorro */
+
+    private fun saveMoney(selectedGoal: Int) {
+
+    }
+
+    private fun extractMoney(selectedGoal: Int) {
+
+    }
+
+    /* Metodos para obtener la información de la familia */
+    private fun getFamily() {
+        if (ContextFamily.family != null) {
+            family = ContextFamily.family!!
+            child = family.getMember(user) as Child
+        } else {
+            //TODO caso de error
+        }
+    }
+
+    /* Metodo para actualizar el dinero disponible */
+    private fun showMoney() {
+        val actualMoney = findViewById<TextView>(R.id.tvDineroDisponible)
+        actualMoney.text = "${child.getActualMoney()}€"
+    }
+
+    /* Metodos para inicializar los RecycleView*/
+
+    private fun showTask() {
+        mandatoryTaskAdapter = TaskMandatoryAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> completeTask(selectedTask) }
+        )
+        val rvTaskObligatorias = findViewById<RecyclerView>(R.id.rvTaskObligatorias)
+        rvTaskObligatorias.layoutManager = LinearLayoutManager(this)
+        rvTaskObligatorias.adapter = mandatoryTaskAdapter
+
+        noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
+            tasks = family.getTaskList(),
+            completeTask = { selectedTask -> completeTask(selectedTask) }
+        )
+        val rvTaskExtra = findViewById<RecyclerView>(R.id.rvTaskExtra)
+        rvTaskExtra.layoutManager = LinearLayoutManager(this)
+        rvTaskExtra.adapter = noMandatoryTaskAdapter
+    }
+
+    private fun showGoals(){
+        val recyclerView = findViewById<RecyclerView>(R.id.rvGoals)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        goalAdapter = GoalAdapter(
+            goals = child.getGoals(),
+            saveMoney = {selectedGoal -> saveMoney(selectedGoal)},
+            extractTask = {selectedGoal -> extractMoney(selectedGoal)}
+        )
+    }
+
+    private fun showCashFlow() {
+        val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        expenseAdapter = ExpenseAdapter(child.getCashFlow())
+        recyclerView.adapter = expenseAdapter
+    }
+
+    /* Metodo encargado de los pop ups*/
+
+    private fun showPopUp(layout: Int) {
+        dialog = Dialog(this)
+        dialog.setContentView(layout)
+        dialog.setCancelable(true)
+        dialog.show()
+    }
+
+    /* Metodos para las animaciones*/
+    private fun changeButtonState(button: ImageView) {
+        button.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue))
+        button.setColorFilter(ContextCompat.getColor(this, R.color.mid_gray))
+    }
+    private fun restartButtons() {
+        expensesButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        taskButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        goalsButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+        gameButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
+
+        expensesButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        taskButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        goalsButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+        gameButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
+    }
     private fun animateExpenses() {
         if (tareas) {
             Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
@@ -275,7 +366,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = false
         games = false
     }
-
     private fun animateTareas() {
         if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
@@ -295,7 +385,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = false
         games = false
     }
-
     private fun animateGoals() {
         if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
@@ -315,7 +404,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = true
         games = false
     }
-
     private fun animateGames() {
         if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
@@ -334,32 +422,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         games = true
     }
 
-    private fun changeButtonState(button: ImageView) {
-        button.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue))
-        button.setColorFilter(ContextCompat.getColor(this, R.color.mid_gray))
-    }
-
-    private fun restartButtons() {
-        expensesButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
-        taskButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
-        goalsButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
-        gameButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
-
-        expensesButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
-        taskButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
-        goalsButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
-        gameButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
-    }
-
-    private fun getFamily() {
-        if (ContextFamily.isMock) {
-            family = ContextFamily.mockFamily!!
-            child = family.getMember(user) as Child
-        } else {
-            //TODO consulta a firebase
-        }
-    }
-
+    /* Metodos de control del activity */
     private fun initToolBar() {
         val toolbar: Toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)
@@ -374,7 +437,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         toggle.syncState()
     }
-
     private fun initNavView() {
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
@@ -385,7 +447,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         navigationView.addHeaderView(headerView)
 
     }
-
     @Deprecated("Deprecated")
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -404,7 +465,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
         }
     }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
@@ -417,33 +477,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         return true
     }
-
     private fun backProfiles() {
         startActivity(Intent(this, ProfilesActivity::class.java))
     }
-
     private fun signOut() {
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.mockFamily = null
-    }
-
-    private fun showMoney() {
-        val actualMoney = findViewById<TextView>(R.id.tvDineroDisponible)
-        actualMoney.text = "${child.getActualMoney()}€"
-    }
-
-    private fun showCashFlow() {
-        val recyclerView = findViewById<RecyclerView>(R.id.rvCashFlow)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        expenseAdapter = ExpenseAdapter(child.getCashFlow())
-        recyclerView.adapter = expenseAdapter
-    }
-
-    private fun showPopUp(layout: Int) {
-        dialog = Dialog(this)
-        dialog.setContentView(layout)
-        dialog.setCancelable(true)
-        dialog.show()
+        ContextFamily.family = null
     }
 }

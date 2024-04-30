@@ -5,51 +5,47 @@
     android:id="@+id/popUpAddGoal"
     android:layout_width="350dp"
     android:layout_height="500dp"
-    android:background="@drawable/pop_up"
     android:layout_gravity="center"
+    android:background="@drawable/pop_up"
     android:translationZ="5dp">
 
     <TextView
         android:id="@+id/tvPopUpAddGoal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:padding="5dp"
         android:text="@string/nuevo_objetivo"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/line5"
-        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddGoal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/black" />
+        android:background="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddGoal" />
 
     <TextView
         android:id="@+id/tvDescripcionObjetivo"
-        app:layout_constraintEnd_toEndOf="@+id/line5"
-        app:layout_constraintStart_toStartOf="@+id/line5"
-        app:layout_constraintTop_toBottomOf="@+id/line5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
-        android:padding="5dp"
+        android:padding="2dp"
         android:text="@string/descripcion"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/line5"
+        app:layout_constraintStart_toStartOf="@+id/line5"
+        app:layout_constraintTop_toBottomOf="@+id/line5" />
 
     <EditText
         android:id="@+id/inputDescripcionObjetivo"
-        app:layout_constraintEnd_toEndOf="@+id/tvDescripcionObjetivo"
-        app:layout_constraintStart_toStartOf="@+id/tvDescripcionObjetivo"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescripcionObjetivo"
-        tools:text="aaaaa"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:background="@drawable/corners_white"
@@ -58,27 +54,27 @@
         android:padding="10dp"
         android:textColor="@color/black"
         android:textCursorDrawable="@drawable/custom_cursor"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvDescripcionObjetivo"
+        app:layout_constraintStart_toStartOf="@+id/tvDescripcionObjetivo"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescripcionObjetivo"
+        tools:text="aaaaa" />
 
     <TextView
-        android:id="@+id/tvCantidadObjetivo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputDescripcionObjetivo"
+        android:id="@+id/tvPrecioObjetivo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
-        android:padding="5dp"
-        android:text="@string/objetivo"
+        android:padding="2dp"
+        android:text="@string/precio"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputDescripcionObjetivo" />
 
     <EditText
         android:id="@+id/inputCantidadObjetivo"
-        app:layout_constraintEnd_toEndOf="@+id/tvCantidadObjetivo"
-        app:layout_constraintStart_toStartOf="@+id/tvCantidadObjetivo"
-        app:layout_constraintTop_toBottomOf="@+id/tvCantidadObjetivo"
-        tools:text="50,20"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -89,47 +85,119 @@
         android:padding="10dp"
         android:textColor="@color/black"
         android:textCursorDrawable="@drawable/custom_cursor"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvPrecioObjetivo"
+        app:layout_constraintStart_toStartOf="@+id/tvPrecioObjetivo"
+        app:layout_constraintTop_toBottomOf="@+id/tvPrecioObjetivo"
+        tools:text="50,20" />
+
+    <TextView
+        android:id="@+id/tvTipoObjetivo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:padding="2dp"
+        android:text="@string/objetivo"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputCantidadObjetivo" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTipoObjetivo">
+
+        <RadioButton
+            android:id="@+id/radio_button_toys"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
+            android:fontFamily="@font/andika_regular"
+            android:padding="2dp"
+            android:tag="1"
+            android:text="@string/juguetes_o_juegos"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/radio_button_activities"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
+            android:fontFamily="@font/andika_regular"
+            android:padding="2dp"
+            android:tag="2"
+            android:text="@string/actividades"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/radio_button_gift"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
+            android:fontFamily="@font/andika_regular"
+            android:padding="2dp"
+            android:tag="3"
+            android:text="@string/regalo"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/radio_button_books_school_supplies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
+            android:fontFamily="@font/andika_regular"
+            android:padding="2dp"
+            android:tag="4"
+            android:text="@string/libros_o_material_escolar"
+            android:textColor="@color/black" />
+
+    </RadioGroup>
 
 
     <View
         android:id="@+id/line7"
-        app:layout_constraintBottom_toTopOf="@id/cancelNewGoal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/black" />
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/cancelNewGoal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/cancelNewGoal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/corners_buttons_white"
+        android:background="@drawable/edge_white"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:text="@string/cancelar"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/addNewGoal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/corners_buttons_blue"
+        android:background="@drawable/edge_blue"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:text="@string/add"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

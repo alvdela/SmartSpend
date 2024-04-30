@@ -184,6 +184,17 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="close_task">Cerrar\n la tarea</string>
     <string name="re_open_task">Reabrir\n la tarea</string>
     <string name="complete_task_note">Nota: se dara automaticamente la recompensa al niño que la realizó</string>
+    <string name="password_wrong">Contraseña incorrecta</string>
+    <string name="precio">Precio</string>
+    <string name="juguetes_o_juegos">Juguetes o Juegos</string>
+    <string name="actividades">Actividades</string>
+    <string name="regalo">Regalo</string>
+    <string name="libros_o_material_escolar">Libros o Material Escolar</string>
+    <string name="ahorrar">Ahorrar</string>
+    <string name="ask_save_money">¿Cuanto dinero quieres ahorrar?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="eliminar_cuenta">Eliminar cuenta</string>
 
 </resources>
 

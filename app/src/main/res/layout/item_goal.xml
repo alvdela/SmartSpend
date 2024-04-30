@@ -1,7 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background">
+    android:background="@color/mid_gray"
+    android:layout_marginBottom="25dp">
+
+    <ImageView
+        android:id="@+id/imageGoal"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:padding="5dp"
+        android:background="@drawable/round_background"
+        android:src="@drawable/goal_activity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressGoal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progressBackgroundTint="@color/dark_gray"
+        android:progressTint="@color/dark_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btSaveMoney"
+        tools:progress="10" />
+
+    <TextView
+        android:id="@+id/tvProgreso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressGoal"
+        tools:text="10€ de 20€" />
+
+    <TextView
+        android:id="@+id/tvPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressGoal"
+        tools:text="50%" />
+
+    <TextView
+        android:id="@+id/tvGoalName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="215dp"
+        android:layout_marginStart="5dp"
+        android:fontFamily="@font/andika_regular"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:maxLength="80"
+        app:layout_constraintStart_toEndOf="@+id/imageGoal"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Baloncesto con amigos" />
+
+    <ImageView
+        android:id="@+id/btExtractMoney"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_width="60dp"
+        android:layout_height="55dp"
+        android:src="@drawable/extract_money"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btSaveMoney"
+        android:layout_marginTop="5dp"
+
+        android:layout_width="60dp"
+        android:layout_height="55dp"
+        android:src="@drawable/save_money"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/btExtractMoney"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
