@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/mid_gray"
+    android:background="@drawable/corners_gray"
     android:layout_marginBottom="25dp">
 
     <ImageView
         android:id="@+id/imageGoal"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:padding="5dp"
@@ -31,6 +33,7 @@
 
     <TextView
         android:id="@+id/tvProgreso"
+        android:layout_marginEnd="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
@@ -43,6 +46,7 @@
 
     <TextView
         android:id="@+id/tvPercentage"
+        android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"

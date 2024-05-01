@@ -194,6 +194,8 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="eliminar_cuenta">Eliminar cuenta</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="extract_money_of_goal">¿Estas seguro? El dinero volverá a tu cuenta pero no habrás logrado el objetivo marcado</string>
 
 </resources>
 

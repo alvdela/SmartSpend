@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.NumberPicker
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
 import com.alvdela.smartspend.model.CashFlow
@@ -34,6 +36,8 @@ import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
+import com.alvdela.smartspend.model.GoalType
+import com.alvdela.smartspend.model.SavingGoal
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.GoalAdapter
 import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
@@ -47,6 +51,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     //Menu emergente
     private lateinit var drawer: DrawerLayout
+
     //Pop up
     private lateinit var dialog: Dialog
 
@@ -89,11 +94,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         user = intent.getStringExtra("USER_NAME").toString()
         getFamily()
         initObjects()
-        initToolBar()
-        initNavView()
         showMoney()
         showCashFlow()
         showTask()
+        showGoals()
     }
 
     private fun initObjects() {
@@ -113,6 +117,8 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         changeButtonState(expensesButton)
 
         initButtons()
+        initToolBar()
+        initNavView()
     }
 
     private fun initButtons() {
@@ -156,7 +162,140 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     /* Metodos para los objetivos de ahorro */
 
     private fun addSaveGoal() {
-        TODO("Not yet implemented")
+        showPopUp(R.layout.pop_up_add_goal)
+
+        val inputDescripcion = dialog.findViewById<EditText>(R.id.inputDescripcionObjetivo)
+        inputDescripcion.setText("")
+
+        val inputCantidad = dialog.findViewById<EditText>(R.id.inputCantidadObjetivo)
+        inputCantidad.setText("")
+        inputCantidad.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
+
+        val radioGroup = dialog.findViewById<RadioGroup>(R.id.radio_group_options)
+        var tipo = 0
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val selectedRadioButton = dialog.findViewById<RadioButton>(checkedId)
+            tipo = selectedRadioButton.tag.toString().toInt()
+        }
+
+        val cancel = dialog.findViewById<Button>(R.id.cancelNewGoal)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val addNewGoal = dialog.findViewById<Button>(R.id.addNewGoal)
+        addNewGoal.setOnClickListener {
+            var allOk = true
+            var descripcion = ""
+            var cantidad = 0f
+            if (inputDescripcion.text.toString().isBlank()) {
+                inputDescripcion.error = "¡Ups! Parece que olvidaste agregar una descripción"
+                allOk = false
+            } else {
+                descripcion = inputDescripcion.text.toString()
+            }
+            if (inputCantidad.text.toString().isBlank()) {
+                inputCantidad.error = "Necesitas saber el precio de lo que deseas conseguir"
+                allOk = false
+            } else {
+                cantidad = inputCantidad.text.toString().toFloat()
+            }
+            if (allOk) {
+                val goal: SavingGoal = when (tipo) {
+                    1 -> SavingGoal(descripcion, cantidad, GoalType.TOYS)
+                    2 -> SavingGoal(descripcion, cantidad, GoalType.ACTIVITIES)
+                    3 -> SavingGoal(descripcion, cantidad, GoalType.GIFT)
+                    4 -> SavingGoal(descripcion, cantidad, GoalType.BOOK)
+                    else -> SavingGoal(descripcion, cantidad, GoalType.TOYS)
+
+                }
+                child.addGoal(goal)
+                goalAdapter.notifyItemInserted(child.getGoals().size)
+                dialog.dismiss()
+            }
+
+        }
+    }
+
+    private fun saveMoney(selectedGoal: Int) {
+        val goal = child.getGoals()[selectedGoal]
+        showPopUp(R.layout.pop_up_save_money)
+
+        val natural = Utility.getNaturalNumber(goal.getMoneyLeft())
+        val decimal = Utility.getDecimalNumber(goal.getMoneyLeft())
+
+        val npNumber = dialog.findViewById<NumberPicker>(R.id.npNumber)
+        val npDecimal = dialog.findViewById<NumberPicker>(R.id.npDecimal)
+        npNumber.minValue = 0
+        npNumber.value = 0
+        npNumber.wrapSelectorWheel = true
+        npNumber.setFormatter { i -> String.format("%02d", i) }
+        npDecimal.minValue = 0
+        npDecimal.value = 0
+        npDecimal.wrapSelectorWheel = true
+        npDecimal.setFormatter { i -> String.format("%02d", i) }
+
+        if (child.getActualMoney() < goal.getGoal()){
+            npNumber.maxValue = Utility.getNaturalNumber(child.getActualMoney())
+            if (Utility.getNaturalNumber(child.getActualMoney()) <= 0){
+                npDecimal.maxValue = Utility.getDecimalNumber(child.getActualMoney())
+            }else{
+                npDecimal.maxValue = 99
+                npDecimal.setFormatter { i -> String.format("%02d", i*5) }
+            }
+        }else{
+            npNumber.maxValue = natural
+            if (natural <= 0){
+                npDecimal.maxValue = decimal
+            }else{
+                npDecimal.maxValue = 99
+                npDecimal.setFormatter { i -> String.format("%02d", i) }
+            }
+        }
+
+        val cancelButtonSave = dialog.findViewById<Button>(R.id.cancelButtonSave)
+        cancelButtonSave.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val confirmButtonSave = dialog.findViewById<Button>(R.id.confirmButtonSave)
+        confirmButtonSave.setOnClickListener {
+            val value = Utility.formFloatNumber(npNumber.value,npDecimal.value)
+            child.setActualMoney(child.getActualMoney() - value + goal.saveMoney(value))
+            showMoney()
+            dialog.dismiss()
+            goalAdapter.notifyItemChanged(selectedGoal)
+        }
+    }
+
+    private fun extractMoney(selectedGoal: Int) {
+        val goal = child.getGoals()[selectedGoal]
+        if (goal.isArchived()){
+            showPopUp(R.layout.pop_up_goal_archieved)
+            val confirmGoal = dialog.findViewById<Button>(R.id.confirmGoalAchieved)
+            confirmGoal.setOnClickListener {
+                child.claimGoal(selectedGoal)
+                goalAdapter.notifyItemRemoved(selectedGoal)
+                dialog.dismiss()
+            }
+        }else{
+            showPopUp(R.layout.pop_up_delete)
+            val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
+            tvDelete.text = resources.getString(R.string.extract_money_of_goal)
+            val cancelDelete = dialog.findViewById<Button>(R.id.cancelDelete)
+            cancelDelete.setOnClickListener {
+                dialog.dismiss()
+            }
+            val confirmDelete = dialog.findViewById<Button>(R.id.confirmDelete)
+            confirmDelete.text = resources.getString(R.string.aceptar)
+            confirmDelete.setOnClickListener {
+                child.claimGoal(selectedGoal)
+                goalAdapter.notifyItemRemoved(selectedGoal)
+                expenseAdapter.notifyDataSetChanged()
+                showMoney()
+                dialog.dismiss()
+            }
+        }
     }
 
     /* Metodos para las tareas */
@@ -164,10 +303,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val task = family.getTask(selectedTask)
         task.setState(TaskState.COMPLETE)
         task.setChild(child)
-        if (task.isMandatory()){
+        if (task.isMandatory()) {
             mandatoryTaskAdapter.filterTasks()
             mandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
-        }else{
+        } else {
             noMandatoryTaskAdapter.filterTasks()
             noMandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
         }
@@ -258,16 +397,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
     }
 
-    /* Metodos para los objetivos de ahorro */
-
-    private fun saveMoney(selectedGoal: Int) {
-
-    }
-
-    private fun extractMoney(selectedGoal: Int) {
-
-    }
-
     /* Metodos para obtener la información de la familia */
     private fun getFamily() {
         if (ContextFamily.family != null) {
@@ -289,7 +418,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private fun showTask() {
         mandatoryTaskAdapter = TaskMandatoryAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePostition -> completeTask(selectedTask,recyclePostition) }
+            completeTask = { selectedTask, recyclePostition ->
+                completeTask(
+                    selectedTask,
+                    recyclePostition
+                )
+            }
         )
         val rvTaskObligatorias = findViewById<RecyclerView>(R.id.rvTaskObligatorias)
         rvTaskObligatorias.layoutManager = LinearLayoutManager(this)
@@ -297,21 +431,27 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask,recyclePostition -> completeTask(selectedTask,recyclePostition) }
+            completeTask = { selectedTask, recyclePostition ->
+                completeTask(
+                    selectedTask,
+                    recyclePostition
+                )
+            }
         )
         val rvTaskExtra = findViewById<RecyclerView>(R.id.rvTaskExtra)
         rvTaskExtra.layoutManager = LinearLayoutManager(this)
         rvTaskExtra.adapter = noMandatoryTaskAdapter
     }
 
-    private fun showGoals(){
+    private fun showGoals() {
         val recyclerView = findViewById<RecyclerView>(R.id.rvGoals)
         recyclerView.layoutManager = LinearLayoutManager(this)
         goalAdapter = GoalAdapter(
             goals = child.getGoals(),
-            saveMoney = {selectedGoal -> saveMoney(selectedGoal)},
-            extractTask = {selectedGoal -> extractMoney(selectedGoal)}
+            saveMoney = { selectedGoal -> saveMoney(selectedGoal) },
+            extractTask = { selectedGoal -> extractMoney(selectedGoal) }
         )
+        recyclerView.adapter = goalAdapter
     }
 
     private fun showCashFlow() {
@@ -335,6 +475,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         button.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue))
         button.setColorFilter(ContextCompat.getColor(this, R.color.mid_gray))
     }
+
     private fun restartButtons() {
         expensesButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
         taskButton.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_blue))
@@ -346,6 +487,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goalsButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
         gameButton.setColorFilter(ContextCompat.getColor(this, R.color.dark_gray))
     }
+
     private fun animateExpenses() {
         if (tareas) {
             Animations.animateViewOfFloat(taskLayout, "translationX", 2000f, 300)
@@ -363,6 +505,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = false
         games = false
     }
+
     private fun animateTareas() {
         if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
@@ -382,6 +525,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = false
         games = false
     }
+
     private fun animateGoals() {
         if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
@@ -401,6 +545,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         goals = true
         games = false
     }
+
     private fun animateGames() {
         if (expenses) {
             Animations.animateViewOfFloat(expensesLayout, "translationX", -2000f, 300)
@@ -434,6 +579,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         toggle.syncState()
     }
+
     private fun initNavView() {
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
@@ -444,6 +590,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         navigationView.addHeaderView(headerView)
 
     }
+
     @Deprecated("Deprecated")
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -462,6 +609,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
         }
     }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
@@ -474,9 +622,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         return true
     }
+
     private fun backProfiles() {
         startActivity(Intent(this, ProfilesActivity::class.java))
     }
+
     private fun signOut() {
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))

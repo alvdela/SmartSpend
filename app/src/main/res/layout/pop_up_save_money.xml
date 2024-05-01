@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popUpSaveMoney"
     android:layout_width="350dp"
-    android:layout_height="200dp"
+    android:layout_height="220dp"
     android:background="@drawable/corners_white"
     android:layout_gravity="center"
     android:translationZ="5dp">
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <NumberPicker
-            android:id="@+id/numberPickerNumber"
+            android:id="@+id/npNumber"
             android:layout_width="wrap_content"
             android:layout_height="120dp"
             android:theme="@style/NumberPickerTheme"
@@ -55,7 +55,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <NumberPicker
-            android:id="@+id/numberPickerDecimal"
+            android:id="@+id/npDecimal"
             android:layout_width="wrap_content"
             android:layout_height="120dp"
             android:theme="@style/NumberPickerTheme"

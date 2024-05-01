@@ -122,7 +122,8 @@
             android:padding="2dp"
             android:tag="1"
             android:text="@string/juguetes_o_juegos"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/radio_button_activities"

@@ -3,13 +3,13 @@ package com.alvdela.smartspend.model
 class SavingGoal(
     private var description: String,
     private var goal: Float,
-    private var saving: Float = 0f,
     private var type: GoalType
 ) {
-    private var archived = false
+    private var achived = false
+    private var saving: Float = 0f
 
     fun isArchived(): Boolean{
-        return archived
+        return achived
     }
 
     fun getDescription(): String{
@@ -40,8 +40,12 @@ class SavingGoal(
 
     fun checkArchieved(){
         if (getSaving() == getGoal()){
-            archived = true
+            achived = true
         }
+    }
+
+    fun getMoneyLeft(): Float{
+        return getGoal() - getSaving()
     }
 
 }
