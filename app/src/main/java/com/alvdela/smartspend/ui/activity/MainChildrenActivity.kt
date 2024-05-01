@@ -160,20 +160,17 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     /* Metodos para las tareas */
-    private fun completeTask(selectedTask: Int) {
-        updateTasks()
+    private fun completeTask(selectedTask: Int, recyclePostition: Int) {
         val task = family.getTask(selectedTask)
         task.setState(TaskState.COMPLETE)
         task.setChild(child)
-        updateTasks()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun updateTasks() {
-        mandatoryTaskAdapter.filterTasks()
-        mandatoryTaskAdapter.notifyDataSetChanged()
-        noMandatoryTaskAdapter.filterTasks()
-        noMandatoryTaskAdapter.notifyDataSetChanged()
+        if (task.isMandatory()){
+            mandatoryTaskAdapter.filterTasks()
+            mandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
+        }else{
+            noMandatoryTaskAdapter.filterTasks()
+            noMandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
+        }
     }
 
     /* Metodos para los gastos*/
@@ -292,7 +289,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private fun showTask() {
         mandatoryTaskAdapter = TaskMandatoryAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask -> completeTask(selectedTask) }
+            completeTask = { selectedTask, recyclePostition -> completeTask(selectedTask,recyclePostition) }
         )
         val rvTaskObligatorias = findViewById<RecyclerView>(R.id.rvTaskObligatorias)
         rvTaskObligatorias.layoutManager = LinearLayoutManager(this)
@@ -300,7 +297,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask -> completeTask(selectedTask) }
+            completeTask = { selectedTask,recyclePostition -> completeTask(selectedTask,recyclePostition) }
         )
         val rvTaskExtra = findViewById<RecyclerView>(R.id.rvTaskExtra)
         rvTaskExtra.layoutManager = LinearLayoutManager(this)

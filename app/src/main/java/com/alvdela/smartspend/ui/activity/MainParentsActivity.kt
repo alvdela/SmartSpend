@@ -30,7 +30,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
@@ -192,26 +191,26 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     /* Metodo para la gestion de las tareas */
 
-    private fun closeTask(selectedTask: Int) {
+    private fun closeTask(selectedTask: Int, recyclePosition: Int) {
         showPopUp(R.layout.pop_up_delete)
         val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
         tvDelete.text = resources.getString(R.string.delete_task)
         val cancel = dialog.findViewById<Button>(R.id.cancelDelete)
         cancel.setOnClickListener {
             dialog.dismiss()
-            updateTasks()
         }
 
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
             family.removeTask(selectedTask)
             dialog.dismiss()
-            openTaskAdapter.notifyItemRemoved(selectedTask)
+            openTaskAdapter.filterTasks()
+            openTaskAdapter.notifyItemRemoved(recyclePosition)
         }
 
     }
 
-    private fun completeTask(selectedTask: Int) {
+    private fun completeTask(selectedTask: Int, recyclePosition: Int) {
         showPopUp(R.layout.pop_up_complete_task)
         val task = family.getTask(selectedTask)
         val tvNota = dialog.findViewById<TextView>(R.id.tvNota)
@@ -221,24 +220,16 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
             task.setState(TaskState.OPEN)
-            updateTasks()
             dialog.dismiss()
         }
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
         closeTask.setOnClickListener {
             task.givePrice()
             family.removeTask(selectedTask)
-            updateTasks()
+            completeTaskAdapter.filterTasks()
+            completeTaskAdapter.notifyItemRemoved(recyclePosition)
             dialog.dismiss()
         }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun updateTasks() {
-        openTaskAdapter.filterTasks()
-        openTaskAdapter.notifyDataSetChanged()
-        completeTaskAdapter.filterTasks()
-        completeTaskAdapter.notifyDataSetChanged()
     }
 
     private fun createNewTask() {
@@ -293,7 +284,11 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 val task =
                     Task(description, fecha, cbObligatoria.isChecked, recompensa, TaskState.OPEN)
                 family.addTask(task)
-                updateTasks()
+                if (task.getState() == TaskState.OPEN){
+                    openTaskAdapter.notifyNewTask()
+                }else{
+                    completeTaskAdapter.notifyNewTask()
+                }
                 dialog.dismiss()
             }
         }
@@ -741,14 +736,14 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun showTasks() {
         openTaskAdapter = TaskOpenAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask -> closeTask(selectedTask) }
+            completeTask = { selectedTask, recyclePosition -> closeTask(selectedTask,recyclePosition) }
         )
         rvTaskPendientes.layoutManager = LinearLayoutManager(this)
         rvTaskPendientes.adapter = openTaskAdapter
 
         completeTaskAdapter = TaskCompleteAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask -> completeTask(selectedTask) }
+            completeTask = { selectedTask, recyclePosition -> completeTask(selectedTask, recyclePosition) }
         )
         rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
         rvTaskCompletadas.adapter = completeTaskAdapter

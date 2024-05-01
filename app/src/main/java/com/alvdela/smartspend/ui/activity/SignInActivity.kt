@@ -1,6 +1,5 @@
 package com.alvdela.smartspend.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -8,9 +7,19 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.ui.Animations
 
 class SignInActivity : AppCompatActivity() {
+    companion object{
+        var isPrivacyPolicyShown = false
+        private lateinit var fragmentContainer: FragmentContainerView
+        fun hidePrivacyTerms(){
+            Animations.animateViewOfFloat(fragmentContainer,"translationY", 3000f,300)
+            isPrivacyPolicyShown = false
+        }
+    }
 
     private lateinit var familyNameInput: EditText
     private lateinit var tutorNameInput: EditText
@@ -22,7 +31,7 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var passwordAgainInput: EditText
     private lateinit var passwordWarning2: TextView
     private lateinit var checkTerms: CheckBox
-    private lateinit var registrarseButton: TextView
+    private lateinit var signInButton: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +50,22 @@ class SignInActivity : AppCompatActivity() {
         passwordAgainInput = findViewById(R.id.password_again)
         passwordWarning2 = findViewById(R.id.tv_advise_password2)
         checkTerms = findViewById(R.id.terminos_check)
-        registrarseButton = findViewById(R.id.registrarse_button)
+        signInButton = findViewById(R.id.registrarse_button)
+        fragmentContainer = findViewById(R.id.fragmentPrivacySignIn)
     }
 
     fun showPrivacyTerms(view: View) {
-        //TODO
+        isPrivacyPolicyShown = true
+        Animations.animateViewOfFloat(fragmentContainer, "translationY", 0f,300)
+    }
+
+    override fun onBackPressed() {
+        if (isPrivacyPolicyShown){
+            hidePrivacyTerms()
+            isPrivacyPolicyShown = false
+        }else{
+            super.onBackPressed()
+        }
     }
 
     private fun initShowButtons() {

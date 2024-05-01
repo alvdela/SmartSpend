@@ -2,7 +2,6 @@ package com.alvdela.smartspend.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Task
@@ -10,7 +9,7 @@ import com.alvdela.smartspend.model.TaskState
 
 class TaskNoMandatoryAdapter(
     private val tasks: MutableList<Task> = mutableListOf(),
-    private val completeTask: (Int) -> Unit
+    private val completeTask: (Int, Int) -> Unit
 ) : RecyclerView.Adapter<TaskViewHolder>() {
 
     private val filteredTasks: MutableList<Task> = mutableListOf()
@@ -37,6 +36,6 @@ class TaskNoMandatoryAdapter(
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = filteredTasks[position]
-        holder.render(task, completeTask, tasks.indexOf(task))
+        holder.render(task, completeTask, tasks.indexOf(task), position)
     }
 }

@@ -180,6 +180,12 @@
         android:backgroundTint="@android:color/transparent"
         android:onClick="showPrivacyTerms"/>
 
-
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentPrivacy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.alvdela.smartspend.ui.fragment.PrivacyPolicy"
+        tools:background="@color/gray_light_trans"
+        android:translationY="1000dp"/>
 
 </RelativeLayout>

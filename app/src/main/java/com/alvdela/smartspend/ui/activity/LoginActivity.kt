@@ -9,6 +9,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainer
+import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Allowance
@@ -18,6 +20,7 @@ import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Parent
+import com.alvdela.smartspend.ui.Animations
 import java.time.LocalDate
 
 
@@ -30,8 +33,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var accessButton: TextView
     private lateinit var signInButton: TextView
     private lateinit var mockButton: Button
-
-    private lateinit var family: Family
+    companion object{
+        var isPrivacyPolicyShown = false
+        private lateinit var fragmentContainer: FragmentContainerView
+        fun hidePrivacyTerms(){
+            Animations.animateViewOfFloat(fragmentContainer,"translationY", 3000f,300)
+            isPrivacyPolicyShown = false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
         accessButton = findViewById(R.id.acceder_button)
         signInButton = findViewById(R.id.registrarse_button)
         mockButton = findViewById(R.id.mock_button)
+        fragmentContainer = findViewById(R.id.fragmentPrivacy)
 
         errorText.visibility = View.INVISIBLE
 
@@ -74,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun createMockFamily() {
-        family = Family("Invitados", "email@email.com")
+        val family = Family("Invitados", "email@email.com")
         val parent = Parent("Invitado", "")
         family.addMember(parent)
         val child = Child("Hijo/a", "")
@@ -93,18 +103,22 @@ class LoginActivity : AppCompatActivity() {
         ContextFamily.isMock = true
     }
 
-
     fun showPrivacyTerms(view: View) {
-        //TODO
+        Animations.animateViewOfFloat(fragmentContainer,"translationY", 0f,300)
+        isPrivacyPolicyShown = true
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        //TODO mensaje que pregunte al usuario si desea cerrar la aplicacion
-        val startMain = Intent(Intent.ACTION_MAIN)
-        startMain.addCategory(Intent.CATEGORY_HOME)
-        startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(startMain)
+        if (isPrivacyPolicyShown){
+            hidePrivacyTerms()
+        }else{
+            super.onBackPressed()
+            //TODO mensaje que pregunte al usuario si desea cerrar la aplicacion
+            val startMain = Intent(Intent.ACTION_MAIN)
+            startMain.addCategory(Intent.CATEGORY_HOME)
+            startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(startMain)
+        }
     }
 
     private fun initShowButtons() {
