@@ -1,10 +1,12 @@
 package com.alvdela.smartspend.ui.adapter
 
+import android.graphics.Color
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.alvdela.smartspend.R
@@ -33,7 +35,13 @@ class GoalViewHolder(val view: View): ViewHolder(view) {
         progressGoal.max = goal.getGoal().toInt()
         progressGoal.progress = goal.getSaving().toInt()
 
-        tvProgreso.text = "${goal.getSaving()} de ${goal.getGoal()}"
+        val saving = if (goal.getSaving().toString().length > 5){
+            goal.getSaving().toString().substring(0,6)
+        }else{
+            goal.getSaving().toString()
+        }
+
+        tvProgreso.text = "$saving de ${goal.getGoal()}"
 
         tvPercentage.text = "${Utility.getPercentage(goal.getSaving(),goal.getGoal())}%"
 
@@ -45,6 +53,12 @@ class GoalViewHolder(val view: View): ViewHolder(view) {
 
         val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.fade_anim)
         itemView.startAnimation(animation)
+
+        if (goal.isArchived()){
+            btSaveMoney.isEnabled = false
+            val itemGoal = view.findViewById<ConstraintLayout>(R.id.itemGoal)
+            itemGoal.setBackgroundResource(R.drawable.edge_green)
+        }
     }
 
 }

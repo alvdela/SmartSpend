@@ -35,10 +35,11 @@ class SavingGoal(
             this.saving = getGoal()
         }
         this.saving = getSaving() + money
+        checkAchieved()
         return rest
     }
 
-    fun checkArchieved(){
+    private fun checkAchieved(){
         if (getSaving() == getGoal()){
             achived = true
         }

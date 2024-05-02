@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -221,33 +222,59 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val goal = child.getGoals()[selectedGoal]
         showPopUp(R.layout.pop_up_save_money)
 
-        val natural = Utility.getNaturalNumber(goal.getMoneyLeft())
-        val decimal = Utility.getDecimalNumber(goal.getMoneyLeft())
-
         val npNumber = dialog.findViewById<NumberPicker>(R.id.npNumber)
+        val editText: EditText = npNumber.getChildAt(0) as EditText
+        editText.inputType = InputType.TYPE_NULL
         val npDecimal = dialog.findViewById<NumberPicker>(R.id.npDecimal)
+        val editText2: EditText = npDecimal.getChildAt(0) as EditText
+        editText2.inputType = InputType.TYPE_NULL
+
         npNumber.minValue = 0
-        npNumber.value = 0
         npNumber.wrapSelectorWheel = true
         npNumber.setFormatter { i -> String.format("%02d", i) }
+        npNumber.value = 0
         npDecimal.minValue = 0
-        npDecimal.value = 0
         npDecimal.wrapSelectorWheel = true
-        npDecimal.setFormatter { i -> String.format("%02d", i) }
+        npDecimal.setFormatter { i -> String.format("%2d0", i) }
+        npDecimal.value = 0
 
-        if (child.getActualMoney() < goal.getGoal()){
-            npNumber.maxValue = Utility.getNaturalNumber(child.getActualMoney())
-            if (Utility.getNaturalNumber(child.getActualMoney()) <= 0){
-                npDecimal.maxValue = Utility.getDecimalNumber(child.getActualMoney())
-            }else{
-                npDecimal.maxValue = 99
-                npDecimal.setFormatter { i -> String.format("%02d", i*5) }
-            }
-        }else{
+        var natural = 0
+        var decimal = 0
+
+        if (child.getActualMoney() < goal.getMoneyLeft()){
+            natural = Utility.getNaturalNumber(child.getActualMoney())
+            decimal = Utility.getDecimalNumber(child.getActualMoney())
             npNumber.maxValue = natural
             if (natural <= 0){
-                npDecimal.maxValue = decimal
+                npDecimal.maxValue = Utility.getDecimalNumber(child.getActualMoney()) + 1
+                npDecimal.setFormatter { i -> String.format("%02d", i) }
             }else{
+                npDecimal.maxValue = 99
+                npDecimal.setFormatter { i -> String.format("%02d", i) }
+            }
+        }else{
+            natural = Utility.getNaturalNumber(goal.getMoneyLeft())
+            decimal = Utility.getDecimalNumber(goal.getMoneyLeft())
+            npNumber.maxValue = natural
+            if (npNumber.maxValue <= 0){
+                npDecimal.maxValue = decimal + 1
+                npDecimal.setFormatter { i -> String.format("%02d", i) }
+            }else{
+                npDecimal.maxValue = 99
+                npDecimal.setFormatter { i -> String.format("%02d", i) }
+            }
+        }
+
+        npNumber.setOnValueChangedListener { _, _, newVal ->
+            if (newVal == npNumber.maxValue && decimal == 0){
+                npDecimal.value = 0
+                npDecimal.isEnabled = false
+            }else if(newVal == npNumber.maxValue && decimal != 0){
+                npDecimal.maxValue = decimal
+                npDecimal.setFormatter { i -> String.format("%02d", i) }
+                npDecimal.isEnabled = true
+            }else{
+                npDecimal.isEnabled = true
                 npDecimal.maxValue = 99
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }
@@ -268,6 +295,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun extractMoney(selectedGoal: Int) {
         val goal = child.getGoals()[selectedGoal]
         if (goal.isArchived()){
@@ -276,6 +304,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             confirmGoal.setOnClickListener {
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
+                expenseAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
         }else{
