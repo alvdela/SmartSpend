@@ -53,7 +53,7 @@ class ProfilesActivity : AppCompatActivity() {
     }
 
     private fun getFamily() {
-        if (ContextFamily.family != null) {
+        if (ContextFamily.isMock) {
             family = ContextFamily.family!!
         } else {
             //TODO consulta a firebase

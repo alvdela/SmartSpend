@@ -168,7 +168,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:src="@drawable/ic_copyright"
-        android:backgroundTint="@android:color/transparent"/>
+        android:backgroundTint="@android:color/transparent"
+        android:onClick="showLicense"/>
 
     <ImageButton
         android:id="@+id/condition_of_use_button"

@@ -5,6 +5,7 @@ class SavingGoal(
     private var goal: Float,
     private var type: GoalType
 ) {
+    private lateinit var id: String
     private var achived = false
     private var saving: Float = 0f
 
@@ -26,6 +27,14 @@ class SavingGoal(
 
     fun getType(): GoalType{
         return this.type
+    }
+
+    fun getId(): String{
+        return id
+    }
+
+    fun setId(id:String){
+        this.id = id
     }
 
     fun saveMoney(money: Float): Float{

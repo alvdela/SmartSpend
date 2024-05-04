@@ -9,24 +9,9 @@ object ContextFamily {
 
     var isMock = false
 
-    var record = mutableListOf("Gasto")
-
     fun reset() {
         family = null
         familyEmail = null
         isMock = false
-    }
-
-    fun addRecord(newString: String){
-        var existe = false
-        for (i in record){
-            if (newString == i) existe = true
-        }
-        if (!existe){
-            record.add(0,newString)
-        }
-        if (record.size > 3){
-            record.removeAt(record.size - 1)
-        }
     }
 }

@@ -19,12 +19,14 @@ class Family(
         if (this.members.size < MAX_MEMBERS) {
             this.members[member.getUser()] = member
             return "Usuario añadido correctamente"
+            //TODO add to the database
         }
         return "Numero máximo de usuarios alcanzado (12 miembros)"
     }
 
     fun deleteMember(user: String) {
         this.members.remove(user)
+        //TODO remove to the database
     }
 
     fun getMember(user: String): Member? {
@@ -89,11 +91,13 @@ class Family(
 
     fun addTask(task: Task) {
         this.taskList.add(task)
+        //TODO add to the database
     }
 
     fun removeTask(indexTask: Int) {
         addTaskToHistoric(getTaskList()[indexTask])
         this.taskList.removeAt(indexTask)
+        //TODO remove to the database
     }
 
     private fun addTaskToHistoric(task: Task){
@@ -101,9 +105,11 @@ class Family(
         if (oldTask.size > MAX_HISTORIC){
             removeTaskFromHistoric(oldTask.size)
         }
+        //TODO add to the database
     }
     private fun removeTaskFromHistoric(indexTask: Int) {
         this.oldTask.removeAt(indexTask)
+        //TODO remove to the database
     }
 
     /* --- Metodos para asegurar la contraseña --- */

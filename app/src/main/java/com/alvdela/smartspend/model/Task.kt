@@ -5,13 +5,14 @@ import java.time.temporal.ChronoUnit
 
 class Task (
     private var description: String,
-    private var limitDate: LocalDate?,
+    private var limitDate: LocalDate? = null,
     private var mandatory: Boolean = false,
     private var price: Float = 0f,
     private var state: TaskState
 ){
-    private lateinit var completedDate: LocalDate
-    private lateinit var child: Child
+    private lateinit var id: String
+    private var completedDate: LocalDate? = null
+    private var child: Child? = null
 
     fun getDescription(): String {
         return description
@@ -45,6 +46,14 @@ class Task (
         this.price = price
     }
 
+    fun setCompletedDate(date: LocalDate){
+        this.completedDate = date
+    }
+
+    fun getCompletedDate(): LocalDate?{
+        return this.completedDate
+    }
+
     // Getter and Setter for state
     fun getState(): TaskState {
         return state
@@ -58,9 +67,25 @@ class Task (
         this.child = child
     }
 
+    fun getChildName(): String{
+        return if (this.child != null){
+            this.child!!.getUser()
+        }else{
+            ""
+        }
+    }
+
+    fun getId(): String{
+        return id
+    }
+
+    fun setId(id:String){
+        this.id = id
+    }
+
     fun givePrice(){
         if (this.state == TaskState.COMPLETE){
-            this.child.claimPrice(getDescription(),getPrice())
+            this.child!!.claimPrice(getDescription(),getPrice())
         }
     }
 

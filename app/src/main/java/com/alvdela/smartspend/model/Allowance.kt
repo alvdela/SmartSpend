@@ -9,7 +9,7 @@ class Allowance (
     private var amount: Float,
     private var type: AllowanceType)
 {
-
+    private lateinit var id : String
     private var expired = false
 
     /* --- Setter y getter --- */
@@ -43,6 +43,14 @@ class Allowance (
 
     fun setType(newType: AllowanceType){
         this.type = newType
+    }
+
+    fun getId(): String{
+        return id
+    }
+
+    fun setId(id:String){
+        this.id = id
     }
 
     /* Fin de setter y getter */

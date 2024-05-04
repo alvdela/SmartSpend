@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 object Utility {
+
     fun isValidDate(dateStr: String, dateFormat: DateTimeFormatter): Boolean {
         return try {
             LocalDate.parse(dateStr, dateFormat)

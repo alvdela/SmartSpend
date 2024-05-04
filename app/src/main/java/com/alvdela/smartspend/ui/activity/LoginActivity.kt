@@ -8,11 +8,12 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainer
 import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.firebase.FirebaseManager
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.model.CashFlow
@@ -21,21 +22,35 @@ import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.ui.Animations
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.runBlocking
+import java.lang.Thread.sleep
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
 
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var familyInput: EditText
+    private var email = "email@email.com"
+    private var password by Delegates.notNull<String>()
+
+    private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var errorText: TextView
     private lateinit var forgetButton: TextView
     private lateinit var accessButton: TextView
     private lateinit var signInButton: TextView
     private lateinit var mockButton: Button
+
+    private lateinit var mAuth: FirebaseAuth
+
     companion object{
         var isPrivacyPolicyShown = false
         private lateinit var fragmentContainer: FragmentContainerView
+        const val URL_LICENSE = "https://creativecommons.org/licenses/by-nc/4.0/"
         fun hidePrivacyTerms(){
             Animations.animateViewOfFloat(fragmentContainer,"translationY", 3000f,300)
             isPrivacyPolicyShown = false
@@ -50,20 +65,24 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initObjects() {
-        familyInput = findViewById(R.id.familia_login)
+        emailInput = findViewById(R.id.familia_login)
         passwordInput = findViewById(R.id.password_login)
+
         errorText = findViewById(R.id.error_text)
+
         forgetButton = findViewById(R.id.forget_button)
+
         accessButton = findViewById(R.id.acceder_button)
         signInButton = findViewById(R.id.registrarse_button)
         mockButton = findViewById(R.id.mock_button)
-        fragmentContainer = findViewById(R.id.fragmentPrivacy)
 
         errorText.visibility = View.INVISIBLE
 
         mockButton.setOnClickListener {
-            createMockFamily()
-            goProfiles()
+            ContextFamily.isMock = true
+            val family = createMockFamily()
+            if (family != null) goProfiles(family, email)
+            else Toast.makeText(this, "Error al crear la familia de muestra", Toast.LENGTH_SHORT).show()
         }
 
         signInButton.setOnClickListener {
@@ -71,36 +90,48 @@ class LoginActivity : AppCompatActivity() {
         }
 
         accessButton.setOnClickListener {
-            //TODO acceso mediante firebase
+            loginUser()
         }
+
+        fragmentContainer = findViewById(R.id.fragmentPrivacy)
+    }
+
+    private fun loginUser() {
+        email = emailInput.text.toString()
+        password = passwordInput.text.toString()
+
+        mAuth.signInWithEmailAndPassword(email,password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful){
+                    //Todo getDataFromFireBase
+                    val family = Family("a",email)
+                    goProfiles(family,email)
+                }else{
+                    errorText.visibility = View.VISIBLE
+                }
+            }
     }
 
     private fun goSignIn() {
         startActivity(Intent(this, SignInActivity::class.java))
     }
 
-    private fun goProfiles() {
+    private fun goProfiles(family: Family, email: String) {
+        ContextFamily.family = family
+        ContextFamily.familyEmail = email
         startActivity(Intent(this, ProfilesActivity::class.java))
     }
 
-    private fun createMockFamily() {
-        val family = Family("Invitados", "email@email.com")
-        val parent = Parent("Invitado", "")
-        family.addMember(parent)
-        val child = Child("Hijo/a", "")
-        val expense1 = CashFlow("Gasto1", 5.5F, CashFlowType.COMIDA, LocalDate.now().minusDays(5))
-        val expense2 = CashFlow("Gasto2", 10F, CashFlowType.COMPRAS, LocalDate.now())
-        val expense3 = CashFlow("Gasto3", 7.75F, CashFlowType.OCIO, LocalDate.now())
-        child.setActualMoney(100f)
-        child.addExpense(expense1)
-        child.addExpense(expense2)
-        child.addExpense(expense3)
-        val allowance = Allowance("Propina", LocalDate.now().plusDays(5),5f,AllowanceType.SEMANAL)
-        child.addAllowance(allowance)
-        family.addMember(child)
-        println(child.getCashFlow().toList())
-        ContextFamily.family = family
-        ContextFamily.isMock = true
+    private fun createMockFamily(): Family? {
+        val family = FirebaseManager.getInstance().getFamily("mock")
+        sleep(1000)
+        if (family != null){
+            runBlocking {
+                FirebaseManager.getInstance().getMembers(family)
+            }
+        }
+
+        return family
     }
 
     fun showPrivacyTerms(view: View) {
@@ -127,5 +158,10 @@ class LoginActivity : AppCompatActivity() {
         passwordButton.setOnCheckedChangeListener{ _, isChecked ->
             passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
+    }
+
+    fun showLicense(view: View) {
+        /*val intent = Intent(Intent.ACTION_VIEW, Uri.parse(URL_LICENSE))
+        startActivity(intent)*/
     }
 }

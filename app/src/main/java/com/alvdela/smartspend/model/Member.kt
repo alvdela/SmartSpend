@@ -13,6 +13,10 @@ open class Member(
         this.user = user
     }
 
+    internal fun getPassword(): String{
+        return this.password
+    }
+
     internal fun setPassword(password:String){
         this.password = password
     }

@@ -19,11 +19,13 @@ class Child(user: String, password: String) : Member(user, password) {
 
     fun addAllowance(allowance: Allowance) {
         this.allowanceList.add(allowance)
+        //TODO add to the database
     }
 
     fun updateAllowance(allowance: Allowance, id: Int) {
         this.allowanceList.removeAt(id)
         this.allowanceList.add(id, allowance)
+        //TODO update from database
     }
 
     fun getAllowances(): MutableList<Allowance> {
@@ -59,6 +61,7 @@ class Child(user: String, password: String) : Member(user, password) {
                 index++
             }
             this.cashFlowList.add(index, cashFlow)
+            //TODO add to the database
             return index
         }
         return -1
@@ -70,14 +73,20 @@ class Child(user: String, password: String) : Member(user, password) {
             index++
         }
         this.cashFlowList.add(index, cashFlow)
+        //TODO add to the database
     }
 
     fun getCashFlow(): MutableList<CashFlow> {
         return cashFlowList
     }
 
+    fun setCashFlow(cashFlowList: MutableList<CashFlow>){
+        this.cashFlowList = cashFlowList
+    }
+
     fun addGoal(goal: SavingGoal) {
         this.goalList.add(goal)
+        //TODO add to the database
     }
 
     fun getGoals(): MutableList<SavingGoal> {
@@ -91,7 +100,7 @@ class Child(user: String, password: String) : Member(user, password) {
         addIncome(payment)
         this.actualMoney += goal.getSaving()
         this.goalList.removeAt(i)
-
+        //TODO remove to the database
     }
 
     fun claimPrice(description: String, money: Float) {

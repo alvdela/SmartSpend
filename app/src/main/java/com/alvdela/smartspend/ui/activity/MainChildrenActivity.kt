@@ -89,6 +89,8 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private var goals = false
     private var games = false
 
+    var record = mutableListOf("Gasto")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_children)
@@ -352,7 +354,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val addButton = dialog.findViewById<Button>(R.id.addNewSpent)
 
         descripcion.setText("")
-        val autoComplete = CustomSpinnerAdapter(this, ContextFamily.record.toList())
+        val autoComplete = CustomSpinnerAdapter(this, record.toList())
         descripcion.setAdapter(autoComplete)
         descripcion.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) descripcion.showDropDown()
@@ -385,7 +387,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 ).show()
             } else {
                 amountNumber = amount.text.toString().toFloat()
-                ContextFamily.addRecord(descripcionText)
+                addRecord(descripcionText)
                 when (tipo) {
                     1 -> {
                         val newExpense = CashFlow(
@@ -428,7 +430,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     /* Metodos para obtener la información de la familia */
     private fun getFamily() {
-        if (ContextFamily.family != null) {
+        if (ContextFamily.isMock) {
             family = ContextFamily.family!!
             child = family.getMember(user) as Child
         } else {
@@ -660,5 +662,18 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
         ContextFamily.family = null
+    }
+
+    fun addRecord(newString: String){
+        var existe = false
+        for (i in record){
+            if (newString == i) existe = true
+        }
+        if (!existe){
+            record.add(0,newString)
+        }
+        if (record.size > 3){
+            record.removeAt(record.size - 1)
+        }
     }
 }
