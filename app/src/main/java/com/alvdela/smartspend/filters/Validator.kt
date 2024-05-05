@@ -10,9 +10,19 @@ object Validator {
         return matcher.find()
     }
 
-    fun validateDate(date: String): Boolean{
+    fun validatePassword(password: String): Boolean {
+        if (password.length < 8) {
+            return false
+        }
+
+        val pattern = Regex("^(?=.*[a-zA-Z])(?=.*[0-9]).+$")
+
+        return pattern.matches(password)
+    }
+
+    /*fun validateDate(date: String): Boolean{
         val pattern = Pattern.compile("[0-9][0-9]\\/[0-9][0-9]\\/[0-9][0-9][0-9][0-9]")
         val matcher = pattern.matcher(date)
         return matcher.find()
-    }
+    }*/
 }

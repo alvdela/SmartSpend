@@ -37,6 +37,18 @@ object Animations {
         view.startAnimation(animation)
     }
 
+    fun girarImagen(view: View){
+        val animation = RotateAnimation(
+            0f, 360f,
+            RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+            RotateAnimation.RELATIVE_TO_SELF, 0.5f
+        )
+        animation.setDuration(2000)
+        animation.setRepeatCount(Animation.INFINITE)
+        animation.repeatMode = Animation.INFINITE
+        view.startAnimation(animation)
+    }
+
     fun compactView(button: ImageView, container: RelativeLayout, recycler: RecyclerView) {
         rotarImagen(button)
         sleep(300)

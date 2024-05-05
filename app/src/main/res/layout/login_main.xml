@@ -189,4 +189,10 @@
         tools:background="@color/gray_light_trans"
         android:translationY="1000dp"/>
 
+    <include
+        layout="@layout/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
 </RelativeLayout>

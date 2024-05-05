@@ -32,6 +32,10 @@ class Child(user: String, password: String) : Member(user, password) {
         return allowanceList
     }
 
+    fun setAllowances(allowances: MutableList<Allowance>){
+        this.allowanceList = allowances
+    }
+
     fun getPayment() {
         val iterator = allowanceList.iterator()
         while (iterator.hasNext()) {
@@ -91,6 +95,10 @@ class Child(user: String, password: String) : Member(user, password) {
 
     fun getGoals(): MutableList<SavingGoal> {
         return this.goalList
+    }
+
+    fun setGoals(goals: MutableList<SavingGoal>){
+        this.goalList = goals
     }
 
     fun claimGoal(i: Int) {

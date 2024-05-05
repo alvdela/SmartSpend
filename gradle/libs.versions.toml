@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.0"
+coreSplashscreen = "1.0.1"
 firebaseBom = "32.8.1"
 fragmentKtx = "1.6.2"
 kotlin = "1.9.0"
@@ -17,6 +18,7 @@ firebaseFirestore = "24.11.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

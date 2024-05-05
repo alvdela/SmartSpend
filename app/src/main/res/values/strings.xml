@@ -19,8 +19,8 @@
     <string name="correo_invalido">El correo no es valido</string>
     <string name="password_advise">Debe tener un tamaño de 8 con numeros y letras</string>
     <string name="password_not_equals">Las contraseñas no coinciden</string>
-    <string name="terms1">"He leido y acepto los "</string>
-    <string name="terms2">terminos y condiciones</string>
+    <string name="terms1">"He leido y acepto la "</string>
+    <string name="terms2">politica de privacidad</string>
     <string name="forgot">Recuperar contraseña</string>
     <string name="toolbar_example">Usuario</string>
     <string name="settings">Editar perfil</string>

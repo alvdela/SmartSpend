@@ -1,6 +1,8 @@
+/*
 package com.alvdela.smartspend.firebase
 
 import android.util.Log
+import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.model.CashFlow
@@ -33,16 +35,6 @@ class FirebaseManager private constructor() {
         @Volatile
         private var instance: FirebaseManager? = null
 
-        private const val FAMILY = "family"
-
-        private const val MEMBERS = "members"
-        const val TASKS = "tasks"
-        const val HISTORIC = "oldTasks"
-
-        private const val ALLOWANCES = "allowances"
-        private const val CASHFLOW = "cashFlow"
-        private const val GOALS = "goals"
-
         fun getInstance(): FirebaseManager {
             return instance ?: synchronized(this) {
                 instance ?: FirebaseManager().also { instance = it }
@@ -50,48 +42,38 @@ class FirebaseManager private constructor() {
         }
     }
 
-    /**
+    */
+/**
      * Funcion creada para comprobar la conexión con Firebase
-     */
-    fun test(){
+     *//*
+
+    fun test() {
         collectionRef = firebaseFirestore.collection("test")
-        collectionRef.document(FAMILY).set(hashMapOf(
-            "familyName" to "test",
-            "familyEmail" to "email@email.com"
-        ))
-    }
-
-    suspend fun getFamily(collection: String): Family? {
-        return withContext(Dispatchers.IO) {
-            suspendCoroutine { continuation ->
-                collectionRef = firebaseFirestore.collection(collection)
-
-                collectionRef.document(FAMILY)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        if (document.exists()) {
-                            val familyName = document.getString("familyName")
-                            val familyEmail = document.getString("familyEmail")
-                            val family = Family(familyName!!, familyEmail!!)
-                            continuation.resume(family)
-                        } else {
-                            continuation.resume(null)
-                        }
-                    }
-                    .addOnFailureListener { exception ->
-                        continuation.resumeWithException(exception)
-                    }
-            }
-        }
-    }
-
-    fun addFamily(family: Family) {
         collectionRef.document(FAMILY).set(
             hashMapOf(
-                "familyName" to family.getName(),
-                "familyEmail" to family.getEmail()
+                "familyName" to "test",
+                "familyEmail" to "email@email.com"
             )
         )
+    }
+
+    fun getFamily(collection: String) {
+        collectionRef = firebaseFirestore.collection(collection)
+
+        collectionRef
+            .document(FAMILY)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val familyName = document.getString("familyName")
+                    val familyEmail = document.getString("familyEmail")
+                    val family = Family(familyName!!, familyEmail!!)
+                    ContextFamily.family = family
+                }
+            }
+            .addOnFailureListener { exception ->
+                println(exception)
+            }
     }
 
     fun updateFamily(family: Family) {
@@ -397,7 +379,7 @@ class FirebaseManager private constructor() {
                     val amount = document.getDouble("amount")!!.toFloat()
                     val type = CashFlowType.fromString(document.getString("type")!!)
                     val date = LocalDate.parse(document.getString("date")!!, dateFormat)
-                    val cashFlow = CashFlow(description,amount,type!!,date)
+                    val cashFlow = CashFlow(description, amount, type!!, date)
                     var index = 0
                     while (index < cashFlowList.size && cashFlowList[index].date.isAfter(cashFlow.date)) {
                         index++
@@ -408,18 +390,20 @@ class FirebaseManager private constructor() {
         return cashFlowList
     }
 
-    fun addCashFlow(child: String, cashFlow: CashFlow){
+    fun addCashFlow(child: String, cashFlow: CashFlow) {
         collectionRef
             .document(FAMILY)
             .collection(MEMBERS)
             .document(child)
             .collection(CASHFLOW)
-            .add(hashMapOf(
-                "description" to cashFlow.description,
-                "amount" to cashFlow.amount,
-                "type" to CashFlowType.toString(cashFlow.type),
-                "date" to cashFlow.date.format(dateFormat)
-            ))
+            .add(
+                hashMapOf(
+                    "description" to cashFlow.description,
+                    "amount" to cashFlow.amount,
+                    "type" to CashFlowType.toString(cashFlow.type),
+                    "date" to cashFlow.date.format(dateFormat)
+                )
+            )
             .addOnSuccessListener {
                 println("Documento añadido correctamente")
             }
@@ -428,7 +412,7 @@ class FirebaseManager private constructor() {
             }
     }
 
-    fun getGoals(child: String): MutableList<SavingGoal>{
+    fun getGoals(child: String): MutableList<SavingGoal> {
         val goals = mutableListOf<SavingGoal>()
         collectionRef
             .document(FAMILY)
@@ -437,14 +421,14 @@ class FirebaseManager private constructor() {
             .collection(GOALS)
             .get()
             .addOnSuccessListener { documents ->
-                for (document in documents){
+                for (document in documents) {
                     val description = document.getString("description")!!
                     val savingGoal = document.getDouble("goal")!!.toFloat()
                     val saving = document.getDouble("saving")!!.toFloat()
                     val type = GoalType.fromString(document.getString("type")!!)
                     val id = document.id
 
-                    val goal = SavingGoal(description,savingGoal,type!!)
+                    val goal = SavingGoal(description, savingGoal, type!!)
                     goal.saveMoney(saving)
                     goal.setId(id)
 
@@ -454,19 +438,21 @@ class FirebaseManager private constructor() {
         return goals
     }
 
-    fun addGoal(child: String, goal: SavingGoal){
+    fun addGoal(child: String, goal: SavingGoal) {
         collectionRef
             .document(FAMILY)
             .collection(MEMBERS)
             .document(child)
             .collection(GOALS)
-            .add(hashMapOf(
-                "description" to goal.getDescription(),
-                "goal" to goal.getGoal(),
-                "type" to GoalType.toString(goal.getType()),
-                "saving" to goal.getSaving(),
-                "archived" to goal.isArchived()
-            ))
+            .add(
+                hashMapOf(
+                    "description" to goal.getDescription(),
+                    "goal" to goal.getGoal(),
+                    "type" to GoalType.toString(goal.getType()),
+                    "saving" to goal.getSaving(),
+                    "archived" to goal.isArchived()
+                )
+            )
             .addOnSuccessListener { document ->
                 goal.setId(document.id)
             }
@@ -482,13 +468,15 @@ class FirebaseManager private constructor() {
             .document(child)
             .collection(GOALS)
             .document(goal.getId()) // Suponiendo que tienes un ID para la meta
-            .update(mapOf(
-                "description" to goal.getDescription(),
-                "goal" to goal.getGoal(),
-                "type" to GoalType.toString(goal.getType()),
-                "saving" to goal.getSaving(),
-                "archived" to goal.isArchived()
-            ))
+            .update(
+                mapOf(
+                    "description" to goal.getDescription(),
+                    "goal" to goal.getGoal(),
+                    "type" to GoalType.toString(goal.getType()),
+                    "saving" to goal.getSaving(),
+                    "archived" to goal.isArchived()
+                )
+            )
             .addOnSuccessListener {
                 println("Meta actualizada correctamente")
             }
@@ -514,3 +502,4 @@ class FirebaseManager private constructor() {
     }
 
 }
+*/

@@ -39,6 +39,7 @@ android {
 dependencies {
 
     implementation(libs.firebase.bom)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

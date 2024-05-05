@@ -53,6 +53,16 @@ class Family(
         this.emailFamily = newEmail
     }
 
+    fun getChildren(): List<Child> {
+        val childList = mutableListOf<Child>()
+        for ((userName, member) in members) {
+            if (member is Child) {
+                childList.add(member)
+            }
+        }
+        return childList.toList()
+    }
+
     fun getChildrenNames(): List<String> {
         val childList = mutableListOf("")
         for ((userName, member) in members) {
