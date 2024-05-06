@@ -7,14 +7,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".MainParentsActivity"
+    tools:context=".ui.activity.MainParentsActivity"
     >
     <!-- tools:openDrawer="start" -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background">
+        android:background="@color/background"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/consultarLayout"
@@ -22,12 +23,13 @@
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_marginBottom="65dp"
-            android:background="@color/mid_gray"
+            android:background="@color/background"
             app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:translationX="0dp">
+            android:translationX="0dp"
+            tools:translationX="-1000dp">
 
             <TextView
                 android:id="@+id/tvConsultarMovimiento"
@@ -80,7 +82,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tvMiembro"
                 app:layout_constraintTop_toTopOf="@+id/consultaContainer"
                 app:layout_constraintBottom_toBottomOf="@+id/consultaContainer"                android:layout_weight=".28"
-                android:background="@drawable/spinner_background"
+                android:background="@color/transparent"
                 android:layout_marginStart="15dp"
                 android:orientation="horizontal">
 
@@ -90,14 +92,13 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:background="@android:color/transparent"
+                    android:background="@drawable/edge_white"
                     android:gravity="center"
                     android:layout_marginStart="5dp"
                     android:fontFamily="@font/andika_regular"
                     android:textColor="@color/black"
                     android:spinnerMode="dropdown"
                     android:overlapAnchor="false"
-                    android:backgroundTint="@color/white"
                     />
 
                 <ImageView
@@ -107,7 +108,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_extend_selector" />
+                    android:src="@drawable/ic_extend" />
 
             </RelativeLayout>
 
@@ -125,7 +126,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/consultaContainer"
-                app:layout_constraintVertical_bias="0"
                 />
 
 
@@ -142,7 +142,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:translationX="500dp">
+            android:translationX="500dp"
+            tools:translationX="0dp">
 
             <TextView
                 android:id="@+id/tvTareas"
@@ -166,35 +167,122 @@
                 android:background="@color/black"
                 app:layout_constraintTop_toBottomOf="@+id/tvTareas" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTask"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vDivideLine2">
+
+                <TextView
+                    android:id="@+id/tvPendientes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/andika_regular"
+                    android:text="@string/pendientes"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ivExtendPendientes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_extend"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tvPendientes"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/darker_gray" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/containerPendientes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/vDivideLine2"
-                app:layout_constraintBottom_toTopOf="@+id/buttonAddTask"
-                android:layout_marginTop="5dp"
-                app:layout_constraintVertical_bias="0"
-                android:layout_marginBottom="65dp"/>
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                app:layout_constraintHeight_max="500dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTaskPendientes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    android:scrollbarThumbVertical="@android:color/darker_gray"
+                    android:scrollbarSize="5dp"
+                    android:scrollbarAlwaysDrawVerticalTrack="true"
+                    android:fadeScrollbars="false"
+                    tools:background="@color/dark_gray"
+                    />
+            </RelativeLayout>
 
-            <Button
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/containerPendientes">
+                <TextView
+                    android:id="@+id/tvCompletadas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/andika_regular"
+                    android:text="@string/completadas"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:id="@+id/ivExtendCompletadas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_extend"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tvCompletadas"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/darker_gray" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/containerCompletadas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                app:layout_constraintHeight_max="500dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTaskCompletadas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    android:scrollbarThumbVertical="@android:color/darker_gray"
+                    android:scrollbarSize="5dp"
+                    android:scrollbarAlwaysDrawVerticalTrack="true"
+                    android:fadeScrollbars="false"                    tools:background="@color/dark_gray"
+                    />
+            </RelativeLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/buttonAddTask"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/corners_white"
-                android:text="@string/nueva_tarea"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:fontFamily="@font/andika_bold"
-                android:padding="10dp"
+                android:src="@drawable/ic_add"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                android:backgroundTint="@color/color1"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="20dp"/>
-
-
-
+                android:layout_marginBottom="35dp"
+                android:layout_marginEnd="35dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -236,13 +324,16 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAdminFamilia"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/buttonAddMember"
+                android:layout_height="480dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vDivideLine3"
-                android:layout_marginTop="5dp"
-                app:layout_constraintVertical_bias="0" />
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@android:color/darker_gray"
+                android:scrollbarSize="5dp"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:fadeScrollbars="false"
+                android:layout_marginTop="15dp" />
             <Button
                 android:id="@+id/buttonAddMember"
                 android:layout_width="wrap_content"
@@ -302,6 +393,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentProfile"
+        android:translationZ="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="@color/red"
+        android:translationX="500dp"
+        />
+
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
@@ -316,11 +416,5 @@
         app:menu="@menu/activity_main_drawer"
         />
 
-    <include
-        layout="@layout/pop_up_back_profiles"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        />
 
 </androidx.drawerlayout.widget.DrawerLayout>

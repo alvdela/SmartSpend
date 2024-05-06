@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- spinner_item_layout.xml -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     android:layout_width="match_parent"
@@ -7,5 +6,5 @@
     android:textColor="@android:color/black"
     android:fontFamily="@font/andika_regular"
     android:textSize="16sp"
-    android:padding="10dp"
-    android:background="@android:color/white"/>
+    android:padding="5dp"
+    android:background="@drawable/edge_white"/>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.fragment.ProfileFragment">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:background="@color/black"
+        android:src="@drawable/ic_default_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/app_bar_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="409dp"
+        android:layout_marginTop="25dp"
+        android:layout_height="1dp"
+        android:background="@color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <LinearLayout
+        android:id="@+id/lyUser"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:padding="5dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider4"
+        android:gravity="center_vertical"
+        android:background="@drawable/edge_white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_bold"
+            android:text="@string/nombre_del_usuario"
+            android:textColor="@color/black"
+            android:layout_marginEnd="10dp"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_regular"
+            tools:text="Ramon"
+            android:textColor="@color/black"
+            android:layout_marginEnd="20dp"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btEditUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_edit"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/lyUser"
+        app:layout_constraintTop_toTopOf="@+id/lyUser" />
+
+    <LinearLayout
+        android:id="@+id/lyFamilia"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:padding="5dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lyUser"
+        android:gravity="center_vertical"
+        android:background="@drawable/edge_white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_bold"
+            android:text="@string/familia"
+            android:textColor="@color/black"
+            android:layout_marginEnd="10dp"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tvNombreFamilia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_regular"
+            tools:text="Perez"
+            android:textColor="@color/black"
+            android:layout_marginEnd="20dp"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btEditFamilyName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_edit"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/lyFamilia"
+        app:layout_constraintTop_toTopOf="@+id/lyFamilia" />
+
+    <LinearLayout
+        android:id="@+id/lyEmail"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:padding="5dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lyFamilia"
+        android:gravity="center_vertical"
+        android:background="@drawable/edge_white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_bold"
+            android:text="@string/email"
+            android:textColor="@color/black"
+            android:layout_marginEnd="10dp"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/andika_regular"
+            android:maxLength="54"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            tools:text="ejemplo@ejemplo.com" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btEditEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_edit"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/lyEmail"
+        app:layout_constraintTop_toTopOf="@+id/lyEmail" />
+
+    <LinearLayout
+        android:id="@+id/lyPassword"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:padding="5dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lyEmail"
+        android:gravity="center_vertical"
+        android:background="@drawable/edge_white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/andika_bold"
+            android:text="@string/password"
+            android:textColor="@color/black"
+            android:layout_marginEnd="10dp"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tvPasswordProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/andika_regular"
+            android:maxLength="54"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:text="********" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btEditPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_edit"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/lyPassword"
+        app:layout_constraintTop_toTopOf="@+id/lyPassword" />
+
+    <TextView
+        android:id="@+id/btDeleteMember"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/eliminar_cuenta"
+        android:textColor="@color/red"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

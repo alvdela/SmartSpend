@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".LoginActivity">
+    tools:context=".ui.activity.LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                 android:id="@+id/show_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_selector"
+                android:button="@drawable/password_selector"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
@@ -168,7 +168,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:src="@drawable/ic_copyright"
-        android:backgroundTint="@android:color/transparent"/>
+        android:backgroundTint="@android:color/transparent"
+        android:onClick="showLicense"/>
 
     <ImageButton
         android:id="@+id/condition_of_use_button"
@@ -180,6 +181,18 @@
         android:backgroundTint="@android:color/transparent"
         android:onClick="showPrivacyTerms"/>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentPrivacy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.alvdela.smartspend.ui.fragment.PrivacyPolicy"
+        tools:background="@color/gray_light_trans"
+        android:translationY="1000dp"/>
 
+    <include
+        layout="@layout/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </RelativeLayout>

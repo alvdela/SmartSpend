@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "17779174496",
+    "project_id": "smart-spend-db6a7",
+    "storage_bucket": "smart-spend-db6a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:17779174496:android:55f6c0cb4fc27aa1902705",
+        "android_client_info": {
+          "package_name": "com.alvdela.smartspend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeQ-KBeEX9P6v5zgQxYnViU1dsv87TYps"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

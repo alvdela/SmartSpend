@@ -11,91 +11,91 @@
 
     <TextView
         android:id="@+id/tvPopUpAddTask"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:padding="5dp"
         android:text="@string/nueva_tarea"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/line5"
-        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddTask"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/black" />
+        android:background="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvPopUpAddTask" />
 
     <TextView
         android:id="@+id/tvDescripcionTarea"
-        app:layout_constraintEnd_toEndOf="@+id/line5"
-        app:layout_constraintStart_toStartOf="@+id/line5"
-        app:layout_constraintTop_toBottomOf="@+id/line5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:padding="5dp"
         android:text="@string/descripcion"
         android:textColor="@color/black"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/line5"
+        app:layout_constraintStart_toStartOf="@+id/line5"
+        app:layout_constraintTop_toBottomOf="@+id/line5" />
 
     <EditText
-        android:id="@+id/inputDescripcionGasto"
-        app:layout_constraintEnd_toEndOf="@+id/tvDescripcionTarea"
-        app:layout_constraintStart_toStartOf="@+id/tvDescripcionTarea"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescripcionTarea"
-        tools:text="aaaaa"
+        android:id="@+id/inputDescripcionTarea"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:background="@drawable/corners_white"
         android:fontFamily="@font/andika_regular"
         android:inputType="textAutoCorrect"
-        android:padding="10dp"
+        android:padding="5dp"
         android:textColor="@color/black"
         android:textCursorDrawable="@drawable/custom_cursor"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvDescripcionTarea"
+        app:layout_constraintStart_toStartOf="@+id/tvDescripcionTarea"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescripcionTarea"
+        tools:text="aaaaa" />
 
     <TextView
         android:id="@+id/tvFechaLimite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputDescripcionGasto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:padding="5dp"
         android:text="@string/fecha_limite"
         android:textColor="@color/black"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputDescripcionTarea" />
 
     <RelativeLayout
         android:id="@+id/dateContainer"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_height="40dp"
         android:background="@drawable/corners_white"
         app:layout_constraintEnd_toEndOf="@+id/tvFechaLimite"
         app:layout_constraintStart_toStartOf="@+id/tvFechaLimite"
         app:layout_constraintTop_toBottomOf="@+id/tvFechaLimite">
 
         <EditText
-            android:id="@+id/inputFechaLimite"
-            tools:text=""
+            android:id="@+id/inputFechaLimiteTarea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/corners_white"
             android:fontFamily="@font/andika_regular"
             android:inputType="datetime"
-            android:padding="10dp"
+            android:padding="5dp"
             android:textColor="@color/black"
             android:textCursorDrawable="@drawable/custom_cursor"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            tools:text="" />
 
         <CheckBox
             android:id="@+id/show_calendar"
@@ -108,104 +108,111 @@
             android:button="@drawable/ic_calendar_blank" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tv_advise_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/opcional"
+        android:textAlignment="center"
+        android:textColor="@color/darker_gray"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateContainer" />
+
     <CheckBox
         android:id="@+id/cbObligatoria"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/obligatoria"
-        app:layout_constraintTop_toBottomOf="@+id/dateContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:buttonTint="@color/black"
+        android:text="@string/obligatoria"
         android:textColor="@color/black"
-        android:layout_marginTop="10dp"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_advise_date" />
 
     <TextView
         android:id="@+id/tvRecompensa"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbObligatoria"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
         android:padding="5dp"
-        android:text="@string/recompensas"
+        android:text="@string/recompensa"
         android:textColor="@color/black"
-        android:textSize="18sp" />
-
-    <View
-        android:id="@+id/line6"
-        app:layout_constraintTop_toBottomOf="@+id/tvRecompensa"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="55dp"
-        android:layout_marginEnd="55dp"
-        android:background="@color/black" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvRecompensas"
-        android:layout_width="match_parent"
-        android:layout_height="125dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line6"
+        app:layout_constraintTop_toBottomOf="@+id/cbObligatoria" />
+
+    <EditText
+        android:id="@+id/recompensa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        tools:background="@color/dark_gray"/>
+        android:background="@drawable/corners_white"
+        android:fontFamily="@font/andika_regular"
+        android:inputType="numberDecimal"
+        android:padding="5dp"
+        android:textColor="@color/black"
+        android:textCursorDrawable="@drawable/custom_cursor"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvRecompensa">
+    </EditText>
 
     <TextView
+        android:id="@+id/tv_advise_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_recompensa"
-        android:textColor="@color/black"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/opcional"
+        android:textAlignment="center"
+        android:textColor="@color/darker_gray"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvRecompensas"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/andika_regular"
-        app:drawableStartCompat="@drawable/ic_plus_circle_outline"
-        android:drawablePadding="5dp"/>
-
-
+        app:layout_constraintTop_toBottomOf="@+id/recompensa" />
     <View
         android:id="@+id/line7"
-        app:layout_constraintBottom_toTopOf="@id/cancelTask"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/black" />
+        android:layout_marginBottom="20dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/cancelTask"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/cancelTask"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/corners_buttons_white"
+        android:background="@drawable/edge_white"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:text="@string/cancelar"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/addTask"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/corners_buttons_blue"
+        android:background="@drawable/edge_blue"
         android:fontFamily="@font/andika_bold"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:text="@string/add"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
