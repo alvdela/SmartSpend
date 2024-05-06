@@ -142,8 +142,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:translationX="500dp"
-            tools:translationX="0dp">
+            android:translationX="500dp">
 
             <TextView
                 android:id="@+id/tvTareas"
@@ -297,7 +296,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:translationX="1000dp">
+            android:translationX="1000dp"
+            tools:translationX="0dp">
 
             <TextView
                 android:id="@+id/tvAdministarFamilia"
@@ -324,10 +324,11 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAdminFamilia"
                 android:layout_width="match_parent"
-                android:layout_height="480dp"
+                android:layout_height="450dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vDivideLine3"
+                android:background="@color/white"
                 android:scrollbars="vertical"
                 android:scrollbarThumbVertical="@android:color/darker_gray"
                 android:scrollbarSize="5dp"

@@ -248,7 +248,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             decimal = Utility.getDecimalNumber(child.getActualMoney())
             npNumber.maxValue = natural
             if (natural <= 0){
-                npDecimal.maxValue = Utility.getDecimalNumber(child.getActualMoney()) + 1
+                npDecimal.maxValue = Utility.getDecimalNumber(child.getActualMoney())
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }else{
                 npDecimal.maxValue = 99
@@ -259,7 +259,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             decimal = Utility.getDecimalNumber(goal.getMoneyLeft())
             npNumber.maxValue = natural
             if (npNumber.maxValue <= 0){
-                npDecimal.maxValue = decimal + 1
+                npDecimal.maxValue = decimal
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }else{
                 npDecimal.maxValue = 99
@@ -306,6 +306,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             confirmGoal.setOnClickListener {
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
+                showMoney()
                 expenseAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
@@ -313,6 +314,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             showPopUp(R.layout.pop_up_delete)
             val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
             tvDelete.text = resources.getString(R.string.extract_money_of_goal)
+            tvDelete.textSize = 18f
             val cancelDelete = dialog.findViewById<Button>(R.id.cancelDelete)
             cancelDelete.setOnClickListener {
                 dialog.dismiss()

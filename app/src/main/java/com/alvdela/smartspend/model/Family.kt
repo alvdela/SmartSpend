@@ -1,10 +1,13 @@
 package com.alvdela.smartspend.model
 
 import java.io.Serializable
+import java.security.MessageDigest
+import java.security.SecureRandom
 
 class Family(
     private var familyName: String,
-    private var emailFamily: String
+    private var emailFamily: String,
+    private var passwordFamily: String = ""
 ) : Serializable {
     private var members: MutableMap<String, Member> = mutableMapOf()
     private val taskList: MutableList<Task> = mutableListOf()
@@ -110,7 +113,7 @@ class Family(
         //TODO remove to the database
     }
 
-    private fun addTaskToHistoric(task: Task){
+    fun addTaskToHistoric(task: Task){
         this.oldTask.add(0,task)
         if (oldTask.size > MAX_HISTORIC){
             removeTaskFromHistoric(oldTask.size)
@@ -123,10 +126,6 @@ class Family(
     }
 
     /* --- Metodos para asegurar la contraseña --- */
-
-    /* fun getPassword():String{
-         return this.passwordFamily
-     }
 
      fun setPassword(password: String) {
          val salt = generateSalt()
@@ -149,5 +148,5 @@ class Family(
          val messageDigest = MessageDigest.getInstance("SHA-256")
          val bytes = messageDigest.digest("$password$salt".toByteArray(Charsets.UTF_8))
          return bytes.joinToString("") { "%02x".format(it) }
-     }*/
+     }
 }

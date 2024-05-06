@@ -18,6 +18,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.firebase.Constants
 import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
 import com.alvdela.smartspend.firebase.Constants.CASHFLOW
 import com.alvdela.smartspend.firebase.Constants.FAMILY
@@ -33,6 +34,8 @@ import com.alvdela.smartspend.model.GoalType
 import com.alvdela.smartspend.model.MemberType
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.model.SavingGoal
+import com.alvdela.smartspend.model.Task
+import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.Animations
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -80,11 +83,12 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
-        val currentUser = FirebaseAuth.getInstance().currentUser
+        //TODO autologin
+        /*val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null){
-
-        }
+            getFamily()
+            goProfiles()
+        }*/
     }
 
     private fun initObjects() {
@@ -124,9 +128,8 @@ class LoginActivity : AppCompatActivity() {
         mAuth.signInWithEmailAndPassword(email,password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful){
-                    //Todo getDataFromFireBase
-                    val family = Family("a",email)
-                    goProfiles()
+                    ContextFamily.isMock = false
+                    getFamily()
                 }else{
                     errorText.visibility = View.VISIBLE
                 }
@@ -139,11 +142,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun goProfiles() {
         ContextFamily.familyEmail = email
+        if (!ContextFamily.isMock){
+            ContextFamily.family!!.setPassword(password)
+        }
         startActivity(Intent(this, ProfilesActivity::class.java))
     }
 
     private fun createMockFamily() {
-        showLoading()
+        ContextFamily.isMock = true
         getFamily()
     }
 
@@ -193,6 +199,7 @@ class LoginActivity : AppCompatActivity() {
     /* Metodos para obtener los datos de firebase */
 
     private fun getFamily() {
+        showLoading()
         FirebaseFirestore.getInstance()
             .collection(email)
             .document(FAMILY)
@@ -249,6 +256,8 @@ class LoginActivity : AppCompatActivity() {
             child.setGoals(getGoals(child.getUser()))
         }
         dismissLoading()
+        getTask(Constants.TASKS)
+        getTask(Constants.HISTORIC)
         goProfiles()
     }
 
@@ -328,5 +337,56 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         return goals
+    }
+
+    private fun getTask(typeOfTask: String) {
+        val family = ContextFamily.family!!
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(typeOfTask)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val description = document.getString("description")!!
+
+                    val limitDateString = document.getString("limitDate")!!
+                    var limitDate: LocalDate? = null
+                    if (limitDateString != "") {
+                        limitDate = LocalDate.parse(limitDateString, dateFormat)
+                    }
+
+                    val mandatory = document.getBoolean("mandatory")!!
+
+                    val price = document.getDouble("price")!!.toFloat()
+
+                    var state = TaskState.OPEN
+                    when (document.getString("state")!!) {
+                        "OPEN" -> state = TaskState.OPEN
+                        "COMPLETE" -> state = TaskState.COMPLETE
+                    }
+
+                    val task = Task(description, limitDate, mandatory, price, state)
+                    val id = document.id
+                    task.setId(id)
+                    if (state == TaskState.COMPLETE) {
+                        val child = family.getMember(document.getString("child")!!) as Child
+                        task.setChild(child)
+                    }
+                    if (typeOfTask == Constants.HISTORIC) {
+                        val completedDateString = document.getString("completedDate")!!
+                        var completedDate: LocalDate?
+                        if (completedDateString != "") {
+                            completedDate = LocalDate.parse(completedDateString, dateFormat)
+                            task.setCompletedDate(completedDate)
+                        }
+                    }
+                    if (typeOfTask == Constants.TASKS){
+                        family.addTask(task)
+                    }else if (typeOfTask == Constants.HISTORIC){
+                        family.addTaskToHistoric(task)
+                    }
+                }
+            }
     }
 }

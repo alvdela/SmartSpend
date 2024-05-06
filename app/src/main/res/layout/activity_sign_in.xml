@@ -130,15 +130,15 @@
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/text_box"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
                     android:inputType="textPassword"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textColorHint="@color/dark_gray"
                     android:textCursorDrawable="@drawable/custom_cursor"
                     android:textSize="20sp"
-
+                    android:layout_marginEnd="35dp"
                     />
 
                 <CheckBox
@@ -181,14 +181,16 @@
                 <EditText
                     android:id="@+id/password_again"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/text_box"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
                     android:inputType="textPassword"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textColorHint="@color/dark_gray"
                     android:textCursorDrawable="@drawable/custom_cursor"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:layout_marginEnd="35dp"
+                    />
 
                 <CheckBox
                     android:id="@+id/show_repeat"

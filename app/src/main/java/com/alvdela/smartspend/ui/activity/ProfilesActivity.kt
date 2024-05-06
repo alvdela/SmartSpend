@@ -14,12 +14,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
+import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
+import java.time.format.DateTimeFormatter
 
 class ProfilesActivity : AppCompatActivity() {
 
@@ -29,6 +30,9 @@ class ProfilesActivity : AppCompatActivity() {
     private lateinit var passwordInput: EditText
 
     private lateinit var family: Family
+    private lateinit var email: String
+
+    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     private lateinit var dialog: Dialog
 
@@ -38,8 +42,6 @@ class ProfilesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profiles)
         getFamily()
         initObjects()
-        hideButtons()
-        showFamilyData()
         family.checkChildrenPayments()
     }
 
@@ -47,36 +49,21 @@ class ProfilesActivity : AppCompatActivity() {
         super.onStart()
         getFamily()
         initObjects()
-        hideButtons()
-        showFamilyData()
         family.checkChildrenPayments()
     }
 
     private fun getFamily() {
-        if (ContextFamily.isMock) {
-            family = ContextFamily.family!!
-        } else {
-            //TODO consulta a firebase
-        }
-    }
-
-    private fun showFamilyData() {
-        var i = 0
-        for ((clave, valor) in family.getMembers()) {
-            profilesButtons[i].visibility = View.VISIBLE
-            profilesButtons[i].text = clave
-            profilesButtons[i].tag = clave
-            i++
-        }
-    }
-
-    private fun hideButtons() {
-        for (button in profilesButtons) {
-            button.visibility = View.INVISIBLE
-        }
+        family = ContextFamily.family!!
+        email = ContextFamily.familyEmail!!
     }
 
     private fun initObjects() {
+        setViews()
+        hideButtons()
+        showFamilyData()
+    }
+
+    private fun setViews() {
         profilesButtons = mutableListOf()
         val button0: Button = findViewById(R.id.button0)
         profilesButtons.add(button0)
@@ -108,6 +95,20 @@ class ProfilesActivity : AppCompatActivity() {
         familyName = findViewById(R.id.familyName)
         familyName.text = getString(R.string.familia_display, family.getName())
     }
+    private fun hideButtons() {
+        for (button in profilesButtons) {
+            button.visibility = View.INVISIBLE
+        }
+    }
+    private fun showFamilyData() {
+        var i = 0
+        for ((clave, valor) in family.getMembers()) {
+            profilesButtons[i].visibility = View.VISIBLE
+            profilesButtons[i].text = clave
+            profilesButtons[i].tag = clave
+            i++
+        }
+    }
 
     fun triggerGoMain(view: View) {
         goMain(view.tag.toString())
@@ -126,6 +127,7 @@ class ProfilesActivity : AppCompatActivity() {
         val passwordWrong = dialog.findViewById<TextView>(R.id.tvWrongPassword)
         passwordWrong.visibility = View.GONE
         passwordInput = dialog.findViewById(R.id.passwordProfile)
+        val forgetButton = dialog.findViewById<TextView>(R.id.forgetButton)
 
         tvProfileName.text = user
 
@@ -133,11 +135,17 @@ class ProfilesActivity : AppCompatActivity() {
             if (member.checkPassword("")) {
                 acceder = true
                 passwordContainer.visibility = View.GONE
+                forgetButton.visibility = View.GONE
                 unlockImage.visibility = View.VISIBLE
             } else {
+                forgetButton.setOnClickListener {
+                    dialog.dismiss()
+                    forgetPassword(member)
+                }
                 passwordContainer.visibility = View.VISIBLE
                 unlockImage.visibility = View.GONE
                 passwordInput.setText("")
+
             }
         } else {
             Toast.makeText(this, "Error: Usuario no existente", Toast.LENGTH_SHORT).show()
@@ -161,6 +169,51 @@ class ProfilesActivity : AppCompatActivity() {
                 }
             }else{
                 passwordWrong.visibility = View.VISIBLE
+            }
+        }
+
+    }
+
+    private fun forgetPassword(member: Member?) {
+        showPopUp(R.layout.pop_up_forgot_password)
+        val passwordProfile = dialog.findViewById<EditText>(R.id.passwordForget)
+        val tvWrongPassword = dialog.findViewById<TextView>(R.id.tvWrongPassword)
+        tvWrongPassword.visibility = View.GONE
+        val passwordButton = dialog.findViewById<CheckBox>(R.id.show_password)
+        passwordButton.setOnCheckedChangeListener { _, isChecked ->
+            passwordProfile.transformationMethod =
+                if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+
+        if (ContextFamily.isMock){
+            val tvInfo = dialog.findViewById<TextView>(R.id.tvInfo)
+            tvInfo.text = resources.getString(R.string.forget_in_mock)
+            val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
+            passwordContainer.visibility = View.GONE
+        }
+
+        val accessForgetButton = dialog.findViewById<Button>(R.id.accessForgetButton)
+        accessForgetButton.setOnClickListener {
+            if (ContextFamily.isMock) {
+                member!!.setPassword("")
+                if (member is Parent) {
+                    dialog.dismiss()
+                    goParentMain(member.getUser())
+                } else if (member is Child) {
+                    dialog.dismiss()
+                    goChildMain(member.getUser())
+                }
+            } else if (family.checkPassword(passwordProfile.text.toString())) {
+                member!!.setPassword("")
+                if (member is Parent) {
+                    dialog.dismiss()
+                    goParentMain(member.getUser())
+                } else if (member is Child) {
+                    dialog.dismiss()
+                    goChildMain(member.getUser())
+                }
+            }else{
+                tvWrongPassword.visibility = View.VISIBLE
             }
         }
 

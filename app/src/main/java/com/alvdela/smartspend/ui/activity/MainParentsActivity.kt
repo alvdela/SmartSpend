@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -220,6 +221,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
             task.setState(TaskState.OPEN)
+            completeTaskAdapter.filterTasks()
+            completeTaskAdapter.notifyItemRemoved(recyclePosition)
+            openTaskAdapter.filterTasks()
+            openTaskAdapter.notifyItemRemoved(recyclePosition)
             dialog.dismiss()
         }
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
@@ -548,6 +553,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val passwordInputRepeat = dialog.findViewById<EditText>(R.id.passwordAddMemberAgain)
         passwordInputRepeat.setText("")
 
+        val showPassword = dialog.findViewById<CheckBox>(R.id.show_password)
+        showPassword.setOnCheckedChangeListener{ _, isChecked ->
+            passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+        val showPassword2 = dialog.findViewById<CheckBox>(R.id.show_repeat)
+        showPassword2.setOnCheckedChangeListener{ _, isChecked ->
+            passwordInputRepeat.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+
         val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
         cancel.setOnClickListener {
             dialog.dismiss()
@@ -568,26 +582,32 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
                     userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
-                } else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
+                }else if(passwordInput.text.toString().length < 4){
+                    val tvRecomendado = dialog.findViewById<TextView>(R.id.tvRecomendado)
+                    tvRecomendado.setTextColor(Color.RED)
+                    tvRecomendado.text = resources.getText(R.string.password_min_size)
+                }
+                else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
                     passwordWarning.visibility = View.VISIBLE
                 } else {
                     when (tipo) {
                         1 -> {
-                            val parent = Parent(memberName, passwordInput.text.toString())
+                            val parent = Parent(memberName, "")
+                            parent.setPassword(passwordInput.text.toString())
                             membersCopy[memberName] = parent
                             val result = family.addMember(parent)
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
 
                         2 -> {
-                            val child = Child(memberName, passwordInput.text.toString())
+                            val child = Child(memberName, "")
+                            child.setPassword(passwordInput.text.toString())
                             if (inputCantidadInicial.text.toString().isNotBlank())
                                 child.setActualMoney(inputCantidadInicial.text.toString().toFloat())
                             membersCopy[memberName] = child
                             val result = family.addMember(child)
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
-
                         else -> {
                             Toast.makeText(
                                 this,
@@ -614,9 +634,18 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
             family.deleteMember(selectedMember)
+            var index = 0
+            var position = 0
+            for ((key, _) in membersCopy) {
+                if (selectedMember == key) {
+                    position = index
+                    break
+                }
+                index++
+            }
             membersCopy.remove(selectedMember)
             dialog.dismiss()
-            memberAdapter.notifyItemRemoved(membersCopy.size)
+            memberAdapter.notifyItemRemoved(position)
         }
     }
 
@@ -631,6 +660,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val radioGroup = dialog.findViewById<RadioGroup>(R.id.rgMemberButtons)
         radioGroup.visibility = View.GONE
+        val tvCantidadInicial = dialog.findViewById<TextView>(R.id.tvCantidadInicial)
+        tvCantidadInicial.visibility = View.GONE
+        val inputCantidadInicial = dialog.findViewById<EditText>(R.id.inputCantidadInicial)
+        inputCantidadInicial.visibility = View.GONE
 
         val userName = dialog.findViewById<EditText>(R.id.inputNombreUsuario)
         userName.setText(member.getUser())
@@ -638,6 +671,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         passwordInput.setText("")
         val passwordInputRepeat = dialog.findViewById<EditText>(R.id.passwordAddMemberAgain)
         passwordInputRepeat.setText("")
+
+        val showPassword = dialog.findViewById<CheckBox>(R.id.show_password)
+        showPassword.setOnCheckedChangeListener{ _, isChecked ->
+            passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+        val showPassword2 = dialog.findViewById<CheckBox>(R.id.show_repeat)
+        showPassword2.setOnCheckedChangeListener{ _, isChecked ->
+            passwordInputRepeat.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
 
         val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
         cancel.setOnClickListener {
@@ -663,6 +705,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
                     userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                }else if (passwordInput.text.toString().length < 4) {
+                    val tvRecomendado = dialog.findViewById<TextView>(R.id.tvRecomendado)
+                    tvRecomendado.setTextColor(Color.RED)
+                    tvRecomendado.text = resources.getText(R.string.password_min_size)
                 } else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
                     passwordWarning.visibility = View.VISIBLE
                 } else {
@@ -673,7 +719,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     family.addMember(member)
                     membersCopy[memberName] = member
                     dialog.dismiss()
-                    memberAdapter.notifyDataSetChanged()
+                    memberAdapter.notifyItemInserted(membersCopy.size)
                 }
             }
 

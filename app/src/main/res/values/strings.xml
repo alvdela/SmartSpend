@@ -195,7 +195,12 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="eliminar_cuenta">Eliminar cuenta</string>
     <string name="aceptar">Aceptar</string>
-    <string name="extract_money_of_goal">¿Estas seguro? El dinero volverá a tu cuenta pero no habrás logrado el objetivo marcado</string>
+    <string name="extract_money_of_goal">¿Estas seguro? Recuperarás el dinero pero no habrás logrado el objetivo</string>
+    <string name="password_min_size">Tamaño minimo de 4 caracteres</string>
+    <string name="he_olvidado">He olvidado la contraseña</string>
+    <string name="recuerda_restablecer">Recuerda restablecer tu contraseña en \'mi perfil\'</string>
+    <string name="forget_in_mock">En el modo invitado no es necesario introducir la contraseña</string>
+    <string name="accede_con_cuenta_smartspend">Accede con la contraseña de tu cuenta SmartSpend</string>
 
 </resources>
 
