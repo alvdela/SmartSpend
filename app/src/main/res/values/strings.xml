@@ -201,6 +201,8 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="recuerda_restablecer">Recuerda restablecer tu contraseña en \'mi perfil\'</string>
     <string name="forget_in_mock">En el modo invitado no es necesario introducir la contraseña</string>
     <string name="accede_con_cuenta_smartspend">Accede con la contraseña de tu cuenta SmartSpend</string>
+    <string name="recover_password">¿Has olvidado la contraseña?</string>
+    <string name="recuperar">Recuperar</string>
 
 </resources>
 

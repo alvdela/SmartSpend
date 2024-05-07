@@ -1,5 +1,6 @@
 package com.alvdela.smartspend.model
 
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -7,7 +8,7 @@ class Task (
     private var description: String,
     private var limitDate: LocalDate? = null,
     private var mandatory: Boolean = false,
-    private var price: Float = 0f,
+    private var price: BigDecimal = BigDecimal(0),
     private var state: TaskState
 ){
     private lateinit var id: String
@@ -38,11 +39,11 @@ class Task (
         this.mandatory = mandatory
     }
 
-    fun getPrice(): Float {
+    fun getPrice(): BigDecimal {
         return price
     }
 
-    fun setPrice(price: Float) {
+    fun setPrice(price: BigDecimal) {
         this.price = price
     }
 

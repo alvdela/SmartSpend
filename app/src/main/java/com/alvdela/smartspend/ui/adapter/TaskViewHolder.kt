@@ -8,6 +8,7 @@ import android.widget.ToggleButton
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Task
+import java.math.BigDecimal
 
 class TaskViewHolder(val view: View): ViewHolder(view) {
 
@@ -17,7 +18,7 @@ class TaskViewHolder(val view: View): ViewHolder(view) {
     val fechaLimiteTarea = view.findViewById<TextView>(R.id.fechaLimiteTarea)
     fun render(task: Task, completeTask: (Int, Int) -> Unit, originalPosition: Int, recyclePosition: Int) {
         checkTask.isChecked = true
-        if (task.getPrice() == 0f){
+        if (task.getPrice().compareTo(BigDecimal(0)) == 0){
             recompensaTarea.visibility = View.GONE
         }else{
             recompensaTarea.visibility = View.VISIBLE

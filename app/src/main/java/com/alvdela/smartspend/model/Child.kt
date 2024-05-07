@@ -1,31 +1,33 @@
 package com.alvdela.smartspend.model
 
+import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.firebase.Constants
+import com.google.firebase.firestore.FirebaseFirestore
+import java.math.BigDecimal
 import java.time.LocalDate
 
 class Child(user: String, password: String) : Member(user, password) {
 
-    private var actualMoney: Float = 0F
+    private var actualMoney: BigDecimal = BigDecimal(0)
     private var allowanceList: MutableList<Allowance> = mutableListOf()
     private var cashFlowList: MutableList<CashFlow> = mutableListOf()
     private var goalList: MutableList<SavingGoal> = mutableListOf()
 
-    fun getActualMoney(): Float {
+    fun getActualMoney(): BigDecimal {
         return this.actualMoney
     }
 
-    fun setActualMoney(money: Float) {
+    fun setActualMoney(money: BigDecimal) {
         this.actualMoney = money
     }
 
     fun addAllowance(allowance: Allowance) {
         this.allowanceList.add(allowance)
-        //TODO add to the database
     }
 
     fun updateAllowance(allowance: Allowance, id: Int) {
         this.allowanceList.removeAt(id)
         this.allowanceList.add(id, allowance)
-        //TODO update from database
     }
 
     fun getAllowances(): MutableList<Allowance> {
@@ -51,6 +53,7 @@ class Child(user: String, password: String) : Member(user, password) {
                 actualMoney += allowance.getPayment()
             }
             if (allowance.allowanceExpired()) {
+                deleteAllowanceFromDatabase(this.getUser(), allowance.getId())
                 iterator.remove()
             }
         }
@@ -58,14 +61,13 @@ class Child(user: String, password: String) : Member(user, password) {
     }
 
     fun addExpense(cashFlow: CashFlow): Int {
-        if (cashFlow.amount <= getActualMoney()) {
+        if (cashFlow.amount.compareTo(getActualMoney()) == -1) {
             actualMoney -= cashFlow.amount
             var index = 0
             while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
                 index++
             }
             this.cashFlowList.add(index, cashFlow)
-            //TODO add to the database
             return index
         }
         return -1
@@ -76,8 +78,8 @@ class Child(user: String, password: String) : Member(user, password) {
         while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
             index++
         }
+        addCashFlowToDatabase(this.getUser(),cashFlow)
         this.cashFlowList.add(index, cashFlow)
-        //TODO add to the database
     }
 
     fun getCashFlow(): MutableList<CashFlow> {
@@ -90,7 +92,6 @@ class Child(user: String, password: String) : Member(user, password) {
 
     fun addGoal(goal: SavingGoal) {
         this.goalList.add(goal)
-        //TODO add to the database
     }
 
     fun getGoals(): MutableList<SavingGoal> {
@@ -108,13 +109,51 @@ class Child(user: String, password: String) : Member(user, password) {
         addIncome(payment)
         this.actualMoney += goal.getSaving()
         this.goalList.removeAt(i)
-        //TODO remove to the database
     }
 
-    fun claimPrice(description: String, money: Float) {
+    fun claimPrice(description: String, money: BigDecimal) {
         val payment = CashFlow(description, money, CashFlowType.RECOMPENSA, LocalDate.now())
         addIncome(payment)
         this.actualMoney += money
     }
 
+    private fun deleteAllowanceFromDatabase(child: String, id: String) {
+        FirebaseFirestore.getInstance()
+            .collection(ContextFamily.family!!.getEmail())
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(child)
+            .collection(Constants.ALLOWANCES)
+            .document(id)
+            .delete()
+            .addOnSuccessListener {
+                println("Documento eliminado correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al eliminar documento: $e")
+            }
+    }
+
+    private fun addCashFlowToDatabase(child: String, cashFlow: CashFlow) {
+        FirebaseFirestore.getInstance()
+            .collection(ContextFamily.family!!.getEmail())
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(child)
+            .collection(Constants.CASHFLOW)
+            .add(
+                hashMapOf(
+                    "description" to cashFlow.description,
+                    "amount" to cashFlow.amount.toString(),
+                    "type" to CashFlowType.toString(cashFlow.type),
+                    "date" to cashFlow.date.format(Constants.dateFormat)
+                )
+            )
+            .addOnSuccessListener {
+                println("Documento añadido correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al añadir documento: $e")
+            }
+    }
 }

@@ -18,6 +18,7 @@ import com.alvdela.smartspend.model.MemberType
 import com.alvdela.smartspend.ui.Animations
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.security.MessageDigest
 
 class SignInActivity : AppCompatActivity() {
     companion object {
@@ -74,15 +75,13 @@ class SignInActivity : AppCompatActivity() {
         familyName = familyNameInput.text.toString()
         tutorName = tutorNameInput.text.toString()
         email = emailInput.text.toString()
-        password = passwordInput.text.toString()
     }
 
     private fun register() {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwordInput.text.toString())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     addFamily()
-                    startActivity(Intent(this, LoginActivity::class.java))
                 } else {
                     Toast.makeText(this, "Se ha producido un error inesperado", Toast.LENGTH_SHORT)
                         .show()
@@ -174,7 +173,8 @@ class SignInActivity : AppCompatActivity() {
             .set(
                 hashMapOf(
                     "familyName" to familyName,
-                    "familyEmail" to email
+                    "familyEmail" to email,
+                    "passwordFamily" to hashPassword(passwordInput.text.toString())
                 )
             )
             .addOnCompleteListener { task ->
@@ -197,6 +197,10 @@ class SignInActivity : AppCompatActivity() {
                     "type" to MemberType.toString(MemberType.PARENT)
                 )
             )
+            .addOnCompleteListener {
+                FirebaseAuth.getInstance().signOut()
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
     }
 
     private fun initShowButtons() {
@@ -214,4 +218,10 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    private fun hashPassword(password: String): String {
+        val bytes = password.toByteArray(Charsets.UTF_8)
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.fold("") { str, it -> str + "%02x".format(it) }
+    }
 }

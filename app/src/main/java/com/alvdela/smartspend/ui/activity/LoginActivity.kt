@@ -1,8 +1,10 @@
 package com.alvdela.smartspend.ui.activity
 
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Button
@@ -24,6 +26,7 @@ import com.alvdela.smartspend.firebase.Constants.CASHFLOW
 import com.alvdela.smartspend.firebase.Constants.FAMILY
 import com.alvdela.smartspend.firebase.Constants.GOALS
 import com.alvdela.smartspend.firebase.Constants.MEMBERS
+import com.alvdela.smartspend.firebase.Constants.dateFormat
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.model.CashFlow
@@ -40,7 +43,6 @@ import com.alvdela.smartspend.ui.Animations
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import kotlin.properties.Delegates
 
 
@@ -57,8 +59,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var signInButton: TextView
     private lateinit var mockButton: Button
 
-    private lateinit var mAuth: FirebaseAuth
-    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private lateinit var dialog: Dialog
+
 
     companion object{
         var isPrivacyPolicyShown = false
@@ -83,12 +85,11 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        //TODO autologin
-        /*val currentUser = FirebaseAuth.getInstance().currentUser
+        val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null){
+            email = currentUser.email.toString()
             getFamily()
-            goProfiles()
-        }*/
+        }
     }
 
     private fun initObjects() {
@@ -97,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
 
         errorText = findViewById(R.id.error_text)
 
-        forgetButton = findViewById(R.id.forget_button)
+        forgetButton = findViewById(R.id.forgetButton)
 
         accessButton = findViewById(R.id.acceder_button)
         signInButton = findViewById(R.id.registrarse_button)
@@ -118,14 +119,39 @@ class LoginActivity : AppCompatActivity() {
             loginUser()
         }
 
+        forgetButton.setOnClickListener {
+            forgotPassword()
+        }
+
         fragmentContainer = findViewById(R.id.fragmentPrivacy)
+    }
+
+    private fun forgotPassword() {
+        showPopUp(R.layout.pop_up_recover_password)
+        val etRecoverPassword = dialog.findViewById<EditText>(R.id.etRecoverPassword)
+        val recoverPasswordButton = dialog.findViewById<Button>(R.id.recoverPasswordButton)
+        recoverPasswordButton.setOnClickListener {
+            if (!TextUtils.isEmpty(etRecoverPassword.text)){
+                FirebaseAuth.getInstance().sendPasswordResetEmail(etRecoverPassword.text.toString())
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful){
+                            Toast.makeText(this, "Email enviado a ${etRecoverPassword.text}", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }else{
+                            Toast.makeText(this, "No se encontró ninguna cuenta con ese correo", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }else{
+                Toast.makeText(this, "Por favor indica un email", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun loginUser() {
         email = emailInput.text.toString()
         password = passwordInput.text.toString()
 
-        mAuth.signInWithEmailAndPassword(email,password)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful){
                     ContextFamily.isMock = false
@@ -141,15 +167,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun goProfiles() {
-        ContextFamily.familyEmail = email
-        if (!ContextFamily.isMock){
-            ContextFamily.family!!.setPassword(password)
-        }
         startActivity(Intent(this, ProfilesActivity::class.java))
     }
 
     private fun createMockFamily() {
         ContextFamily.isMock = true
+        email = "mock"
         getFamily()
     }
 
@@ -188,12 +211,19 @@ class LoginActivity : AppCompatActivity() {
         val loadingView = findViewById<ConstraintLayout>(R.id.loadingView)
         loadingView.visibility = View.VISIBLE
         val loadingImage = findViewById<ImageView>(R.id.loadingImage)
-        Animations.girarImagen(loadingImage)
+        Animations.spinImage(loadingImage)
     }
 
     private fun dismissLoading(){
         val loadingView = findViewById<ConstraintLayout>(R.id.loadingView)
         loadingView.visibility = View.GONE
+    }
+
+    private fun showPopUp(layout: Int) {
+        dialog = Dialog(this)
+        dialog.setContentView(layout)
+        dialog.setCancelable(true)
+        dialog.show()
     }
 
     /* Metodos para obtener los datos de firebase */
@@ -208,11 +238,14 @@ class LoginActivity : AppCompatActivity() {
                 if (document.exists()) {
                     val familyName = document.getString("familyName")
                     val familyEmail = document.getString("familyEmail")
-                    val family = Family(familyName!!, familyEmail!!)
+                    val familyPassword = document.getString("passwordFamily")
+                    val family = Family(familyName!!, familyEmail!!, familyPassword!!)
                     ContextFamily.family = family
                     getMembers()
                 }else{
                     Toast.makeText(this, "Error con firebase", Toast.LENGTH_SHORT).show()
+                    FirebaseAuth.getInstance().signOut()
+                    dismissLoading()
                 }
             }
             .addOnFailureListener { exception ->
@@ -236,20 +269,20 @@ class LoginActivity : AppCompatActivity() {
                     } else if (MemberType.fromString(document.getString("type")!!) == MemberType.CHILD) {
                         val user = document.getString("user")!!
                         val password = document.getString("password")!!
-                        val money = document.getLong("money")!!.toFloat()
+                        val money = document.getString("money")!!.toBigDecimal()
                         val child = Child(user, password)
                         child.setActualMoney(money)
                         ContextFamily.family?.addMember(child)
                     }
                 }
-                updateChildren()
+                getChildrenInfo()
             }
             .addOnFailureListener { exception ->
                 println("Error getting document: $exception")
             }
     }
 
-    private fun updateChildren() {
+    private fun getChildrenInfo() {
         for (child in ContextFamily.family!!.getChildren()){
             getAllowances(child)
             child.setCashFlow(getCashFlow(child.getUser()))
@@ -274,7 +307,7 @@ class LoginActivity : AppCompatActivity() {
                     val name = document.getString("name")!!
                     val nextPaymentString = document.getString("nextPayment")!!
                     val nextPayment = LocalDate.parse(nextPaymentString, dateFormat)
-                    val amount = document.getDouble("amount")!!.toFloat()
+                    val amount = document.getString("amount")!!.toBigDecimal()
                     var type = AllowanceType.fromString(document.getString("type")!!)
                     if (type == null) {
                         type = AllowanceType.PUNTUAL
@@ -299,7 +332,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val description = document.getString("description")!!
-                    val amount = document.getLong("amount")!!.toFloat()
+                    val amount = document.getString("amount")!!.toBigDecimal()
                     val type = CashFlowType.fromString(document.getString("type")!!)
                     val date = LocalDate.parse(document.getString("date")!!, dateFormat)
                     val cashFlow = CashFlow(description, amount, type!!, date)
@@ -324,8 +357,8 @@ class LoginActivity : AppCompatActivity() {
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val description = document.getString("description")!!
-                    val savingGoal = document.getDouble("goal")!!.toFloat()
-                    val saving = document.getDouble("saving")!!.toFloat()
+                    val savingGoal = document.getString("goal")!!.toBigDecimal()
+                    val saving = document.getString("saving")!!.toBigDecimal()
                     val type = GoalType.fromString(document.getString("type")!!)
                     val id = document.id
 
@@ -358,7 +391,7 @@ class LoginActivity : AppCompatActivity() {
 
                     val mandatory = document.getBoolean("mandatory")!!
 
-                    val price = document.getDouble("price")!!.toFloat()
+                    val price = document.getString("price")!!.toBigDecimal()
 
                     var state = TaskState.OPEN
                     when (document.getString("state")!!) {

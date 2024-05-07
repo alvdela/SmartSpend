@@ -54,7 +54,7 @@ class ProfilesActivity : AppCompatActivity() {
 
     private fun getFamily() {
         family = ContextFamily.family!!
-        email = ContextFamily.familyEmail!!
+        email = family.getEmail()
     }
 
     private fun initObjects() {

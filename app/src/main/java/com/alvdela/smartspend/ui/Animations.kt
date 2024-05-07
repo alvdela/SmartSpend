@@ -27,7 +27,7 @@ object Animations {
             start()
         }
     }
-    fun rotarImagen(view: View) {
+    private fun rotateImage(view: View) {
         val animation = RotateAnimation(
             180f, 0f,
             RotateAnimation.RELATIVE_TO_SELF, 0.5f,
@@ -37,7 +37,7 @@ object Animations {
         view.startAnimation(animation)
     }
 
-    fun girarImagen(view: View){
+    fun spinImage(view: View){
         val animation = RotateAnimation(
             0f, 360f,
             RotateAnimation.RELATIVE_TO_SELF, 0.5f,
@@ -50,7 +50,7 @@ object Animations {
     }
 
     fun compactView(button: ImageView, container: RelativeLayout, recycler: RecyclerView) {
-        rotarImagen(button)
+        rotateImage(button)
         sleep(300)
         button.setImageResource(R.drawable.ic_compact)
         animateViewOfFloat(recycler, "translationY", -1000f, 200)
@@ -58,7 +58,7 @@ object Animations {
     }
 
     fun extendView(button: ImageView, container: RelativeLayout, recycler: RecyclerView) {
-        rotarImagen(button)
+        rotateImage(button)
         sleep(300)
         button.setImageResource(R.drawable.ic_extend)
         container.visibility = View.VISIBLE

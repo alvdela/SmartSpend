@@ -100,7 +100,7 @@ class FirebaseManager private constructor() {
                     } else if (MemberType.fromString(document.getString("type")!!) == MemberType.CHILD) {
                         val user = document.getString("user")!!
                         val password = document.getString("password")!!
-                        val money = document.getLong("money")!!.toFloat()
+                        val money = document.getLong("money")!!.toBigDecimal()
                         val child = Child(user, password)
                         child.setActualMoney(money)
                         family.addMember(child)
@@ -211,7 +211,7 @@ class FirebaseManager private constructor() {
                         limitDate = LocalDate.parse(limitDateString, dateFormat)
                     }
                     val mandatory = document.getBoolean("mandatory")!!
-                    val price = document.getDouble("price")!!.toFloat()
+                    val price = document.getDouble("price")!!.toBigDecimal()
                     var state = TaskState.OPEN
                     when (document.getString("state")) {
                         "OPEN" -> state = TaskState.OPEN
@@ -289,7 +289,7 @@ class FirebaseManager private constructor() {
                     val name = document.getString("name")!!
                     val nextPaymentString = document.getString("limitDate")!!
                     val nextPayment = LocalDate.parse(nextPaymentString, dateFormat)
-                    val amount = document.getDouble("amount")!!.toFloat()
+                    val amount = document.getDouble("amount")!!.toBigDecimal()
                     var type = AllowanceType.fromString(document.getString("type")!!)
                     if (type == null) {
                         type = AllowanceType.PUNTUAL
@@ -376,7 +376,7 @@ class FirebaseManager private constructor() {
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val description = document.getString("description")!!
-                    val amount = document.getDouble("amount")!!.toFloat()
+                    val amount = document.getDouble("amount")!!.toBigDecimal()
                     val type = CashFlowType.fromString(document.getString("type")!!)
                     val date = LocalDate.parse(document.getString("date")!!, dateFormat)
                     val cashFlow = CashFlow(description, amount, type!!, date)
@@ -423,8 +423,8 @@ class FirebaseManager private constructor() {
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val description = document.getString("description")!!
-                    val savingGoal = document.getDouble("goal")!!.toFloat()
-                    val saving = document.getDouble("saving")!!.toFloat()
+                    val savingGoal = document.getDouble("goal")!!.toBigDecimal()
+                    val saving = document.getDouble("saving")!!.toBigDecimal()
                     val type = GoalType.fromString(document.getString("type")!!)
                     val id = document.id
 

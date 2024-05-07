@@ -35,15 +35,24 @@ import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
 import com.alvdela.smartspend.model.CashFlow
 import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
-import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
+import com.alvdela.smartspend.firebase.Constants
+import com.alvdela.smartspend.firebase.Constants.CASHFLOW
+import com.alvdela.smartspend.firebase.Constants.FAMILY
+import com.alvdela.smartspend.firebase.Constants.GOALS
+import com.alvdela.smartspend.firebase.Constants.MEMBERS
+import com.alvdela.smartspend.firebase.Constants.TASKS
+import com.alvdela.smartspend.firebase.Constants.dateFormat
 import com.alvdela.smartspend.model.GoalType
 import com.alvdela.smartspend.model.SavingGoal
+import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.GoalAdapter
 import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
+import java.math.BigDecimal
 import java.time.LocalDate
 
 class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -80,7 +89,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     //Informacion de la familia y miembro actual
     private var user: String = ""
-    private lateinit var family: Family
+    private val family = ContextFamily.family!!
+    private val email = family.getEmail()
+    private val isMock = ContextFamily.isMock
     private lateinit var child: Child
 
     //Control de la interfaz
@@ -95,7 +106,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_children)
         user = intent.getStringExtra("USER_NAME").toString()
-        getFamily()
+        child = family.getMember(user) as Child
         initObjects()
         showMoney()
         showCashFlow()
@@ -190,7 +201,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addNewGoal.setOnClickListener {
             var allOk = true
             var descripcion = ""
-            var cantidad = 0f
+            var cantidad = BigDecimal(0)
             if (inputDescripcion.text.toString().isBlank()) {
                 inputDescripcion.error = "¡Ups! Parece que olvidaste agregar una descripción"
                 allOk = false
@@ -201,7 +212,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 inputCantidad.error = "Necesitas saber el precio de lo que deseas conseguir"
                 allOk = false
             } else {
-                cantidad = inputCantidad.text.toString().toFloat()
+                cantidad = inputCantidad.text.toString().toBigDecimal()
             }
             if (allOk) {
                 val goal: SavingGoal = when (tipo) {
@@ -213,6 +224,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
                 }
                 child.addGoal(goal)
+
+                if (!isMock){
+                    addGoalToDatabase(child.getUser(),goal)
+                }
                 goalAdapter.notifyItemInserted(child.getGoals().size)
                 dialog.dismiss()
             }
@@ -289,9 +304,15 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         val confirmButtonSave = dialog.findViewById<Button>(R.id.confirmButtonSave)
         confirmButtonSave.setOnClickListener {
-            val value = Utility.formFloatNumber(npNumber.value,npDecimal.value)
+            val value = Utility.formBigDecimalNumber(npNumber.value,npDecimal.value)
             child.setActualMoney(child.getActualMoney() - value + goal.saveMoney(value))
+
             showMoney()
+
+            if (!isMock){
+                updateGoalToDatabase(child.getUser(),goal)
+            }
+
             dialog.dismiss()
             goalAdapter.notifyItemChanged(selectedGoal)
         }
@@ -304,6 +325,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             showPopUp(R.layout.pop_up_goal_archieved)
             val confirmGoal = dialog.findViewById<Button>(R.id.confirmGoalAchieved)
             confirmGoal.setOnClickListener {
+                if (!isMock){
+                    deleteGoalFromDatabase(child.getUser(),child.getGoals()[selectedGoal].getId())
+                }
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
                 showMoney()
@@ -322,6 +346,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             val confirmDelete = dialog.findViewById<Button>(R.id.confirmDelete)
             confirmDelete.text = resources.getString(R.string.aceptar)
             confirmDelete.setOnClickListener {
+                if (!isMock){
+                    deleteGoalFromDatabase(child.getUser(),child.getGoals()[selectedGoal].getId())
+                }
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
                 expenseAdapter.notifyDataSetChanged()
@@ -336,6 +363,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val task = family.getTask(selectedTask)
         task.setState(TaskState.COMPLETE)
         task.setChild(child)
+        if (!isMock){
+            updateTaskInDatabase(task, TASKS)
+        }
         if (task.isMandatory()) {
             mandatoryTaskAdapter.filterTasks()
             mandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
@@ -373,14 +403,14 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         addButton.setOnClickListener {
             val descripcionText = descripcion.text.toString()
-            var amountNumber = 0f
+            var amountNumber = BigDecimal(0)
             if (descripcionText.isEmpty()) {
                 descripcion.error = "Se necesita una descripción"
                 Toast.makeText(this, "Se necesita una descripción", Toast.LENGTH_SHORT).show()
             } else if (amount.text.toString().isEmpty()) {
                 amount.error = "La cantidad no puede quedar vacia"
                 Toast.makeText(this, "La cantidad no puede quedar vacia", Toast.LENGTH_SHORT).show()
-            } else if (amount.text.toString().toFloat() > child.getActualMoney()) {
+            } else if (amount.text.toString().toBigDecimal() > child.getActualMoney()) {
                 amount.error = "La cantidad no puede ser mayor que la cantidad disponible"
                 Toast.makeText(
                     this,
@@ -388,7 +418,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                amountNumber = amount.text.toString().toFloat()
+                amountNumber = amount.text.toString().toBigDecimal()
                 addRecord(descripcionText)
                 when (tipo) {
                     1 -> {
@@ -397,6 +427,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if(!isMock){
+                            addCashFlowToDatabase(child.getUser(),newExpense)
+                        }
                     }
 
                     2 -> {
@@ -405,6 +438,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if(!isMock){
+                            addCashFlowToDatabase(child.getUser(),newExpense)
+                        }
                     }
 
                     3 -> {
@@ -413,6 +449,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if(!isMock){
+                            addCashFlowToDatabase(child.getUser(),newExpense)
+                        }
                     }
 
                     else -> {
@@ -421,6 +460,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if(!isMock){
+                            addCashFlowToDatabase(child.getUser(),newExpense)
+                        }
                     }
                 }
                 expenseAdapter.notifyDataSetChanged()
@@ -430,20 +472,13 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
     }
 
-    /* Metodos para obtener la información de la familia */
-    private fun getFamily() {
-        if (ContextFamily.isMock) {
-            family = ContextFamily.family!!
-            child = family.getMember(user) as Child
-        } else {
-            //TODO caso de error
-        }
-    }
-
     /* Metodo para actualizar el dinero disponible */
     private fun showMoney() {
         val actualMoney = findViewById<TextView>(R.id.tvDineroDisponible)
         actualMoney.text = "${child.getActualMoney()}€"
+        if(!isMock){
+            updateChildInDatabase(child)
+        }
     }
 
     /* Metodos para inicializar los RecycleView*/
@@ -648,12 +683,23 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         when (item.itemId) {
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
-
+            R.id.nav_item_share -> share()
         }
 
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    private fun share() {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos!")
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, "SmartSpend")
+        }
+
+        startActivity(Intent.createChooser(shareIntent, "Compartir mediante"))
     }
 
     private fun backProfiles() {
@@ -663,10 +709,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private fun signOut() {
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.family = null
+        ContextFamily.reset()
     }
 
-    fun addRecord(newString: String){
+    private fun addRecord(newString: String){
         var existe = false
         for (i in record){
             if (newString == i) existe = true
@@ -678,4 +724,141 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             record.removeAt(record.size - 1)
         }
     }
+
+    /* Operaciones de Firebase */
+
+    private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
+        var limitDate = ""
+        if (task.getLimitDate() != null) {
+            limitDate = task.getLimitDate()!!.format(Constants.dateFormat)
+        }
+        var completedDate = ""
+        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
+            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+        }
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(typeOfTask)
+            .document(task.getId())
+            .update(
+                mapOf(
+                    "state" to TaskState.toString(task.getState()),
+                    "completedDate" to completedDate,
+                    "child" to task.getChildName()
+                )
+            )
+            .addOnSuccessListener {
+                println("Documento actualizado exitosamente.")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar documento: $e")
+            }
+    }
+
+    private fun addCashFlowToDatabase(child: String, cashFlow: CashFlow) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child)
+            .collection(CASHFLOW)
+            .add(
+                hashMapOf(
+                    "description" to cashFlow.description,
+                    "amount" to cashFlow.amount.toString(),
+                    "type" to CashFlowType.toString(cashFlow.type),
+                    "date" to cashFlow.date.format(dateFormat)
+                )
+            )
+            .addOnSuccessListener {
+                println("Documento añadido correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al añadir documento: $e")
+            }
+    }
+
+    private fun addGoalToDatabase(child: String, goal: SavingGoal) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child)
+            .collection(GOALS)
+            .add(
+                hashMapOf(
+                    "description" to goal.getDescription(),
+                    "goal" to goal.getGoal().toString(),
+                    "type" to GoalType.toString(goal.getType()),
+                    "saving" to goal.getSaving().toString(),
+                    "archived" to goal.isArchived()
+                )
+            )
+            .addOnSuccessListener { document ->
+                goal.setId(document.id)
+            }
+            .addOnFailureListener { e ->
+                println("Error al agregar documento: $e")
+            }
+    }
+
+    private fun updateGoalToDatabase(child: String, goal: SavingGoal) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child)
+            .collection(GOALS)
+            .document(goal.getId()) // Suponiendo que tienes un ID para la meta
+            .update(
+                mapOf(
+                    "saving" to goal.getSaving().toString(),
+                    "archived" to goal.isArchived()
+                )
+            )
+            .addOnSuccessListener {
+                println("Meta actualizada correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar meta: $e")
+            }
+    }
+
+    private fun deleteGoalFromDatabase(child: String, goalId: String) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child)
+            .collection(GOALS)
+            .document(goalId)
+            .delete()
+            .addOnSuccessListener {
+                println("Meta eliminada correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al eliminar meta: $e")
+            }
+    }
+
+    private fun updateChildInDatabase(child: Child) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child.getUser())
+            .update(
+                mapOf(
+                    "money" to child.getActualMoney().toString()
+                )
+            )
+            .addOnSuccessListener {
+                println("Datos del miembro actualizados correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar datos del padre: $e")
+            }
+    }
+
 }

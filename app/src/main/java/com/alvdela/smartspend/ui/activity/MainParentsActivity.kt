@@ -1,7 +1,6 @@
 package com.alvdela.smartspend.ui.activity
 
 import TaskCompleteAdapter
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
@@ -41,14 +40,21 @@ import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
+import com.alvdela.smartspend.firebase.Constants
+import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
+import com.alvdela.smartspend.firebase.Constants.FAMILY
+import com.alvdela.smartspend.firebase.Constants.HISTORIC
+import com.alvdela.smartspend.firebase.Constants.MEMBERS
+import com.alvdela.smartspend.firebase.Constants.TASKS
+import com.alvdela.smartspend.firebase.Constants.dateFormat
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
 import com.alvdela.smartspend.ui.adapter.MemberAdapter
 import com.alvdela.smartspend.model.Child
-import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Member
+import com.alvdela.smartspend.model.MemberType
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
@@ -57,34 +63,43 @@ import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     //Informacion de la familia y miembro actual
-    private lateinit var family: Family
+    private val family = ContextFamily.family!!
+    private val email = family.getEmail()
+    private val isMock = ContextFamily.isMock
     private var user: String = ""
 
     private lateinit var membersCopy: MutableMap<String, Member>
+
     // Variables para el control de la interfaz
     private var seguimiento = true
     private var tareas = false
     private var administracion = false
     private var isPendientesShow = true
     private var isCompletadasShow = true
+
     //Menu emergente y toolbar
     private lateinit var toolbar: Toolbar
     private lateinit var drawer: DrawerLayout
+
     // Difrentes botones
     private lateinit var seleccionarMiembro: Spinner
     private lateinit var seguimientoButton: ImageView
     private lateinit var taskButton: ImageView
     private lateinit var adminButton: ImageView
+
     // Layouts
     private lateinit var seguimientoLayout: ConstraintLayout
     private lateinit var taskLayout: ConstraintLayout
     private lateinit var adminLayout: ConstraintLayout
+
     // Variables para menus desplegables
     private lateinit var extendPendientes: ImageView
     private lateinit var containerPendientes: RelativeLayout
@@ -93,12 +108,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var extendCompletadas: ImageView
     private lateinit var containerCompletadas: RelativeLayout
     private lateinit var rvTaskCompletadas: RecyclerView
+
     // Pop up
     private lateinit var dialog: Dialog
+
     // Adapters para los RecycleView
     private lateinit var memberAdapter: MemberAdapter
     private lateinit var openTaskAdapter: TaskOpenAdapter
     private lateinit var completeTaskAdapter: TaskCompleteAdapter
+
     //Constantes
     private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
@@ -107,7 +125,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_parents)
         user = intent.getStringExtra("USER_NAME").toString()
-        getFamily()
         initObjects()
         initToolBar()
         initNavView()
@@ -203,6 +220,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
+            if (!isMock){
+                deleteTaskFromDatabase(family.getTask(selectedTask).getId(), TASKS)
+                addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
+            }
             family.removeTask(selectedTask)
             dialog.dismiss()
             openTaskAdapter.filterTasks()
@@ -215,7 +236,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         showPopUp(R.layout.pop_up_complete_task)
         val task = family.getTask(selectedTask)
         val tvNota = dialog.findViewById<TextView>(R.id.tvNota)
-        if (task.getPrice() <= 0f) {
+        if (task.getPrice().compareTo(BigDecimal(0)) == -1 || task.getPrice().compareTo(BigDecimal(0)) == 0) {
             tvNota.visibility = View.GONE
         }
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
@@ -230,6 +251,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
         closeTask.setOnClickListener {
             task.givePrice()
+            if (!isMock){
+                deleteTaskFromDatabase(family.getTask(selectedTask).getId(), TASKS)
+                addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
+            }
             family.removeTask(selectedTask)
             completeTaskAdapter.filterTasks()
             completeTaskAdapter.notifyItemRemoved(recyclePosition)
@@ -282,16 +307,19 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             }
             if (allOk) {
                 val description = inputDescripcionTarea.text.toString()
-                var recompensa = 0f
+                var recompensa = BigDecimal(0)
                 if (inputRecompensa.text.toString().isNotBlank()) {
-                    recompensa = inputRecompensa.text.toString().toFloat()
+                    recompensa = inputRecompensa.text.toString().toBigDecimal()
                 }
                 val task =
                     Task(description, fecha, cbObligatoria.isChecked, recompensa, TaskState.OPEN)
                 family.addTask(task)
-                if (task.getState() == TaskState.OPEN){
+                if (!isMock){
+                    addTaskToDatabase(task, TASKS)
+                }
+                if (task.getState() == TaskState.OPEN) {
                     openTaskAdapter.notifyNewTask()
-                }else{
+                } else {
                     completeTaskAdapter.notifyNewTask()
                 }
                 dialog.dismiss()
@@ -313,6 +341,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
             val child = family.getMember(selectedChild) as Child
+            if (!isMock){
+                deleteAllowanceFromDatabase(child.getUser(),child.getAllowances()[allowanceId].getId())
+            }
             child.getAllowances().removeAt(allowanceId)
             dialog.dismiss()
             memberAdapter.notifyDataSetChanged()
@@ -322,7 +353,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun editAllowance(allowanceId: Int, selectedChild: String) {
         showPopUp(R.layout.pop_up_add_allowance)
         val child = family.getMember(selectedChild) as Child
-        var allowance = child.getAllowances().get(allowanceId)
+        var allowance = child.getAllowances()[allowanceId]
 
         /*Inicialización de los elementos*/
         val inputNombreAsignacion = dialog.findViewById<EditText>(R.id.inputNombreAsignacion)
@@ -415,10 +446,13 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 allowance = Allowance(
                     inputNombreAsignacion.text.toString(),
                     fecha!!,
-                    inputCantidadAsignacion.text.toString().toFloat(),
+                    inputCantidadAsignacion.text.toString().toBigDecimal(),
                     frecuencia!!
                 )
                 child.updateAllowance(allowance, allowanceId)
+                if (!isMock){
+                    updateAllowanceInDatabase(child.getUser(),allowance)
+                }
                 memberAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
@@ -509,10 +543,13 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 val allowance = Allowance(
                     inputNombreAsignacion.text.toString(),
                     fecha!!,
-                    inputCantidadAsignacion.text.toString().toFloat(),
+                    inputCantidadAsignacion.text.toString().toBigDecimal(),
                     frecuencia!!
                 )
                 child.addAllowance(allowance)
+                if (!isMock) {
+                    addAllowanceToDatabase(child.getUser(), allowance)
+                }
                 memberAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
@@ -554,12 +591,14 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         passwordInputRepeat.setText("")
 
         val showPassword = dialog.findViewById<CheckBox>(R.id.show_password)
-        showPassword.setOnCheckedChangeListener{ _, isChecked ->
-            passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        showPassword.setOnCheckedChangeListener { _, isChecked ->
+            passwordInput.transformationMethod =
+                if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
         val showPassword2 = dialog.findViewById<CheckBox>(R.id.show_repeat)
-        showPassword2.setOnCheckedChangeListener{ _, isChecked ->
-            passwordInputRepeat.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        showPassword2.setOnCheckedChangeListener { _, isChecked ->
+            passwordInputRepeat.transformationMethod =
+                if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
 
         val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
@@ -582,12 +621,13 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
                     userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
-                }else if(passwordInput.text.toString().length < 4){
+                } else if (passwordInput.text.toString().length < 4 && passwordInput.text.toString()
+                        .isNotEmpty()
+                ) {
                     val tvRecomendado = dialog.findViewById<TextView>(R.id.tvRecomendado)
                     tvRecomendado.setTextColor(Color.RED)
                     tvRecomendado.text = resources.getText(R.string.password_min_size)
-                }
-                else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
+                } else if (passwordInput.text.toString() != passwordInputRepeat.text.toString()) {
                     passwordWarning.visibility = View.VISIBLE
                 } else {
                     when (tipo) {
@@ -596,6 +636,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             parent.setPassword(passwordInput.text.toString())
                             membersCopy[memberName] = parent
                             val result = family.addMember(parent)
+                            if (!isMock){
+                                addParentToDatabase(parent)
+                            }
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
 
@@ -603,11 +646,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             val child = Child(memberName, "")
                             child.setPassword(passwordInput.text.toString())
                             if (inputCantidadInicial.text.toString().isNotBlank())
-                                child.setActualMoney(inputCantidadInicial.text.toString().toFloat())
+                                child.setActualMoney(inputCantidadInicial.text.toString().toBigDecimal())
                             membersCopy[memberName] = child
                             val result = family.addMember(child)
+                            if (!isMock){
+                                addChildToDatabase(child)
+                            }
                             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
+
                         else -> {
                             Toast.makeText(
                                 this,
@@ -634,6 +681,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
             family.deleteMember(selectedMember)
+            if (!isMock){
+                deleteMemberFromDatabase(selectedMember)
+            }
             var index = 0
             var position = 0
             for ((key, _) in membersCopy) {
@@ -673,12 +723,14 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         passwordInputRepeat.setText("")
 
         val showPassword = dialog.findViewById<CheckBox>(R.id.show_password)
-        showPassword.setOnCheckedChangeListener{ _, isChecked ->
-            passwordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        showPassword.setOnCheckedChangeListener { _, isChecked ->
+            passwordInput.transformationMethod =
+                if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
         val showPassword2 = dialog.findViewById<CheckBox>(R.id.show_repeat)
-        showPassword2.setOnCheckedChangeListener{ _, isChecked ->
-            passwordInputRepeat.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        showPassword2.setOnCheckedChangeListener { _, isChecked ->
+            passwordInputRepeat.transformationMethod =
+                if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
 
         val cancel = dialog.findViewById<Button>(R.id.cancelNewMember)
@@ -705,7 +757,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
                     userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
-                }else if (passwordInput.text.toString().length < 4) {
+                } else if (passwordInput.text.toString().length < 4 && passwordInput.text.toString()
+                        .isNotEmpty()) {
                     val tvRecomendado = dialog.findViewById<TextView>(R.id.tvRecomendado)
                     tvRecomendado.setTextColor(Color.RED)
                     tvRecomendado.text = resources.getText(R.string.password_min_size)
@@ -714,24 +767,19 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 } else {
                     family.deleteMember(selectedMember)
                     membersCopy.remove(selectedMember)
+
                     member.setUser(memberName)
                     member.setPassword(passwordInput.text.toString())
                     family.addMember(member)
                     membersCopy[memberName] = member
+
+                    if (!isMock) updateMemberInDatabase(member)
+
                     dialog.dismiss()
                     memberAdapter.notifyItemInserted(membersCopy.size)
                 }
             }
 
-        }
-    }
-
-    /* Obtenemos los datos de la familia */
-    private fun getFamily() {
-        if (ContextFamily.isMock) {
-            family = ContextFamily.family!!
-        } else {
-            //TODO consulta a firebase
         }
     }
 
@@ -782,14 +830,24 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun showTasks() {
         openTaskAdapter = TaskOpenAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePosition -> closeTask(selectedTask,recyclePosition) }
+            completeTask = { selectedTask, recyclePosition ->
+                closeTask(
+                    selectedTask,
+                    recyclePosition
+                )
+            }
         )
         rvTaskPendientes.layoutManager = LinearLayoutManager(this)
         rvTaskPendientes.adapter = openTaskAdapter
 
         completeTaskAdapter = TaskCompleteAdapter(
             tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePosition -> completeTask(selectedTask, recyclePosition) }
+            completeTask = { selectedTask, recyclePosition ->
+                completeTask(
+                    selectedTask,
+                    recyclePosition
+                )
+            }
         )
         rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
         rvTaskCompletadas.adapter = completeTaskAdapter
@@ -930,7 +988,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
-        } else if(ProfileFragment.configProfileOpen){
+        } else if (ProfileFragment.configProfileOpen) {
             val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
             supportFragmentManager.beginTransaction().remove(fragment!!).commit()
         } else {
@@ -953,10 +1011,22 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_item_settings -> showEditProfile()
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
+            R.id.nav_item_share -> share()
         }
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    private fun share() {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos!")
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, "SmartSpend")
+        }
+
+        startActivity(Intent.createChooser(shareIntent, "Compartir mediante"))
     }
 
     private fun backProfiles() {
@@ -966,7 +1036,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun signOut() {
         //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.family = null
+        ContextFamily.reset()
     }
 
     private fun initSpinner() {
@@ -991,7 +1061,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
-    private fun showEditProfile(){
+    private fun showEditProfile() {
         val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
         val bundle = bundleOf(USER_BUNDLE to user)
         ProfileFragment.configProfileOpen = true
@@ -1000,6 +1070,186 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
         }
         fragmentView.translationX = 500f
-        Animations.animateViewOfFloat(fragmentView, "translationX", 0f,300)
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
+    }
+
+    /* Operaciones de Firebase */
+
+    private fun updateMemberInDatabase(member: Member) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(member.getUser())
+            .update(
+                mapOf(
+                    "user" to member.getUser(),
+                    "password" to member.getPassword(),
+                )
+            )
+            .addOnSuccessListener {
+                println("Datos del miembro actualizados correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar datos del padre: $e")
+            }
+    }
+
+    private fun addAllowanceToDatabase(child: String, allowance: Allowance) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child)
+            .collection(ALLOWANCES)
+            .add(
+                hashMapOf(
+                    "name" to allowance.getName(),
+                    "nextPayment" to allowance.getNextPayment().format(dateFormat),
+                    "amount" to allowance.getAmount().toString(),
+                    "type" to AllowanceType.toString(allowance.getType()),
+                    "expired" to allowance.allowanceExpired()
+                )
+            )
+            .addOnSuccessListener { document ->
+                allowance.setId(document.id)
+            }
+            .addOnFailureListener { e ->
+                println("Error al agregar documento: $e")
+            }
+    }
+
+    private fun updateAllowanceInDatabase(child: String, allowance: Allowance) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child)
+            .collection(ALLOWANCES)
+            .document(allowance.getId())
+            .update(
+                mapOf(
+                    "name" to allowance.getName(),
+                    "nextPayment" to allowance.getNextPayment().format(dateFormat),
+                    "amount" to allowance.getAmount().toString(),
+                    "type" to AllowanceType.toString(allowance.getType()),
+                )
+            )
+            .addOnSuccessListener {
+                println("Asignación actualizada correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar asignación: $e")
+            }
+    }
+
+    private fun deleteAllowanceFromDatabase(child: String, id: String) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child)
+            .collection(ALLOWANCES)
+            .document(id)
+            .delete()
+            .addOnSuccessListener {
+                println("Documento eliminado correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al eliminar documento: $e")
+            }
+    }
+
+    private fun addParentToDatabase(parent: Parent) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(parent.getUser())
+            .set(
+                hashMapOf(
+                    "user" to parent.getUser(),
+                    "password" to parent.getPassword(),
+                    "type" to MemberType.toString(MemberType.PARENT)
+                )
+            )
+    }
+
+    private fun addChildToDatabase(child: Child) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(child.getUser())
+            .set(
+                hashMapOf(
+                    "user" to child.getUser(),
+                    "password" to child.getPassword(),
+                    "money" to child.getActualMoney().toString(),
+                    "type" to MemberType.toString(MemberType.CHILD)
+                )
+            )
+    }
+
+    private fun deleteMemberFromDatabase(member: String) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(member)
+            .delete()
+            .addOnSuccessListener {
+                println("Documento eliminado correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al eliminar documento: $e")
+            }
+    }
+
+    private fun addTaskToDatabase(task: Task, typeOfTask: String) {
+        var limitDate = ""
+        if (task.getLimitDate() != null) {
+            limitDate = task.getLimitDate()!!.format(Constants.dateFormat)
+        }
+        var completedDate = ""
+        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
+            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+        }
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(Constants.FAMILY)
+            .collection(typeOfTask)
+            .add(
+                hashMapOf(
+                    "description" to task.getDescription(),
+                    "limitDate" to task.getLimitDate()!!.format(dateFormat),
+                    "mandatory" to task.isMandatory(),
+                    "price" to task.getPrice().toString(),
+                    "state" to TaskState.toString(task.getState()),
+                    "completedDate" to completedDate,
+                    "child" to task.getChildName()
+                )
+            )
+            .addOnSuccessListener { document ->
+                task.setId(document.id)
+            }
+            .addOnFailureListener { e ->
+                println("Error al agregar documento: $e")
+            }
+    }
+
+    private fun deleteTaskFromDatabase(id: String, typeOfTask: String) {
+        FirebaseFirestore.getInstance()
+            .collection(email)
+            .document(Constants.FAMILY)
+            .collection(typeOfTask)
+            .document(id)
+            .delete()
+            .addOnSuccessListener {
+                println("Documento eliminado correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al eliminar documento: $e")
+            }
     }
 }
