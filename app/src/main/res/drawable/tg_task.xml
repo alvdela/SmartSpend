@@ -3,6 +3,6 @@
     android:enterFadeDuration="@android:integer/config_longAnimTime"
     android:exitFadeDuration="@android:integer/config_longAnimTime"
     >
-    <item android:drawable="@drawable/ic_unchecked_circle" android:state_checked="true"/>
-    <item android:drawable="@drawable/ic_check_circle" android:state_checked="false"/>
+    <item android:drawable="@drawable/ic_unchecked_circle" android:state_checked="false"/>
+    <item android:drawable="@drawable/ic_check_circle" android:state_checked="true"/>
 </selector>

@@ -1,6 +1,7 @@
 package com.alvdela.smartspend.ui.adapter
 
 import android.graphics.Color
+import android.os.Handler
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.TextView
@@ -16,8 +17,8 @@ class TaskViewHolder(val view: View): ViewHolder(view) {
     val descripcionTarea = view.findViewById<TextView>(R.id.descripcionTarea)
     val recompensaTarea = view.findViewById<TextView>(R.id.recompensaTarea)
     val fechaLimiteTarea = view.findViewById<TextView>(R.id.fechaLimiteTarea)
-    fun render(task: Task, completeTask: (Int, Int) -> Unit, originalPosition: Int, recyclePosition: Int) {
-        checkTask.isChecked = true
+    fun render(task: Task, completeTask: (Int) -> Unit, originalPosition: Int) {
+        checkTask.isChecked = false
         if (task.getPrice().compareTo(BigDecimal(0)) == 0){
             recompensaTarea.visibility = View.GONE
         }else{
@@ -36,8 +37,14 @@ class TaskViewHolder(val view: View): ViewHolder(view) {
             }
         }
         checkTask.setOnCheckedChangeListener { _, _ ->
-            checkTask.isChecked = false
-            completeTask(originalPosition,recyclePosition)
+            if (checkTask.isChecked){
+                Handler().postDelayed({
+                    completeTask(originalPosition)
+                }, 500)
+            }
+            Handler().postDelayed({
+                checkTask.isChecked = false
+            }, 1000)
         }
         val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.fade_anim)
         itemView.startAnimation(animation)

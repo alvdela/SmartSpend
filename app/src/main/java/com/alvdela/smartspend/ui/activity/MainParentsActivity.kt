@@ -209,7 +209,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     /* Metodo para la gestion de las tareas */
 
-    private fun closeTask(selectedTask: Int, recyclePosition: Int) {
+    private fun closeTask(selectedTask: Int) {
         showPopUp(R.layout.pop_up_delete)
         val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
         tvDelete.text = resources.getString(R.string.delete_task)
@@ -226,13 +226,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             }
             family.removeTask(selectedTask)
             dialog.dismiss()
-            openTaskAdapter.filterTasks()
-            openTaskAdapter.notifyItemRemoved(recyclePosition)
+            openTaskAdapter.removeItem()
         }
 
     }
 
-    private fun completeTask(selectedTask: Int, recyclePosition: Int) {
+    private fun completeTask(selectedTask: Int) {
         showPopUp(R.layout.pop_up_complete_task)
         val task = family.getTask(selectedTask)
         val tvNota = dialog.findViewById<TextView>(R.id.tvNota)
@@ -242,10 +241,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
             task.setState(TaskState.OPEN)
-            completeTaskAdapter.filterTasks()
-            completeTaskAdapter.notifyItemRemoved(recyclePosition)
-            openTaskAdapter.filterTasks()
-            openTaskAdapter.notifyItemRemoved(recyclePosition)
+            completeTaskAdapter.removeItem()
+            openTaskAdapter.removeItem()
             dialog.dismiss()
         }
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
@@ -256,9 +253,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
             }
             family.removeTask(selectedTask)
-            completeTaskAdapter.filterTasks()
-            completeTaskAdapter.notifyItemRemoved(recyclePosition)
             dialog.dismiss()
+            completeTaskAdapter.removeItem()
         }
     }
 
@@ -443,12 +439,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 inputCantidadAsignacion.error = "Se necesita una cantidad"
             }
             if (isCorrect) {
-                allowance = Allowance(
-                    inputNombreAsignacion.text.toString(),
-                    fecha!!,
-                    inputCantidadAsignacion.text.toString().toBigDecimal(),
-                    frecuencia!!
-                )
+                allowance.setName(inputNombreAsignacion.text.toString())
+                allowance.setNextPayment(fecha!!)
+                allowance.setAmount(inputCantidadAsignacion.text.toString().toBigDecimal())
+                allowance.setType(frecuencia!!)
                 child.updateAllowance(allowance, allowanceId)
                 if (!isMock){
                     updateAllowanceInDatabase(child.getUser(),allowance)
@@ -829,26 +823,22 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun showTasks() {
         openTaskAdapter = TaskOpenAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePosition ->
-                closeTask(
-                    selectedTask,
-                    recyclePosition
-                )
-            }
-        )
+            tasks = family.getTaskList()
+        ) { selectedTask ->
+            closeTask(
+                selectedTask
+            )
+        }
         rvTaskPendientes.layoutManager = LinearLayoutManager(this)
         rvTaskPendientes.adapter = openTaskAdapter
 
         completeTaskAdapter = TaskCompleteAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePosition ->
-                completeTask(
-                    selectedTask,
-                    recyclePosition
-                )
-            }
-        )
+            tasks = family.getTaskList()
+        ) { selectedTask ->
+            completeTask(
+                selectedTask,
+            )
+        }
         rvTaskCompletadas.layoutManager = LinearLayoutManager(this)
         rvTaskCompletadas.adapter = completeTaskAdapter
     }
@@ -1153,9 +1143,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             .document(id)
             .delete()
             .addOnSuccessListener {
-                println("Documento eliminado correctamente")
+                Toast.makeText(this,"Documento eliminado correctamente",Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
+                Toast.makeText(this,"Error al eliminar documento: $e",Toast.LENGTH_SHORT).show()
                 println("Error al eliminar documento: $e")
             }
     }
@@ -1222,7 +1213,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             .add(
                 hashMapOf(
                     "description" to task.getDescription(),
-                    "limitDate" to task.getLimitDate()!!.format(dateFormat),
+                    "limitDate" to limitDate,
                     "mandatory" to task.isMandatory(),
                     "price" to task.getPrice().toString(),
                     "state" to TaskState.toString(task.getState()),

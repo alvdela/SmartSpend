@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
@@ -212,7 +213,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 inputCantidad.error = "Necesitas saber el precio de lo que deseas conseguir"
                 allOk = false
             } else {
-                cantidad = inputCantidad.text.toString().toBigDecimal()
+                var cantidadString = inputCantidad.text.toString()
+                if (cantidadString.length == 3){
+                    cantidadString += "0"
+                }
+                cantidad = cantidadString.toBigDecimal()
             }
             if (allOk) {
                 val goal: SavingGoal = when (tipo) {
@@ -359,7 +364,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     /* Metodos para las tareas */
-    private fun completeTask(selectedTask: Int, recyclePostition: Int) {
+    private fun completeTask(selectedTask: Int) {
         val task = family.getTask(selectedTask)
         task.setState(TaskState.COMPLETE)
         task.setChild(child)
@@ -367,11 +372,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             updateTaskInDatabase(task, TASKS)
         }
         if (task.isMandatory()) {
-            mandatoryTaskAdapter.filterTasks()
-            mandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
+            mandatoryTaskAdapter.removeItem()
         } else {
-            noMandatoryTaskAdapter.filterTasks()
-            noMandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
+            noMandatoryTaskAdapter.removeItem()
         }
     }
 
@@ -401,9 +404,13 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             tipo = selectedRadioButton.tag.toString().toInt()
         }
 
+        val cancelNewSpent = dialog.findViewById<Button>(R.id.cancelNewSpent)
+        cancelNewSpent.setOnClickListener {
+            dialog.dismiss()
+        }
+
         addButton.setOnClickListener {
             val descripcionText = descripcion.text.toString()
-            var amountNumber = BigDecimal(0)
             if (descripcionText.isEmpty()) {
                 descripcion.error = "Se necesita una descripción"
                 Toast.makeText(this, "Se necesita una descripción", Toast.LENGTH_SHORT).show()
@@ -418,7 +425,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                amountNumber = amount.text.toString().toBigDecimal()
+                val amountNumber = amount.text.toString().toBigDecimal()
                 addRecord(descripcionText)
                 when (tipo) {
                     1 -> {
@@ -485,30 +492,28 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     private fun showTask() {
         mandatoryTaskAdapter = TaskMandatoryAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePostition ->
-                completeTask(
-                    selectedTask,
-                    recyclePostition
-                )
-            }
-        )
+            tasks = family.getTaskList()
+        ) { selectedTask ->
+            completeTask(
+                selectedTask
+            )
+        }
         val rvTaskObligatorias = findViewById<RecyclerView>(R.id.rvTaskObligatorias)
         rvTaskObligatorias.layoutManager = LinearLayoutManager(this)
         rvTaskObligatorias.adapter = mandatoryTaskAdapter
+        rvTaskObligatorias.itemAnimator = DefaultItemAnimator()
 
         noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePostition ->
-                completeTask(
-                    selectedTask,
-                    recyclePostition
-                )
-            }
-        )
+            tasks = family.getTaskList()
+        ) { selectedTask ->
+            completeTask(
+                selectedTask
+            )
+        }
         val rvTaskExtra = findViewById<RecyclerView>(R.id.rvTaskExtra)
         rvTaskExtra.layoutManager = LinearLayoutManager(this)
         rvTaskExtra.adapter = noMandatoryTaskAdapter
+        rvTaskExtra.itemAnimator = DefaultItemAnimator()
     }
 
     private fun showGoals() {

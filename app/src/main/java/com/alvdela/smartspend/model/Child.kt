@@ -51,9 +51,14 @@ class Child(user: String, password: String) : Member(user, password) {
                 )
                 addIncome(payment)
                 actualMoney += allowance.getPayment()
+
+                if (!ContextFamily.isMock){
+                    updateAllowanceInDatabase(getUser(),allowance)
+                }
             }
             if (allowance.allowanceExpired()) {
-                deleteAllowanceFromDatabase(this.getUser(), allowance.getId())
+                if(!ContextFamily.isMock)
+                    deleteAllowanceFromDatabase(this.getUser(), allowance.getId())
                 iterator.remove()
             }
         }
@@ -78,7 +83,8 @@ class Child(user: String, password: String) : Member(user, password) {
         while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
             index++
         }
-        addCashFlowToDatabase(this.getUser(),cashFlow)
+        if(!ContextFamily.isMock)
+            addCashFlowToDatabase(this.getUser(),cashFlow)
         this.cashFlowList.add(index, cashFlow)
     }
 
@@ -154,6 +160,27 @@ class Child(user: String, password: String) : Member(user, password) {
             }
             .addOnFailureListener { e ->
                 println("Error al añadir documento: $e")
+            }
+    }
+
+    private fun updateAllowanceInDatabase(child: String, allowance: Allowance) {
+        FirebaseFirestore.getInstance()
+            .collection(ContextFamily.family!!.getEmail())
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(child)
+            .collection(Constants.ALLOWANCES)
+            .document(allowance.getId())
+            .update(
+                mapOf(
+                    "nextPayment" to allowance.getNextPayment().format(Constants.dateFormat)
+                )
+            )
+            .addOnSuccessListener {
+                println("Asignación actualizada correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar asignación: $e")
             }
     }
 }

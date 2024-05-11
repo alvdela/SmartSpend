@@ -1,5 +1,8 @@
 package com.alvdela.smartspend.model
 
+import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.firebase.Constants
+import com.google.firebase.firestore.FirebaseFirestore
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -50,7 +53,7 @@ class Allowance (
         return this.id
     }
 
-    fun setId(id:String){
+    fun setId(id: String){
         this.id = id
     }
 
@@ -93,4 +96,27 @@ class Allowance (
         return getAmount()
     }
 
+    private fun updateAllowanceInDatabase(child: String, allowance: Allowance) {
+        FirebaseFirestore.getInstance()
+            .collection(ContextFamily.family!!.getEmail())
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(child)
+            .collection(Constants.ALLOWANCES)
+            .document(allowance.getId())
+            .update(
+                mapOf(
+                    "name" to allowance.getName(),
+                    "nextPayment" to allowance.getNextPayment().format(Constants.dateFormat),
+                    "amount" to allowance.getAmount().toString(),
+                    "type" to AllowanceType.toString(allowance.getType()),
+                )
+            )
+            .addOnSuccessListener {
+                println("Asignación actualizada correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar asignación: $e")
+            }
+    }
 }
