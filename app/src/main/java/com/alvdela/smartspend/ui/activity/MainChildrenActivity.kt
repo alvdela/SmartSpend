@@ -22,8 +22,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,7 +55,9 @@ import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.GoalAdapter
 import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
+import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -214,9 +220,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 allOk = false
             } else {
                 var cantidadString = inputCantidad.text.toString()
-                if (cantidadString.length == 3){
-                    cantidadString += "0"
-                }
                 cantidad = cantidadString.toBigDecimal()
             }
             if (allOk) {
@@ -335,6 +338,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 }
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
+                showGoals()
                 showMoney()
                 expenseAdapter.notifyDataSetChanged()
                 dialog.dismiss()
@@ -357,6 +361,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
                 expenseAdapter.notifyDataSetChanged()
+                showGoals()
                 showMoney()
                 dialog.dismiss()
             }
@@ -686,6 +691,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
+            R.id.nav_item_settings -> showEditProfile()
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
             R.id.nav_item_share -> share()
@@ -712,7 +718,6 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     private fun signOut() {
-        //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
         ContextFamily.reset()
     }
@@ -728,6 +733,18 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         if (record.size > 3){
             record.removeAt(record.size - 1)
         }
+    }
+
+    private fun showEditProfile() {
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf(ProfileFragment.USER_BUNDLE to user)
+        ProfileFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
     }
 
     /* Operaciones de Firebase */

@@ -203,6 +203,16 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="accede_con_cuenta_smartspend">Accede con la contraseña de tu cuenta SmartSpend</string>
     <string name="recover_password">¿Has olvidado la contraseña?</string>
     <string name="recuperar">Recuperar</string>
+    <string name="change_email">Modificar correo electrónico</string>
+    <string name="correo_nuevo">Correo nuevo</string>
+    <string name="note_change_email">Nota: tendrás que verificar el cambio de correo</string>
+    <string name="change_family_name">Cambiar el nombre de la familia</string>
+    <string name="new_name">Nuevo nombre</string>
+    <string name="old_password">Contraseña antigua</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="change_password">Modificar la contraseña</string>
+    <string name="delete_profile">Eliminar perfil</string>
+    <string name="delete_profile_info">Introduce la contraseña para eliminar el perfil</string>
 
 </resources>
 

@@ -20,6 +20,7 @@ import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
+import com.google.firebase.auth.FirebaseAuth
 import java.time.format.DateTimeFormatter
 
 class ProfilesActivity : AppCompatActivity() {
@@ -95,11 +96,13 @@ class ProfilesActivity : AppCompatActivity() {
         familyName = findViewById(R.id.familyName)
         familyName.text = getString(R.string.familia_display, family.getName())
     }
+
     private fun hideButtons() {
         for (button in profilesButtons) {
             button.visibility = View.INVISIBLE
         }
     }
+
     private fun showFamilyData() {
         var i = 0
         for ((clave, valor) in family.getMembers()) {
@@ -167,7 +170,7 @@ class ProfilesActivity : AppCompatActivity() {
                     dialog.dismiss()
                     goChildMain(user)
                 }
-            }else{
+            } else {
                 passwordWrong.visibility = View.VISIBLE
             }
         }
@@ -185,7 +188,7 @@ class ProfilesActivity : AppCompatActivity() {
                 if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
 
-        if (ContextFamily.isMock){
+        if (ContextFamily.isMock) {
             val tvInfo = dialog.findViewById<TextView>(R.id.tvInfo)
             tvInfo.text = resources.getString(R.string.forget_in_mock)
             val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
@@ -203,17 +206,23 @@ class ProfilesActivity : AppCompatActivity() {
                     dialog.dismiss()
                     goChildMain(member.getUser())
                 }
-            } else if (family.checkPassword(passwordProfile.text.toString())) {
-                member!!.setPassword("")
-                if (member is Parent) {
-                    dialog.dismiss()
-                    goParentMain(member.getUser())
-                } else if (member is Child) {
-                    dialog.dismiss()
-                    goChildMain(member.getUser())
-                }
-            }else{
-                tvWrongPassword.visibility = View.VISIBLE
+            } else {
+                FirebaseAuth.getInstance()
+                    .signInWithEmailAndPassword(email, passwordProfile.text.toString())
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            member!!.setPassword("")
+                            if (member is Parent) {
+                                dialog.dismiss()
+                                goParentMain(member.getUser())
+                            } else if (member is Child) {
+                                dialog.dismiss()
+                                goChildMain(member.getUser())
+                            }
+                        } else {
+                            tvWrongPassword.visibility = View.VISIBLE
+                        }
+                    }
             }
         }
 

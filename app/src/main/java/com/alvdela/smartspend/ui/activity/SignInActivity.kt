@@ -174,7 +174,6 @@ class SignInActivity : AppCompatActivity() {
                 hashMapOf(
                     "familyName" to familyName,
                     "familyEmail" to email,
-                    "passwordFamily" to hashPassword(passwordInput.text.toString())
                 )
             )
             .addOnCompleteListener { task ->

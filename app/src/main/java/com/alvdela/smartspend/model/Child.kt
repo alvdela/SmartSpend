@@ -110,10 +110,12 @@ class Child(user: String, password: String) : Member(user, password) {
 
     fun claimGoal(i: Int) {
         val goal = getGoals()[i]
-        val payment =
-            CashFlow(goal.getDescription(), goal.getSaving(), CashFlowType.INGRESO, LocalDate.now())
-        addIncome(payment)
-        this.actualMoney += goal.getSaving()
+        if (goal.getSaving().compareTo(BigDecimal(0)) != 0){
+            val payment =
+                CashFlow(goal.getDescription(), goal.getSaving(), CashFlowType.INGRESO, LocalDate.now())
+            addIncome(payment)
+            this.actualMoney += goal.getSaving()
+        }
         this.goalList.removeAt(i)
     }
 
@@ -121,6 +123,8 @@ class Child(user: String, password: String) : Member(user, password) {
         val payment = CashFlow(description, money, CashFlowType.RECOMPENSA, LocalDate.now())
         addIncome(payment)
         this.actualMoney += money
+        if(!ContextFamily.isMock)
+            updateMoneyInDatabase()
     }
 
     private fun deleteAllowanceFromDatabase(child: String, id: String) {
@@ -181,6 +185,25 @@ class Child(user: String, password: String) : Member(user, password) {
             }
             .addOnFailureListener { e ->
                 println("Error al actualizar asignación: $e")
+            }
+    }
+
+    private fun updateMoneyInDatabase(){
+        FirebaseFirestore.getInstance()
+            .collection(ContextFamily.family!!.getEmail())
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(getUser())
+            .update(
+                mapOf(
+                    "money" to getActualMoney().toString()
+                )
+            )
+            .addOnSuccessListener {
+                println("Dinero actualizado correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar el dinero disponible: $e")
             }
     }
 }

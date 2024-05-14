@@ -238,8 +238,7 @@ class LoginActivity : AppCompatActivity() {
                 if (document.exists()) {
                     val familyName = document.getString("familyName")
                     val familyEmail = document.getString("familyEmail")
-                    val familyPassword = document.getString("passwordFamily")
-                    val family = Family(familyName!!, familyEmail!!, familyPassword!!)
+                    val family = Family(familyName!!, familyEmail!!)
                     ContextFamily.family = family
                     getMembers()
                 }else{

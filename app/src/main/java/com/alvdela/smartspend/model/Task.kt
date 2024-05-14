@@ -85,7 +85,7 @@ class Task (
     }
 
     fun givePrice(){
-        if (this.state == TaskState.COMPLETE && this.price.compareTo(BigDecimal(0)) == 0){
+        if (this.state == TaskState.COMPLETE && this.price.compareTo(BigDecimal(0)) != 0){
             this.child!!.claimPrice(getDescription(),getPrice())
         }
     }

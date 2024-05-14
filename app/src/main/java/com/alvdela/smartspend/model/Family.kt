@@ -13,7 +13,6 @@ import java.security.SecureRandom
 class Family(
     private var familyName: String,
     private var emailFamily: String,
-    private var passwordFamily: String = ""
 ) : Serializable {
     private var members: MutableMap<String, Member> = mutableMapOf()
     private val taskList: MutableList<Task> = mutableListOf()
@@ -134,24 +133,6 @@ class Family(
     }
     private fun removeTaskFromHistoric(indexTask: Int) {
         this.oldTask.removeAt(indexTask)
-    }
-
-    /* --- Metodos para asegurar la contraseña --- */
-
-     fun setPassword(password: String) {
-         val hashedPassword = hashPassword(password)
-         this.passwordFamily = hashedPassword
-     }
-
-    internal fun checkPassword(passwordInput: String): Boolean{
-        return hashPassword(passwordInput) == this.passwordFamily
-    }
-
-    private fun hashPassword(password: String): String {
-        val bytes = password.toByteArray(Charsets.UTF_8)
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 
 }

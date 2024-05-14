@@ -32,10 +32,14 @@ object Utility {
     fun getDecimalNumber(number: BigDecimal): Int{
         val numeroString = number.toString()
         val partes = numeroString.split(".").toMutableList()
-        if (partes[1].length > 2){
-            partes[1] = partes[1].subSequence(0,2).toString()
-        }else if(partes[1].length < 2){
-            partes[1] = partes[1] + "0"
+        if (partes.size > 1){
+            if (partes[1].length > 2){
+                partes[1] = partes[1].subSequence(0,2).toString()
+            }else if(partes[1].length < 2){
+                partes[1] = partes[1] + "0"
+            }
+        }else{
+            return 0
         }
         return partes[1].toInt()
     }
