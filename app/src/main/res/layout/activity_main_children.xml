@@ -410,16 +410,16 @@
                 app:tint="@color/dark_gray" />
         </LinearLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentProfile"
-            android:translationZ="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:background="@color/red"
-            android:translationX="500dp"
-            />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentProfile"
+        android:translationZ="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="@color/red"
+        android:translationX="500dp"
+        />
 
     <include
         layout="@layout/app_bar_main"

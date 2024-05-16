@@ -48,7 +48,9 @@ import kotlin.properties.Delegates
 
 class LoginActivity : AppCompatActivity() {
 
-    private var email = "mock"
+    private var uid = "mock"
+
+    private var email by Delegates.notNull<String>()
     private var password by Delegates.notNull<String>()
 
     private lateinit var emailInput: EditText
@@ -87,7 +89,7 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null){
-            email = currentUser.email.toString()
+            uid = currentUser.uid
             getFamily()
         }
     }
@@ -155,6 +157,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful){
                     ContextFamily.isMock = false
+                    uid = FirebaseAuth.getInstance().currentUser!!.uid
                     getFamily()
                 }else{
                     errorText.visibility = View.VISIBLE
@@ -186,7 +189,6 @@ class LoginActivity : AppCompatActivity() {
             hidePrivacyTerms()
         }else{
             super.onBackPressed()
-            //TODO mensaje que pregunte al usuario si desea cerrar la aplicacion
             val startMain = Intent(Intent.ACTION_MAIN)
             startMain.addCategory(Intent.CATEGORY_HOME)
             startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -231,13 +233,20 @@ class LoginActivity : AppCompatActivity() {
     private fun getFamily() {
         showLoading()
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val familyName = document.getString("familyName")
-                    val familyEmail = document.getString("familyEmail")
+                    var familyEmail = document.getString("familyEmail")
+                    if (!ContextFamily.isMock){
+                        val user = FirebaseAuth.getInstance().currentUser
+                        if (familyEmail != user?.email){
+                            familyEmail = user?.email
+                            updateEmail(familyEmail)
+                        }
+                    }
                     val family = Family(familyName!!, familyEmail!!)
                     ContextFamily.family = family
                     getMembers()
@@ -247,14 +256,27 @@ class LoginActivity : AppCompatActivity() {
                     dismissLoading()
                 }
             }
-            .addOnFailureListener { exception ->
+            .addOnFailureListener {
                 Toast.makeText(this, "Error con firebase", Toast.LENGTH_SHORT).show()
+                FirebaseAuth.getInstance().signOut()
+                dismissLoading()
             }
+    }
+
+    private fun updateEmail(familyEmail: String?) {
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .update(
+                mapOf(
+                    "familyEmail" to familyEmail
+                )
+            )
     }
 
     private fun getMembers() {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
             .get()
@@ -264,12 +286,16 @@ class LoginActivity : AppCompatActivity() {
                         val user = document.getString("user")!!
                         val password = document.getString("password")!!
                         val parent = Parent(user, password)
+                        val id = document.id
+                        parent.setId(id)
                         ContextFamily.family?.addMember(parent)
                     } else if (MemberType.fromString(document.getString("type")!!) == MemberType.CHILD) {
                         val user = document.getString("user")!!
                         val password = document.getString("password")!!
                         val money = document.getString("money")!!.toBigDecimal()
                         val child = Child(user, password)
+                        val id = document.id
+                        child.setId(id)
                         child.setActualMoney(money)
                         ContextFamily.family?.addMember(child)
                     }
@@ -284,8 +310,8 @@ class LoginActivity : AppCompatActivity() {
     private fun getChildrenInfo() {
         for (child in ContextFamily.family!!.getChildren()){
             getAllowances(child)
-            child.setCashFlow(getCashFlow(child.getUser()))
-            child.setGoals(getGoals(child.getUser()))
+            child.setCashFlow(getCashFlow(child.getId()))
+            child.setGoals(getGoals(child.getId()))
         }
         dismissLoading()
         getTask(Constants.TASKS)
@@ -295,10 +321,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun getAllowances(child: Child) {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
-            .document(child.getUser())
+            .document(child.getId())
             .collection(ALLOWANCES)
             .get()
             .addOnSuccessListener { documents ->
@@ -322,7 +348,7 @@ class LoginActivity : AppCompatActivity() {
     private fun getCashFlow(child: String): MutableList<CashFlow> {
         val cashFlowList = mutableListOf<CashFlow>()
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
             .document(child)
@@ -347,7 +373,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun getGoals(child: String): MutableList<SavingGoal> {
         val goals = mutableListOf<SavingGoal>()
-        FirebaseFirestore.getInstance().collection(email)
+        FirebaseFirestore.getInstance()
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
             .document(child)
@@ -374,7 +401,7 @@ class LoginActivity : AppCompatActivity() {
     private fun getTask(typeOfTask: String) {
         val family = ContextFamily.family!!
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(typeOfTask)
             .get()

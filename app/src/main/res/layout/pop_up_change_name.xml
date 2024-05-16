@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popUpFamilyName"
     android:layout_width="350dp"
-    android:layout_height="260dp"
+    android:layout_height="300dp"
     android:layout_gravity="center"
     android:background="@drawable/corners_white"
     android:translationZ="5dp">
@@ -33,11 +33,11 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/inputNewFamilyName"
+        app:layout_constraintStart_toStartOf="@+id/inputNewName"
         app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
     <EditText
-        android:id="@+id/inputNewFamilyName"
+        android:id="@+id/inputNewName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/corners_white"
@@ -53,8 +53,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvInfo" />
 
+    <TextView
+        android:id="@+id/tvWrongName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/nombre_ocupado"
+        android:textColor="@color/red"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputNewName"
+        tools:visibility="visible" />
+
     <Button
-        android:id="@+id/buttonConfirmNewFamilyName"
+        android:id="@+id/buttonConfirmNewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -69,7 +83,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/buttonCancelNewFamilyName"
+        android:id="@+id/buttonCancelNewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -95,12 +109,12 @@
 
     <View
         android:id="@+id/divider6"
-        android:layout_marginTop="20dp"
         android:layout_width="348dp"
         android:layout_height="1dp"
         android:background="@color/dark_gray"
+        app:layout_constraintBottom_toTopOf="@+id/buttonConfirmNewName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputNewFamilyName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvWrongPassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -207,12 +207,15 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="correo_nuevo">Correo nuevo</string>
     <string name="note_change_email">Nota: tendrás que verificar el cambio de correo</string>
     <string name="change_family_name">Cambiar el nombre de la familia</string>
+    <string name="change_user_name">Cambiar el nombre del usuario</string>
+
     <string name="new_name">Nuevo nombre</string>
     <string name="old_password">Contraseña antigua</string>
     <string name="new_password">Nueva contraseña</string>
     <string name="change_password">Modificar la contraseña</string>
     <string name="delete_profile">Eliminar perfil</string>
-    <string name="delete_profile_info">Introduce la contraseña para eliminar el perfil</string>
+    <string name="delete_profile_info">Introduce la contraseña de la cuenta para eliminar el perfil</string>
+    <string name="note_delete_profile">Nota: la cuenta de la familia se dara de baja si no quedan perfiles asociados a esta</string>
 
 </resources>
 

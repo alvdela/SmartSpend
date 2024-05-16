@@ -42,7 +42,9 @@ import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.firebase.Constants
 import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
+import com.alvdela.smartspend.firebase.Constants.CASHFLOW
 import com.alvdela.smartspend.firebase.Constants.FAMILY
+import com.alvdela.smartspend.firebase.Constants.GOALS
 import com.alvdela.smartspend.firebase.Constants.HISTORIC
 import com.alvdela.smartspend.firebase.Constants.MEMBERS
 import com.alvdela.smartspend.firebase.Constants.TASKS
@@ -73,9 +75,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     //Informacion de la familia y miembro actual
     private val family = ContextFamily.family!!
-    private val email = family.getEmail()
     private val isMock = ContextFamily.isMock
-    private var user: String = ""
+    private var user = ""
+
+    private var uid = "mock"
 
     private lateinit var membersCopy: MutableMap<String, Member>
 
@@ -126,6 +129,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_parents)
         user = intent.getStringExtra("USER_NAME").toString()
+        if (!isMock){
+            uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        }
         initObjects()
         initToolBar()
         initNavView()
@@ -151,8 +157,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
 
         //val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
-        val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
-        currentUserName.text = user
         changeButtonState(seguimientoButton)
 
         seguimientoButton.setOnClickListener {
@@ -339,9 +343,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         confirmButton.setOnClickListener {
             val child = family.getMember(selectedChild) as Child
             if (!isMock){
-                deleteAllowanceFromDatabase(child.getUser(),child.getAllowances()[allowanceId].getId())
+                deleteAllowanceFromDatabase(child, allowanceId)
+            }else{
+                child.getAllowances().removeAt(allowanceId)
             }
-            child.getAllowances().removeAt(allowanceId)
             dialog.dismiss()
             memberAdapter.notifyDataSetChanged()
         }
@@ -446,7 +451,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 allowance.setType(frecuencia!!)
                 child.updateAllowance(allowance, allowanceId)
                 if (!isMock){
-                    updateAllowanceInDatabase(child.getUser(),allowance)
+                    updateAllowanceInDatabase(child.getId(),allowance)
                 }
                 memberAdapter.notifyDataSetChanged()
                 dialog.dismiss()
@@ -541,9 +546,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     inputCantidadAsignacion.text.toString().toBigDecimal(),
                     frecuencia!!
                 )
-                child.addAllowance(allowance)
                 if (!isMock) {
-                    addAllowanceToDatabase(child.getUser(), allowance)
+                    addAllowanceToDatabase(child, allowance)
+                }else{
+                    child.addAllowance(allowance)
                 }
                 memberAdapter.notifyDataSetChanged()
                 dialog.dismiss()
@@ -629,12 +635,14 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         1 -> {
                             val parent = Parent(memberName, "")
                             parent.setPassword(passwordInput.text.toString())
-                            membersCopy[memberName] = parent
-                            val result = family.addMember(parent)
+
                             if (!isMock){
                                 addParentToDatabase(parent)
+                            }else{
+                                membersCopy[memberName] = parent
+                                val result = family.addMember(parent)
+                                Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                             }
-                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
 
                         2 -> {
@@ -642,12 +650,14 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             child.setPassword(passwordInput.text.toString())
                             if (inputCantidadInicial.text.toString().isNotBlank())
                                 child.setActualMoney(inputCantidadInicial.text.toString().toBigDecimal())
-                            membersCopy[memberName] = child
-                            val result = family.addMember(child)
+
                             if (!isMock){
                                 addChildToDatabase(child)
+                            }else{
+                                membersCopy[memberName] = child
+                                val result = family.addMember(child)
+                                Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                             }
-                            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                         }
 
                         else -> {
@@ -675,22 +685,23 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
-            family.deleteMember(selectedMember)
             if (!isMock){
                 deleteMemberFromDatabase(selectedMember)
-            }
-            var index = 0
-            var position = 0
-            for ((key, _) in membersCopy) {
-                if (selectedMember == key) {
-                    position = index
-                    break
+            }else{
+                family.deleteMember(selectedMember)
+                var index = 0
+                var position = 0
+                for ((key, _) in membersCopy) {
+                    if (selectedMember == key) {
+                        position = index
+                        break
+                    }
+                    index++
                 }
-                index++
+                membersCopy.remove(selectedMember)
+                memberAdapter.notifyItemRemoved(position)
             }
-            membersCopy.remove(selectedMember)
             dialog.dismiss()
-            memberAdapter.notifyItemRemoved(position)
         }
     }
 
@@ -771,7 +782,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     if (!isMock) updateMemberInDatabase(member)
 
                     dialog.dismiss()
-                    memberAdapter.notifyItemInserted(membersCopy.size)
+                    memberAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -982,6 +993,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         } else if (ProfileFragment.configProfileOpen) {
             val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
             supportFragmentManager.beginTransaction().remove(fragment!!).commit()
+            ProfileFragment.configProfileOpen = false
         } else {
             showPopUp(R.layout.pop_up_back_profiles)
 
@@ -1067,10 +1079,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun updateMemberInDatabase(member: Member) {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
-            .document(member.getUser())
+            .document(member.getId())
             .update(
                 mapOf(
                     "user" to member.getUser(),
@@ -1078,19 +1090,21 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 )
             )
             .addOnSuccessListener {
+                Toast.makeText(this,"Datos del miembro actualizados correctamente", Toast.LENGTH_SHORT).show()
                 println("Datos del miembro actualizados correctamente")
             }
             .addOnFailureListener { e ->
+                Toast.makeText(this,"Error al actualizar datos del miembro", Toast.LENGTH_SHORT).show()
                 println("Error al actualizar datos del padre: $e")
             }
     }
 
-    private fun addAllowanceToDatabase(child: String, allowance: Allowance) {
+    private fun addAllowanceToDatabase(child: Child, allowance: Allowance) {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
-            .document(child)
+            .document(child.getId())
             .collection(ALLOWANCES)
             .add(
                 hashMapOf(
@@ -1103,18 +1117,21 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             )
             .addOnSuccessListener { document ->
                 allowance.setId(document.id)
+                child.addAllowance(allowance)
+                Toast.makeText(this,"Asignacion añadida", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-                println("Error al agregar documento: $e")
+            .addOnFailureListener {e ->
+                Toast.makeText(this,"Error al crear la asignación", Toast.LENGTH_SHORT).show()
+                println("Error al crear asignación: $e")
             }
     }
 
-    private fun updateAllowanceInDatabase(child: String, allowance: Allowance) {
+    private fun updateAllowanceInDatabase(childId: String, allowance: Allowance) {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
-            .document(child)
+            .document(childId)
             .collection(ALLOWANCES)
             .document(allowance.getId())
             .update(
@@ -1126,74 +1143,169 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 )
             )
             .addOnSuccessListener {
+                Toast.makeText(this,"Asignación actualizada correctamente",Toast.LENGTH_SHORT).show()
                 println("Asignación actualizada correctamente")
             }
             .addOnFailureListener { e ->
+                Toast.makeText(this,"Error al actualizar asignación",Toast.LENGTH_SHORT).show()
                 println("Error al actualizar asignación: $e")
             }
     }
 
-    private fun deleteAllowanceFromDatabase(child: String, id: String) {
+    private fun deleteAllowanceFromDatabase(child: Child, allowanceId: Int) {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(FAMILY)
             .collection(MEMBERS)
-            .document(child)
+            .document(child.getId())
             .collection(ALLOWANCES)
-            .document(id)
+            .document(child.getAllowances()[allowanceId].getId())
             .delete()
             .addOnSuccessListener {
-                Toast.makeText(this,"Documento eliminado correctamente",Toast.LENGTH_SHORT).show()
+                child.getAllowances().removeAt(allowanceId)
+                Toast.makeText(this,"Asignación eliminadada correctamente",Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this,"Error al eliminar documento: $e",Toast.LENGTH_SHORT).show()
-                println("Error al eliminar documento: $e")
+            .addOnFailureListener {
+                Toast.makeText(this,"Error al eliminar la asignación",Toast.LENGTH_SHORT).show()
+                println("Error al eliminar la asignación")
             }
     }
 
     private fun addParentToDatabase(parent: Parent) {
-        FirebaseFirestore.getInstance()
-            .collection(email)
-            .document(Constants.FAMILY)
-            .collection(Constants.MEMBERS)
-            .document(parent.getUser())
-            .set(
-                hashMapOf(
-                    "user" to parent.getUser(),
-                    "password" to parent.getPassword(),
-                    "type" to MemberType.toString(MemberType.PARENT)
+        if (family.getMembers().size <= 12){
+            FirebaseFirestore.getInstance()
+                .collection(uid)
+                .document(FAMILY)
+                .collection(MEMBERS)
+                .add(
+                    hashMapOf(
+                        "user" to parent.getUser(),
+                        "password" to parent.getPassword(),
+                        "type" to MemberType.toString(MemberType.PARENT)
+                    )
                 )
-            )
+                .addOnSuccessListener { document ->
+                    membersCopy[parent.getUser()] = parent
+                    val result = family.addMember(parent)
+                    parent.setId(document.id)
+
+                    Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Se producjo un error al crear al miembro", Toast.LENGTH_SHORT).show()
+                    println("Error al crear al miembro")
+                }
+        }
     }
 
     private fun addChildToDatabase(child: Child) {
-        FirebaseFirestore.getInstance()
-            .collection(email)
-            .document(Constants.FAMILY)
-            .collection(Constants.MEMBERS)
-            .document(child.getUser())
-            .set(
-                hashMapOf(
-                    "user" to child.getUser(),
-                    "password" to child.getPassword(),
-                    "money" to child.getActualMoney().toString(),
-                    "type" to MemberType.toString(MemberType.CHILD)
+        if (family.getMembers().size <= 12){
+            FirebaseFirestore.getInstance()
+                .collection(uid)
+                .document(FAMILY)
+                .collection(MEMBERS)
+                .add(
+                    hashMapOf(
+                        "user" to child.getUser(),
+                        "password" to child.getPassword(),
+                        "money" to child.getActualMoney().toString(),
+                        "type" to MemberType.toString(MemberType.CHILD)
+                    )
                 )
-            )
+                .addOnSuccessListener { document ->
+                    membersCopy[child.getUser()] = child
+                    val result = family.addMember(child)
+                    child.setId(document.id)
+
+                    Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error al crear al miembro", Toast.LENGTH_SHORT).show()
+                    println("Error al crear al miembro")
+                }
+        }
     }
 
-    private fun deleteMemberFromDatabase(member: String) {
+    private fun deleteMemberFromDatabase(selectedMember: String) {
+        val userId = family.getMember(selectedMember)!!.getId()
+
+        //Si es un menor borramos todos sus datos
+        if (!family.isParent(selectedMember)){
+            deleteAllAllowancesFromDatabase(userId)
+            deleteCashFlowFromDatabase(userId)
+            deleteAllGoalsFromDatabase(userId)
+        }
+
         FirebaseFirestore.getInstance()
-            .collection(email)
-            .document(Constants.FAMILY)
-            .collection(Constants.MEMBERS)
-            .document(member)
+            .collection(uid)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(userId)
             .delete()
             .addOnSuccessListener {
-                println("Documento eliminado correctamente")
+                family.deleteMember(selectedMember)
+                var index = 0
+                var position = 0
+                for ((key, _) in membersCopy) {
+                    if (selectedMember == key) {
+                        position = index
+                        break
+                    }
+                    index++
+                }
+                membersCopy.remove(selectedMember)
+                memberAdapter.notifyItemRemoved(position)
+                Toast.makeText(this, "Miembro eliminado correctamente", Toast.LENGTH_SHORT).show()
+                println("Miembro eliminado correctamente")
             }
-            .addOnFailureListener { e ->
-                println("Error al eliminar documento: $e")
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al eliminar al miembro", Toast.LENGTH_SHORT).show()
+                println("Error al eliminar al miembro")
+            }
+    }
+
+    private fun deleteAllAllowancesFromDatabase(userId: String) {
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(userId)
+            .collection(ALLOWANCES)
+            .get()
+            .addOnSuccessListener { allowances ->
+                for (allowance in allowances){
+                    allowance.reference.delete()
+                }
+            }
+    }
+
+    private fun deleteCashFlowFromDatabase(userId: String) {
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(userId)
+            .collection(CASHFLOW)
+            .get()
+            .addOnSuccessListener { moves ->
+                for (move in moves){
+                    move.reference.delete()
+                }
+            }
+    }
+
+    private fun deleteAllGoalsFromDatabase(userId: String) {
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(userId)
+            .collection(GOALS)
+            .get()
+            .addOnSuccessListener { goals ->
+                for (goal in goals){
+                    goal.reference.delete()
+                }
             }
     }
 
@@ -1203,12 +1315,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             limitDate = task.getLimitDate()!!.format(Constants.dateFormat)
         }
         var completedDate = ""
-        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
+        if (typeOfTask == HISTORIC && task.getCompletedDate() != null) {
             completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
         }
         FirebaseFirestore.getInstance()
-            .collection(email)
-            .document(Constants.FAMILY)
+            .collection(uid)
+            .document(FAMILY)
             .collection(typeOfTask)
             .add(
                 hashMapOf(
@@ -1225,22 +1337,23 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 task.setId(document.id)
             }
             .addOnFailureListener { e ->
-                println("Error al agregar documento: $e")
+                Toast.makeText(this, "Error al añadir la tarea", Toast.LENGTH_SHORT).show()
+                println("Error al añadir la tarea")
             }
     }
 
     private fun deleteTaskFromDatabase(id: String, typeOfTask: String) {
         FirebaseFirestore.getInstance()
-            .collection(email)
-            .document(Constants.FAMILY)
+            .collection(uid)
+            .document(FAMILY)
             .collection(typeOfTask)
             .document(id)
             .delete()
             .addOnSuccessListener {
-                println("Documento eliminado correctamente")
+                println("Tarea eliminada correctamente")
             }
             .addOnFailureListener { e ->
-                println("Error al eliminar documento: $e")
+                println("Error al eliminar la tarea: $e")
             }
     }
 }

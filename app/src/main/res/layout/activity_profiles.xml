@@ -15,7 +15,7 @@
         android:text="@string/familia_display"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="40sp"
+        android:textSize="38sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View

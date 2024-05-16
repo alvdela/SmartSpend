@@ -33,13 +33,10 @@ class ProfilesActivity : AppCompatActivity() {
     private lateinit var family: Family
     private lateinit var email: String
 
-    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
     private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_profiles)
         getFamily()
         initObjects()

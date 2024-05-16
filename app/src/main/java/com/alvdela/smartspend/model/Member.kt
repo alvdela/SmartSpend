@@ -7,12 +7,22 @@ open class Member(
     protected var password: String = ""
 ) {
 
+    private lateinit var id: String
+
     internal fun getUser(): String{
         return user
     }
 
     internal fun setUser(user:String){
         this.user = user
+    }
+
+    internal fun getId(): String{
+        return id
+    }
+
+    internal fun setId(id:String){
+        this.id = id
     }
 
     internal fun getPassword(): String{

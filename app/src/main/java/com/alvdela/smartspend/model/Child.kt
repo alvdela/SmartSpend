@@ -2,6 +2,7 @@ package com.alvdela.smartspend.model
 
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.firebase.Constants
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -50,15 +51,16 @@ class Child(user: String, password: String) : Member(user, password) {
                     LocalDate.now()
                 )
                 addIncome(payment)
-                actualMoney += allowance.getPayment()
-
                 if (!ContextFamily.isMock){
-                    updateAllowanceInDatabase(getUser(),allowance)
+                    updateAllowanceInDatabase(allowance)
+                    updateMoneyInDatabase(true, allowance.getPayment())
+                }else{
+                    this.actualMoney += allowance.getPayment()
                 }
             }
             if (allowance.allowanceExpired()) {
                 if(!ContextFamily.isMock)
-                    deleteAllowanceFromDatabase(this.getUser(), allowance.getId())
+                    deleteAllowanceFromDatabase(allowance.getId())
                 iterator.remove()
             }
         }
@@ -67,12 +69,17 @@ class Child(user: String, password: String) : Member(user, password) {
 
     fun addExpense(cashFlow: CashFlow): Int {
         if (cashFlow.amount.compareTo(getActualMoney()) == -1) {
-            actualMoney -= cashFlow.amount
             var index = 0
             while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
                 index++
             }
-            this.cashFlowList.add(index, cashFlow)
+            if(!ContextFamily.isMock){
+                addCashFlowToDatabase(index, cashFlow)
+                updateMoneyInDatabase(false, cashFlow.amount)
+            }else{
+                actualMoney -= cashFlow.amount
+                this.cashFlowList.add(index, cashFlow)
+            }
             return index
         }
         return -1
@@ -83,9 +90,11 @@ class Child(user: String, password: String) : Member(user, password) {
         while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
             index++
         }
-        if(!ContextFamily.isMock)
-            addCashFlowToDatabase(this.getUser(),cashFlow)
-        this.cashFlowList.add(index, cashFlow)
+        if(!ContextFamily.isMock){
+            addCashFlowToDatabase(index,cashFlow)
+        }else{
+            this.cashFlowList.add(index, cashFlow)
+        }
     }
 
     fun getCashFlow(): MutableList<CashFlow> {
@@ -114,7 +123,11 @@ class Child(user: String, password: String) : Member(user, password) {
             val payment =
                 CashFlow(goal.getDescription(), goal.getSaving(), CashFlowType.INGRESO, LocalDate.now())
             addIncome(payment)
-            this.actualMoney += goal.getSaving()
+            if (!ContextFamily.isMock){
+                updateMoneyInDatabase(true, goal.getSaving())
+            }else{
+                this.actualMoney += goal.getSaving()
+            }
         }
         this.goalList.removeAt(i)
     }
@@ -122,19 +135,21 @@ class Child(user: String, password: String) : Member(user, password) {
     fun claimPrice(description: String, money: BigDecimal) {
         val payment = CashFlow(description, money, CashFlowType.RECOMPENSA, LocalDate.now())
         addIncome(payment)
-        this.actualMoney += money
-        if(!ContextFamily.isMock)
-            updateMoneyInDatabase()
+        if (!ContextFamily.isMock){
+            updateMoneyInDatabase(true, money)
+        }else{
+            this.actualMoney += money
+        }
     }
 
-    private fun deleteAllowanceFromDatabase(child: String, id: String) {
+    private fun deleteAllowanceFromDatabase(allowanceId: String) {
         FirebaseFirestore.getInstance()
-            .collection(ContextFamily.family!!.getEmail())
+            .collection(FirebaseAuth.getInstance().currentUser!!.uid)
             .document(Constants.FAMILY)
             .collection(Constants.MEMBERS)
-            .document(child)
+            .document(getId())
             .collection(Constants.ALLOWANCES)
-            .document(id)
+            .document(allowanceId)
             .delete()
             .addOnSuccessListener {
                 println("Documento eliminado correctamente")
@@ -144,12 +159,12 @@ class Child(user: String, password: String) : Member(user, password) {
             }
     }
 
-    private fun addCashFlowToDatabase(child: String, cashFlow: CashFlow) {
+    private fun addCashFlowToDatabase(index: Int, cashFlow: CashFlow) {
         FirebaseFirestore.getInstance()
-            .collection(ContextFamily.family!!.getEmail())
+            .collection(FirebaseAuth.getInstance().currentUser!!.uid)
             .document(Constants.FAMILY)
             .collection(Constants.MEMBERS)
-            .document(child)
+            .document(getId())
             .collection(Constants.CASHFLOW)
             .add(
                 hashMapOf(
@@ -160,19 +175,20 @@ class Child(user: String, password: String) : Member(user, password) {
                 )
             )
             .addOnSuccessListener {
-                println("Documento añadido correctamente")
+                this.cashFlowList.add(index, cashFlow)
+                println("Movimiento añadido correctamente")
             }
-            .addOnFailureListener { e ->
-                println("Error al añadir documento: $e")
+            .addOnFailureListener {
+                println("Error al añadir el movimiento")
             }
     }
 
-    private fun updateAllowanceInDatabase(child: String, allowance: Allowance) {
+    private fun updateAllowanceInDatabase(allowance: Allowance) {
         FirebaseFirestore.getInstance()
-            .collection(ContextFamily.family!!.getEmail())
+            .collection(FirebaseAuth.getInstance().currentUser!!.uid)
             .document(Constants.FAMILY)
             .collection(Constants.MEMBERS)
-            .document(child)
+            .document(getId())
             .collection(Constants.ALLOWANCES)
             .document(allowance.getId())
             .update(
@@ -188,22 +204,33 @@ class Child(user: String, password: String) : Member(user, password) {
             }
     }
 
-    private fun updateMoneyInDatabase(){
+    private fun updateMoneyInDatabase(positive: Boolean, money: BigDecimal) {
+        var actualMoney: BigDecimal
+        if (positive){
+            actualMoney = this.actualMoney + money
+        }else{
+            actualMoney = this.actualMoney - money
+        }
         FirebaseFirestore.getInstance()
-            .collection(ContextFamily.family!!.getEmail())
+            .collection(FirebaseAuth.getInstance().currentUser!!.uid)
             .document(Constants.FAMILY)
             .collection(Constants.MEMBERS)
-            .document(getUser())
+            .document(getId())
             .update(
                 mapOf(
-                    "money" to getActualMoney().toString()
+                    "money" to actualMoney.toString()
                 )
             )
             .addOnSuccessListener {
+                if (positive){
+                    this.actualMoney += money
+                }else{
+                    this.actualMoney -= money
+                }
                 println("Dinero actualizado correctamente")
             }
-            .addOnFailureListener { e ->
-                println("Error al actualizar el dinero disponible: $e")
+            .addOnFailureListener {
+                println("Error al actualizar el dinero disponible")
             }
     }
 }

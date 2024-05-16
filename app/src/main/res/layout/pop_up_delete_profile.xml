@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popUpChangeEmail"
     android:layout_width="350dp"
-    android:layout_height="310dp"
+    android:layout_height="330dp"
     android:layout_gravity="center"
     android:background="@drawable/corners_white"
     android:translationZ="5dp">
@@ -50,7 +50,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvInfo">
 
         <EditText
-            android:id="@+id/oldPasswordInput"
+            android:id="@+id/passwordInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/corners_white"
@@ -78,19 +78,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:fontFamily="@font/andika_regular"
-        android:text="@string/note_change_email"
+        android:text="@string/note_delete_profile"
         android:textAlignment="textStart"
         android:textColor="@color/darker_gray"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/passwordContainer"
         app:layout_constraintTop_toBottomOf="@+id/passwordContainer" />
 
     <Button
-        android:id="@+id/buttonConfirmChangeEmail"
+        android:id="@+id/buttonConfirmDeleteProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/edge_blue"
+        android:background="@drawable/edge_red"
         android:fontFamily="@font/andika_bold"
         android:text="@string/confirmar"
         android:textColor="@color/white"
@@ -101,7 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/buttonCancelChangeEmail"
+        android:id="@+id/buttonCancelDeleteProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"

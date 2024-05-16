@@ -3,7 +3,9 @@ package com.alvdela.smartspend.ui.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.service.controls.ControlsProviderService.TAG
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
@@ -45,7 +47,8 @@ class SignInActivity : AppCompatActivity() {
     private var familyName = ""
     private var tutorName = ""
     private var email = ""
-    private var password = ""
+
+    private lateinit var uid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,9 +84,18 @@ class SignInActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwordInput.text.toString())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
                     addFamily()
+                    FirebaseAuth.getInstance().currentUser?.sendEmailVerification()
+                        ?.addOnCompleteListener { verificationTask ->
+                            if (verificationTask.isSuccessful) {
+                                println("Correo electrónico de verificación enviado correctamente")
+                            } else {
+                                println("Error al enviar el correo electrónico de verificación")
+                            }
+                        }
                 } else {
-                    Toast.makeText(this, "Se ha producido un error inesperado", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Correo ya en uso", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -168,7 +180,7 @@ class SignInActivity : AppCompatActivity() {
 
     private fun addFamily() {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(Constants.FAMILY)
             .set(
                 hashMapOf(
@@ -185,10 +197,10 @@ class SignInActivity : AppCompatActivity() {
 
     private fun addParent() {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(Constants.FAMILY)
             .collection(Constants.MEMBERS)
-            .document(tutorName)
+            .document()
             .set(
                 hashMapOf(
                     "user" to tutorName,
@@ -215,12 +227,5 @@ class SignInActivity : AppCompatActivity() {
             passwordAgainInput.transformationMethod =
                 if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
-    }
-
-    private fun hashPassword(password: String): String {
-        val bytes = password.toByteArray(Charsets.UTF_8)
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 }
