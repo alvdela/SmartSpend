@@ -11,10 +11,10 @@ import com.alvdela.smartspend.model.AllowanceType
 
 class AllowanceViewHolder(val view: View): RecyclerView.ViewHolder(view) {
 
-    val tvAllowanceName = view.findViewById<TextView>(R.id.tvAllowanceName)
-    val tvAllowanceType = view. findViewById<TextView>(R.id.tvAllowanceType)
-    val deleteAllowanceButton = view.findViewById<ImageButton>(R.id.deleteAllowanceButton)
-    val modifyAllowanceButton = view.findViewById<ImageButton>(R.id.modifyAllowanceButton)
+    private val tvAllowanceName = view.findViewById<TextView>(R.id.tvAllowanceName)
+    private val tvAllowanceType = view. findViewById<TextView>(R.id.tvAllowanceType)
+    private val deleteAllowanceButton = view.findViewById<ImageButton>(R.id.deleteAllowanceButton)
+    private val modifyAllowanceButton = view.findViewById<ImageButton>(R.id.modifyAllowanceButton)
 
     fun render(
         allowance: Allowance,

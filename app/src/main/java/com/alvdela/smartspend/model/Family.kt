@@ -1,14 +1,6 @@
 package com.alvdela.smartspend.model
 
-import com.alvdela.smartspend.ContextFamily
-import com.alvdela.smartspend.firebase.Constants
-import com.alvdela.smartspend.firebase.Constants.HISTORIC
-import com.alvdela.smartspend.firebase.Constants.TASKS
-import com.alvdela.smartspend.firebase.Constants.dateFormat
-import com.google.firebase.firestore.FirebaseFirestore
 import java.io.Serializable
-import java.security.MessageDigest
-import java.security.SecureRandom
 
 class Family(
     private var familyName: String,
@@ -121,18 +113,26 @@ class Family(
     }
 
     fun removeTask(indexTask: Int) {
-        addTaskToHistoric(getTaskList()[indexTask])
+        addTaskToHistory(getTaskList()[indexTask])
         this.taskList.removeAt(indexTask)
     }
 
-    fun addTaskToHistoric(task: Task){
+    fun addTaskToHistory(task: Task){
         this.oldTask.add(0,task)
         if (oldTask.size > MAX_HISTORIC){
             removeTaskFromHistoric(oldTask.size)
         }
     }
-    private fun removeTaskFromHistoric(indexTask: Int) {
+
+    fun getTaskHistory(): MutableList<Task> {
+        return this.oldTask
+    }
+
+    fun removeTaskFromHistoric(indexTask: Int) {
         this.oldTask.removeAt(indexTask)
     }
 
+    fun clearHistory(){
+        this.oldTask.clear()
+    }
 }

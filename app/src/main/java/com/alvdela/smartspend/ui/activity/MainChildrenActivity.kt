@@ -469,9 +469,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                         child.addExpense(newExpense)
                     }
                 }
-                expenseAdapter.notifyDataSetChanged()
+                Handler().postDelayed({
+                    expenseAdapter.notifyDataSetChanged()
+                    showMoney()
+                }, 1000)
                 dialog.dismiss()
-                showMoney()
             }
         }
     }

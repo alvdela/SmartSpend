@@ -96,4 +96,10 @@ class Task (
         }
         return -10000
     }
+
+    fun reOpenTask(){
+        this.state = TaskState.OPEN
+        this.child = null
+        this.completedDate = null
+    }
 }

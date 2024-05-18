@@ -51,11 +51,10 @@ class Child(user: String, password: String) : Member(user, password) {
                     LocalDate.now()
                 )
                 addIncome(payment)
+                this.actualMoney += allowance.getPayment()
                 if (!ContextFamily.isMock){
                     updateAllowanceInDatabase(allowance)
                     updateMoneyInDatabase(true, allowance.getPayment())
-                }else{
-                    this.actualMoney += allowance.getPayment()
                 }
             }
             if (allowance.allowanceExpired()) {

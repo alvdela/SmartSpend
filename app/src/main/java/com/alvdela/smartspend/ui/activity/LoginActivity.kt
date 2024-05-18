@@ -443,7 +443,7 @@ class LoginActivity : AppCompatActivity() {
                     if (typeOfTask == Constants.TASKS){
                         family.addTask(task)
                     }else if (typeOfTask == Constants.HISTORIC){
-                        family.addTaskToHistoric(task)
+                        family.addTaskToHistory(task)
                     }
                 }
             }

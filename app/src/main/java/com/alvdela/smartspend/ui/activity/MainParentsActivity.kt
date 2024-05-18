@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -40,7 +41,6 @@ import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
-import com.alvdela.smartspend.firebase.Constants
 import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
 import com.alvdela.smartspend.firebase.Constants.CASHFLOW
 import com.alvdela.smartspend.firebase.Constants.FAMILY
@@ -63,6 +63,7 @@ import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.TaskOpenAdapter
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
+import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -71,7 +72,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
     //Informacion de la familia y miembro actual
     private val family = ContextFamily.family!!
@@ -118,8 +119,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     // Adapters para los RecycleView
     private lateinit var memberAdapter: MemberAdapter
-    private lateinit var openTaskAdapter: TaskOpenAdapter
     private lateinit var completeTaskAdapter: TaskCompleteAdapter
+    private lateinit var openTaskAdapter: TaskOpenAdapter
 
     //Constantes
     private val MAX_USER_LENGHT = 10
@@ -225,6 +226,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
+            family.getTask(selectedTask).setCompletedDate(LocalDate.now())
             if (!isMock){
                 deleteTaskFromDatabase(family.getTask(selectedTask).getId(), TASKS)
                 addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
@@ -253,6 +255,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
         closeTask.setOnClickListener {
             task.givePrice()
+            family.getTask(selectedTask).setCompletedDate(LocalDate.now())
             if (!isMock){
                 deleteTaskFromDatabase(family.getTask(selectedTask).getId(), TASKS)
                 addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
@@ -641,6 +644,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             }else{
                                 membersCopy[memberName] = parent
                                 val result = family.addMember(parent)
+                                memberAdapter.notifyDataSetChanged()
                                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -656,6 +660,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             }else{
                                 membersCopy[memberName] = child
                                 val result = family.addMember(child)
+                                memberAdapter.notifyDataSetChanged()
                                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -669,7 +674,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         }
                     }
                     dialog.dismiss()
-                    memberAdapter.notifyItemInserted(membersCopy.size)
                 }
             }
         }
@@ -994,6 +998,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
             supportFragmentManager.beginTransaction().remove(fragment!!).commit()
             ProfileFragment.configProfileOpen = false
+        }else if (TaskHistoryFragment.configProfileOpen) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
+            supportFragmentManager.beginTransaction().remove(fragment!!).commit()
+            TaskHistoryFragment.configProfileOpen = false
         } else {
             showPopUp(R.layout.pop_up_back_profiles)
 
@@ -1012,6 +1020,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_item_settings -> showEditProfile()
+            R.id.nav_item_record -> showTaskHistory()
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
             R.id.nav_item_share -> share()
@@ -1019,6 +1028,18 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    private fun showTaskHistory() {
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf()
+        TaskHistoryFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<TaskHistoryFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
     }
 
     private fun share() {
@@ -1091,6 +1112,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             )
             .addOnSuccessListener {
                 Toast.makeText(this,"Datos del miembro actualizados correctamente", Toast.LENGTH_SHORT).show()
+                memberAdapter.notifyDataSetChanged()
                 println("Datos del miembro actualizados correctamente")
             }
             .addOnFailureListener { e ->
@@ -1118,6 +1140,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             .addOnSuccessListener { document ->
                 allowance.setId(document.id)
                 child.addAllowance(allowance)
+                memberAdapter.notifyDataSetChanged()
                 Toast.makeText(this,"Asignacion añadida", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {e ->
@@ -1144,6 +1167,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             )
             .addOnSuccessListener {
                 Toast.makeText(this,"Asignación actualizada correctamente",Toast.LENGTH_SHORT).show()
+                memberAdapter.notifyDataSetChanged()
                 println("Asignación actualizada correctamente")
             }
             .addOnFailureListener { e ->
@@ -1163,6 +1187,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             .delete()
             .addOnSuccessListener {
                 child.getAllowances().removeAt(allowanceId)
+                memberAdapter.notifyDataSetChanged()
                 Toast.makeText(this,"Asignación eliminadada correctamente",Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
@@ -1188,7 +1213,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     membersCopy[parent.getUser()] = parent
                     val result = family.addMember(parent)
                     parent.setId(document.id)
-
+                    memberAdapter.notifyDataSetChanged()
                     Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
@@ -1216,7 +1241,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     membersCopy[child.getUser()] = child
                     val result = family.addMember(child)
                     child.setId(document.id)
-
+                    memberAdapter.notifyDataSetChanged()
                     Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
@@ -1312,11 +1337,11 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun addTaskToDatabase(task: Task, typeOfTask: String) {
         var limitDate = ""
         if (task.getLimitDate() != null) {
-            limitDate = task.getLimitDate()!!.format(Constants.dateFormat)
+            limitDate = task.getLimitDate()!!.format(dateFormat)
         }
         var completedDate = ""
         if (typeOfTask == HISTORIC && task.getCompletedDate() != null) {
-            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+            completedDate = task.getCompletedDate()!!.format(dateFormat)
         }
         FirebaseFirestore.getInstance()
             .collection(uid)

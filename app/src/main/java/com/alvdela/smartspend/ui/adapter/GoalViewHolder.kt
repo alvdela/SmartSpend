@@ -17,13 +17,13 @@ import com.alvdela.smartspend.model.SavingGoal
 
 class GoalViewHolder(val view: View): ViewHolder(view) {
 
-    val imageGoal = view.findViewById<ImageView>(R.id.imageGoal)
-    val progressGoal = view.findViewById<ProgressBar>(R.id.progressGoal)
-    val tvProgreso = view.findViewById<TextView>(R.id.tvProgreso)
-    val tvPercentage = view.findViewById<TextView>(R.id.tvPercentage)
-    val tvGoalName = view.findViewById<TextView>(R.id.tvGoalName)
-    val btExtractMoney = view.findViewById<ImageView>(R.id.btExtractMoney)
-    val btSaveMoney = view.findViewById<ImageView>(R.id.btSaveMoney)
+    private val imageGoal = view.findViewById<ImageView>(R.id.imageGoal)
+    private val progressGoal = view.findViewById<ProgressBar>(R.id.progressGoal)
+    private val tvProgreso = view.findViewById<TextView>(R.id.tvProgreso)
+    private val tvPercentage = view.findViewById<TextView>(R.id.tvPercentage)
+    private val tvGoalName = view.findViewById<TextView>(R.id.tvGoalName)
+    private val btExtractMoney = view.findViewById<ImageView>(R.id.btExtractMoney)
+    private val btSaveMoney = view.findViewById<ImageView>(R.id.btSaveMoney)
     fun render(goal: SavingGoal, saveMoney: (Int) -> Unit, extractTask: (Int) -> Unit, position: Int) {
         when(goal.getType()){
             GoalType.TOYS -> imageGoal.setImageDrawable(ContextCompat.getDrawable(view.context,R.drawable.goal_toys))
