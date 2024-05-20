@@ -4,7 +4,10 @@ import TaskCompleteAdapter
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.text.method.PasswordTransformationMethod
@@ -68,6 +71,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -139,6 +144,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initSpinner()
         showTasks()
         showMembers()
+        if (!ContextFamily.isMock){
+            showProfilePicture()
+        }
     }
 
     private fun initObjects() {
@@ -1379,6 +1387,29 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             }
             .addOnFailureListener { e ->
                 println("Error al eliminar la tarea: $e")
+            }
+    }
+
+    private fun showProfilePicture() {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = family.getMember(user)!!.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+
+                    if (bitmap != null) {
+                        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+                        ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
+                        ivCurrentUserImage.setImageBitmap(bitmap)
+                    }
+                }
+            }
+            .addOnFailureListener{
+                Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
     }
 }

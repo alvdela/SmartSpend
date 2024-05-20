@@ -28,13 +28,13 @@
 
                 <ImageView
                     android:id="@+id/ivCurrentUserImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/ic_person"
-                    android:maxHeight="24dp"
-                    android:maxWidth="24dp"
+                    android:maxHeight="50dp"
+                    android:maxWidth="50dp"
                     android:layout_gravity="end"
-                    app:tint="@color/black"
+                    android:scaleType="fitXY"
                     android:background="@color/gray_light_trans"/>
 
                 <TextView

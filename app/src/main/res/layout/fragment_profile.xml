@@ -14,7 +14,7 @@
         android:layout_height="wrap_content" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/profileView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
@@ -25,15 +25,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/changeProfilePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/light_blue"
         android:src="@drawable/ic_camera"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintBottom_toBottomOf="@+id/profileView"
+        app:layout_constraintEnd_toEndOf="@+id/profileView"
+        app:layout_constraintStart_toEndOf="@+id/profileView"
+        app:layout_constraintTop_toBottomOf="@+id/profileView" />
 
     <View
         android:id="@+id/divider4"
@@ -43,7 +43,7 @@
         android:background="@color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/profileView" />
 
     <LinearLayout
         android:id="@+id/lyUser"

@@ -2,6 +2,7 @@ package com.alvdela.smartspend.ui.fragment
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,10 +27,15 @@ import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
+import com.alvdela.smartspend.ui.activity.CameraActivity
 import com.alvdela.smartspend.ui.activity.LoginActivity
+import com.alvdela.smartspend.ui.activity.MainParentsActivity
 import com.alvdela.smartspend.ui.activity.ProfilesActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 
 class ProfileFragment : Fragment() {
     private var user: String? = null
@@ -79,6 +85,7 @@ class ProfileFragment : Fragment() {
         }
 
         initButtons(view)
+        showProfilePicture(view)
 
         val toolbarProfile = view.findViewById<Toolbar>(R.id.toolbar_profile)
         val activity = requireActivity() as AppCompatActivity
@@ -122,6 +129,11 @@ class ProfileFragment : Fragment() {
             editPassword()
         }
 
+        val changeProfilePicture = view.findViewById<FloatingActionButton>(R.id.changeProfilePicture)
+        changeProfilePicture.setOnClickListener {
+            changePicture()
+        }
+
         val btDeleteMember = view.findViewById<TextView>(R.id.btDeleteMember)
         btDeleteMember.setOnClickListener {
             if (!ContextFamily.isMock) {
@@ -143,6 +155,13 @@ class ProfileFragment : Fragment() {
             btEditEmail.visibility = View.GONE
             btDeleteMember.visibility = View.GONE
         }
+    }
+
+    private fun changePicture() {
+        val intent = Intent(requireContext(), CameraActivity::class.java).apply {
+            putExtra("USER_NAME", user)
+        }
+        startActivity(intent)
     }
 
     private fun deleteProfile() {
@@ -538,6 +557,28 @@ class ProfileFragment : Fragment() {
             .addOnSuccessListener {
                 FirebaseAuth.getInstance().currentUser?.delete()
                 backToLogin()
+            }
+    }
+
+    private fun showProfilePicture(view: View) {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = ContextFamily.family!!.getMember(user!!)!!.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+
+                    if (bitmap != null) {
+                        val profileView = view.findViewById<ImageView>(R.id.profileView)
+                        profileView.scaleType = ImageView.ScaleType.FIT_CENTER
+                        profileView.setImageBitmap(bitmap)
+                    }
+                }
+            }
+            .addOnFailureListener{
             }
     }
 

@@ -2,6 +2,9 @@ package com.alvdela.smartspend.ui.activity
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -12,7 +15,6 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
@@ -21,7 +23,8 @@ import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.google.firebase.auth.FirebaseAuth
-import java.time.format.DateTimeFormatter
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 
 class ProfilesActivity : AppCompatActivity() {
 
@@ -101,8 +104,9 @@ class ProfilesActivity : AppCompatActivity() {
     }
 
     private fun showFamilyData() {
+
         var i = 0
-        for ((clave, valor) in family.getMembers()) {
+        for ((clave, member) in family.getMembers()) {
             profilesButtons[i].visibility = View.VISIBLE
             profilesButtons[i].text = clave
             profilesButtons[i].tag = clave
