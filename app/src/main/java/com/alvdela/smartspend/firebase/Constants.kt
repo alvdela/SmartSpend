@@ -13,6 +13,6 @@ object Constants {
     const val CASHFLOW = "cashFlow"
     const val GOALS = "goals"
 
-    val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
 }

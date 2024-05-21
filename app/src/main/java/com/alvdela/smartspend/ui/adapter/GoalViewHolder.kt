@@ -1,6 +1,5 @@
 package com.alvdela.smartspend.ui.adapter
 
-import android.graphics.Color
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -10,9 +9,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.model.GoalType
 import com.alvdela.smartspend.model.SavingGoal
+import java.math.BigDecimal
 
 
 class GoalViewHolder(val view: View): ViewHolder(view) {
@@ -43,7 +42,7 @@ class GoalViewHolder(val view: View): ViewHolder(view) {
 
         tvProgreso.text = "$saving de ${goal.getGoal()}"
 
-        tvPercentage.text = "${Utility.getPercentage(goal.getSaving(),goal.getGoal())}%"
+        tvPercentage.text = "${getPercentage(goal.getSaving(),goal.getGoal())}%"
 
         tvGoalName.text = goal.getDescription()
 
@@ -59,6 +58,13 @@ class GoalViewHolder(val view: View): ViewHolder(view) {
             val itemGoal = view.findViewById<ConstraintLayout>(R.id.itemGoal)
             itemGoal.setBackgroundResource(R.drawable.edge_green)
         }
+    }
+
+    private fun getPercentage(saving: BigDecimal, goal: BigDecimal): String {
+        if (((saving/goal) * BigDecimal(100)).toString().length > 5){
+            return ((saving/goal)* BigDecimal(100)).toString().substring(0,6)
+        }
+        return ((saving/goal)* BigDecimal(100)).toString()
     }
 
 }

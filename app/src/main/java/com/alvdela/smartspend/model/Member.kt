@@ -8,7 +8,6 @@ open class Member(
 ) {
 
     private lateinit var id: String
-    private var profilePicture = ""
 
     internal fun getUser(): String{
         return user
@@ -45,13 +44,5 @@ open class Member(
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
         return digest.fold("") { str, it -> str + "%02x".format(it) }
-    }
-
-    fun getProfilePicture(): String {
-        return this.profilePicture
-    }
-
-    fun setProfilePicture(picture: String){
-        this.profilePicture = picture
     }
 }

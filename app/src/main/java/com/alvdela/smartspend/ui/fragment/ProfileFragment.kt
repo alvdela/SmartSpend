@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +43,8 @@ class ProfileFragment : Fragment() {
     private lateinit var member: Member
     private lateinit var uid: String
 
+    private lateinit var view: View
+
     private lateinit var tvUserName: TextView
     private lateinit var tvNombreFamilia: TextView
 
@@ -67,8 +70,14 @@ class ProfileFragment : Fragment() {
         configProfileOpen = true
     }
 
+    override fun onResume() {
+        super.onResume()
+        showProfilePicture()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.view = view
 
         tvUserName = view.findViewById(R.id.tvUserName)
         tvUserName.text = user
@@ -84,8 +93,8 @@ class ProfileFragment : Fragment() {
             lyEmail.visibility = View.GONE
         }
 
-        initButtons(view)
-        showProfilePicture(view)
+        initButtons()
+        showProfilePicture()
 
         val toolbarProfile = view.findViewById<Toolbar>(R.id.toolbar_profile)
         val activity = requireActivity() as AppCompatActivity
@@ -104,7 +113,7 @@ class ProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    private fun initButtons(view: View) {
+    private fun initButtons() {
         val btEditUserName = view.findViewById<ImageView>(R.id.btEditUserName)
         btEditUserName.setOnClickListener {
             editUserName()
@@ -157,11 +166,37 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun showProfilePicture() {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = ContextFamily.family!!.getMember(user!!)!!.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+
+                    if (bitmap != null) {
+                        val profileView = view.findViewById<ImageView>(R.id.profileView)
+                        profileView.scaleType = ImageView.ScaleType.FIT_CENTER
+                        profileView.setImageBitmap(bitmap)
+                    }
+                }
+            }
+            .addOnFailureListener{
+            }
+    }
+
     private fun changePicture() {
-        val intent = Intent(requireContext(), CameraActivity::class.java).apply {
-            putExtra("USER_NAME", user)
+        if (!ContextFamily.isMock){
+            val intent = Intent(requireContext(), CameraActivity::class.java).apply {
+                putExtra("USER_NAME", user)
+            }
+            startActivity(intent)
+        }else{
+            Toast.makeText(requireContext(), "No se puede cambiar la foto en el modo invitado", Toast.LENGTH_LONG).show()
         }
-        startActivity(intent)
     }
 
     private fun deleteProfile() {
@@ -521,6 +556,7 @@ class ProfileFragment : Fragment() {
             .delete()
             .addOnSuccessListener {
                 ContextFamily.family!!.deleteMember(selectedMember)
+                deletePictures(member.getId())
                 if (ContextFamily.family!!.getMembers().isNotEmpty()) {
                     backToProfiles()
                 }
@@ -560,26 +596,16 @@ class ProfileFragment : Fragment() {
             }
     }
 
-    private fun showProfilePicture(view: View) {
+    private fun deletePictures(userId: String){
         val uuid = FirebaseAuth.getInstance().currentUser!!.uid
-        val fileName = ContextFamily.family!!.getMember(user!!)!!.getId()
 
-        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
-        val localFile = File.createTempFile("tempImage", "jpg")
-        storageRef.getFile(localFile)
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$userId")
+        storageRef.delete()
             .addOnSuccessListener {
-                if (localFile.exists() && localFile.length() > 0) {
-                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-
-                    if (bitmap != null) {
-                        val profileView = view.findViewById<ImageView>(R.id.profileView)
-                        profileView.scaleType = ImageView.ScaleType.FIT_CENTER
-                        profileView.setImageBitmap(bitmap)
-                    }
-                }
+                Log.d("FirebaseStorage", "Archivo eliminado exitosamente.")
             }
-            .addOnFailureListener{
+            .addOnFailureListener{exc ->
+                Log.e("FirebaseStorage", "Error al eliminar el archivo", exc)
             }
     }
-
 }

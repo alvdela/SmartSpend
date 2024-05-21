@@ -72,6 +72,4 @@ dependencies {
 
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
-
-
 }

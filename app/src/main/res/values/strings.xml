@@ -218,6 +218,7 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="note_delete_profile">Nota: la cuenta de la familia se dara de baja si no quedan perfiles asociados a esta</string>
     <string name="reopen_task">¿Desea reabrir esta tarea?</string>
     <string name="clean_task_history">¿Desea eliminar el historial de tareas?</string>
+    <string name="profile_picture">¿Establecer como foto de perfil?</string>
 
 </resources>
 

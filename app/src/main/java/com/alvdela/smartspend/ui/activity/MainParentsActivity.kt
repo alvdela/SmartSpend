@@ -6,11 +6,9 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Handler
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -42,8 +40,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
+import com.alvdela.smartspend.filters.Validator
 import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
 import com.alvdela.smartspend.firebase.Constants.CASHFLOW
 import com.alvdela.smartspend.firebase.Constants.FAMILY
@@ -144,9 +142,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initSpinner()
         showTasks()
         showMembers()
-        if (!ContextFamily.isMock){
-            showProfilePicture()
-        }
+        if (!ContextFamily.isMock) showProfilePicture()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!ContextFamily.isMock) showProfilePicture()
     }
 
     private fun initObjects() {
@@ -219,6 +220,29 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         addTaskButton.setOnClickListener {
             createNewTask()
         }
+    }
+
+    private fun showProfilePicture() {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = family.getMember(user)!!.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+
+                    if (bitmap != null) {
+                        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+                        ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
+                        ivCurrentUserImage.setImageBitmap(bitmap)
+                    }
+                }
+            }
+            .addOnFailureListener{
+                //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
+            }
     }
 
     /* Metodo para la gestion de las tareas */
@@ -309,7 +333,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 allOk = false
             }
             if (inputFechaLimite.text.toString().isNotBlank()) {
-                if (Utility.isValidDate(inputFechaLimite.text.toString(), formatter)) {
+                if (Validator.isValidDate(inputFechaLimite.text.toString(), formatter)) {
                     fecha = LocalDate.parse(inputFechaLimite.text.toString(), formatter)
                 } else {
                     allOk = false
@@ -425,7 +449,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 "Semestral" -> frecuencia = AllowanceType.SEMESTRAL
                 "Anual" -> frecuencia = AllowanceType.ANUAL
             }
-            if (Utility.isValidDate(inputDate.text.toString(), formatter)) {
+            if (Validator.isValidDate(inputDate.text.toString(), formatter)) {
                 fecha = LocalDate.parse(inputDate.text.toString(), formatter)
             } else {
                 isCorrect = false
@@ -518,7 +542,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 "Semestral" -> frecuencia = AllowanceType.SEMESTRAL
                 "Anual" -> frecuencia = AllowanceType.ANUAL
             }
-            if (Utility.isValidDate(inputDate.text.toString(), formatter)) {
+            if (Validator.isValidDate(inputDate.text.toString(), formatter)) {
                 fecha = LocalDate.parse(inputDate.text.toString(), formatter)
             } else {
                 isCorrect = false
@@ -1261,13 +1285,14 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun deleteMemberFromDatabase(selectedMember: String) {
         val userId = family.getMember(selectedMember)!!.getId()
-
         //Si es un menor borramos todos sus datos
         if (!family.isParent(selectedMember)){
             deleteAllAllowancesFromDatabase(userId)
             deleteCashFlowFromDatabase(userId)
             deleteAllGoalsFromDatabase(userId)
         }
+        //Eliminamos las fotos de perfil (si tiene)
+        deletePictures(userId)
 
         FirebaseFirestore.getInstance()
             .collection(uid)
@@ -1390,26 +1415,16 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             }
     }
 
-    private fun showProfilePicture() {
+    private fun deletePictures(userId: String){
         val uuid = FirebaseAuth.getInstance().currentUser!!.uid
-        val fileName = family.getMember(user)!!.getId()
 
-        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
-        val localFile = File.createTempFile("tempImage", "jpg")
-        storageRef.getFile(localFile)
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$userId")
+        storageRef.delete()
             .addOnSuccessListener {
-                if (localFile.exists() && localFile.length() > 0) {
-                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-
-                    if (bitmap != null) {
-                        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
-                        ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
-                        ivCurrentUserImage.setImageBitmap(bitmap)
-                    }
-                }
+                Log.d("FirebaseStorage", "Archivo eliminado exitosamente.")
             }
-            .addOnFailureListener{
-                Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
+            .addOnFailureListener{exc ->
+                Log.e("FirebaseStorage", "Error al eliminar el archivo", exc)
             }
     }
 }

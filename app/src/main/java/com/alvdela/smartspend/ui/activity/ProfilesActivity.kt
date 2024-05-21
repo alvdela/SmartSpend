@@ -2,6 +2,7 @@ package com.alvdela.smartspend.ui.activity
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -110,8 +111,31 @@ class ProfilesActivity : AppCompatActivity() {
             profilesButtons[i].visibility = View.VISIBLE
             profilesButtons[i].text = clave
             profilesButtons[i].tag = clave
+            if(!ContextFamily.isMock){
+                showProfilePicture(profilesButtons[i], member)
+            }
             i++
         }
+    }
+
+    private fun showProfilePicture(button: Button, member: Member) {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = member.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, true)
+                    val drawable: Drawable = BitmapDrawable(resources, scaledBitmap)
+                    button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
+                }
+            }
+            .addOnFailureListener{
+                //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
+            }
     }
 
     fun triggerGoMain(view: View) {

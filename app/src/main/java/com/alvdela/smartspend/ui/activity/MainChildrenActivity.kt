@@ -3,6 +3,7 @@ package com.alvdela.smartspend.ui.activity
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -35,7 +36,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
 import com.alvdela.smartspend.model.CashFlow
@@ -58,6 +58,8 @@ import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -124,6 +126,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         showGoals()
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (!ContextFamily.isMock) showProfilePicture()
+    }
+
     private fun initObjects() {
         expensesLayout = findViewById(R.id.expensesLayout)
         addSpentButton = findViewById(R.id.buttonAddSpent)
@@ -143,6 +150,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         initButtons()
         initToolBar()
         initNavView()
+        if (!ContextFamily.isMock) showProfilePicture()
     }
 
     private fun initButtons() {
@@ -181,6 +189,29 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addGoalButton.setOnClickListener {
             addSaveGoal()
         }
+    }
+
+    private fun showProfilePicture() {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = child.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+
+                    if (bitmap != null) {
+                        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+                        ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
+                        ivCurrentUserImage.setImageBitmap(bitmap)
+                    }
+                }
+            }
+            .addOnFailureListener{
+                //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
+            }
     }
 
     /* Metodos para los objetivos de ahorro */
@@ -269,19 +300,19 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         var decimal = 0
 
         if (child.getActualMoney() < goal.getMoneyLeft()){
-            natural = Utility.getNaturalNumber(child.getActualMoney())
-            decimal = Utility.getDecimalNumber(child.getActualMoney())
+            natural = getNaturalNumber(child.getActualMoney())
+            decimal = getDecimalNumber(child.getActualMoney())
             npNumber.maxValue = natural
             if (natural <= 0){
-                npDecimal.maxValue = Utility.getDecimalNumber(child.getActualMoney())
+                npDecimal.maxValue = getDecimalNumber(child.getActualMoney())
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }else{
                 npDecimal.maxValue = 99
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }
         }else{
-            natural = Utility.getNaturalNumber(goal.getMoneyLeft())
-            decimal = Utility.getDecimalNumber(goal.getMoneyLeft())
+            natural = getNaturalNumber(goal.getMoneyLeft())
+            decimal = getDecimalNumber(goal.getMoneyLeft())
             npNumber.maxValue = natural
             if (npNumber.maxValue <= 0){
                 npDecimal.maxValue = decimal
@@ -314,7 +345,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         val confirmButtonSave = dialog.findViewById<Button>(R.id.confirmButtonSave)
         confirmButtonSave.setOnClickListener {
-            val value = Utility.formBigDecimalNumber(npNumber.value,npDecimal.value)
+            val value = formBigDecimalNumber(npNumber.value,npDecimal.value)
 
             child.setActualMoney(child.getActualMoney() - value + goal.saveMoney(value))
             if (!isMock){
@@ -740,6 +771,33 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
         fragmentView.translationX = 500f
         Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
+    }
+
+    /* Metodos de calculo */
+    private fun getNaturalNumber(number: BigDecimal): Int{
+        val numeroString = number.toString()
+        val partes = numeroString.split(".")
+        return partes[0].toInt()
+    }
+
+    private fun getDecimalNumber(number: BigDecimal): Int{
+        val numeroString = number.toString()
+        val partes = numeroString.split(".").toMutableList()
+        if (partes.size > 1){
+            if (partes[1].length > 2){
+                partes[1] = partes[1].subSequence(0,2).toString()
+            }else if(partes[1].length < 2){
+                partes[1] = partes[1] + "0"
+            }
+        }else{
+            return 0
+        }
+        return partes[1].toInt()
+    }
+
+    private fun formBigDecimalNumber(number: Int, decimal: Int): BigDecimal{
+        val str = "$number.${if(decimal < 10){"0$decimal"} else {"$decimal"}}"
+        return str.toBigDecimal()
     }
 
     /* Operaciones de Firebase */
