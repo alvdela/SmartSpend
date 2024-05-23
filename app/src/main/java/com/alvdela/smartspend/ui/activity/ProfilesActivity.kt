@@ -4,6 +4,11 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -26,6 +31,7 @@ import com.alvdela.smartspend.model.Parent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
+
 
 class ProfilesActivity : AppCompatActivity() {
 
@@ -129,13 +135,39 @@ class ProfilesActivity : AppCompatActivity() {
                 if (localFile.exists() && localFile.length() > 0) {
                     val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
                     val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, true)
-                    val drawable: Drawable = BitmapDrawable(resources, scaledBitmap)
+                    val circularImage = getCroppedBitmap(scaledBitmap)
+                    val drawable: Drawable = BitmapDrawable(resources, circularImage)
                     button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
                 }
             }
             .addOnFailureListener{
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
+        val output = Bitmap.createBitmap(
+            bitmap.getWidth(),
+            bitmap.getHeight(), Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(output)
+        val color = -0xbdbdbe
+        val paint = Paint()
+        val rect = Rect(0, 0, bitmap.getWidth(), bitmap.getHeight())
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        paint.setColor(color)
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(
+            (bitmap.getWidth() / 2).toFloat(), (bitmap.getHeight() / 2).toFloat(),
+            (
+                    bitmap.getWidth() / 2).toFloat(), paint
+        )
+        paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
+        canvas.drawBitmap(bitmap, rect, rect, paint)
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output
     }
 
     fun triggerGoMain(view: View) {

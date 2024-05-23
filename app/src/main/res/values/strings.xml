@@ -133,7 +133,6 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="objetivos_de_ahorro">Objetivos de ahorro</string>
     <string name="add_goal">Añadir objetivo</string>
     <string name="juegos">Juegos</string>
-    <string name="canguro">Canguro matemático</string>
     <string name="tareas_obligatorias">Tareas obligatorias</string>
     <string name="tareas_extra">Tareas extra</string>
     <string name="descripcion">Descripcion</string>
@@ -219,6 +218,14 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="reopen_task">¿Desea reabrir esta tarea?</string>
     <string name="clean_task_history">¿Desea eliminar el historial de tareas?</string>
     <string name="profile_picture">¿Establecer como foto de perfil?</string>
+    <string name="concurso_smartspend">Concurso SmartSpend</string>
+    <string name="start">Comenzar</string>
+    <string name="salir">Salir</string>
+    <string name="contrareloj">Contrareloj</string>
+    <string name="_20_preguntas">20 preguntas</string>
+    <string name="_15_preguntas">15 preguntas</string>
+    <string name="_10_preguntas">10 preguntas</string>
+    <string name="quiz_explanation">Pon a prueba tus conocimientos sobre el manejo del dinero y las matemáticas</string>
 
 </resources>
 

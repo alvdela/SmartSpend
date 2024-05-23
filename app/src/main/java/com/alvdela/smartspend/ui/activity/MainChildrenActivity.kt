@@ -189,6 +189,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addGoalButton.setOnClickListener {
             addSaveGoal()
         }
+
+        val quizButton = findViewById<TextView>(R.id.quizButton)
+        quizButton.setOnClickListener {
+            startActivity(Intent(this, QuizActivity::class.java))
+        }
     }
 
     private fun showProfilePicture() {
