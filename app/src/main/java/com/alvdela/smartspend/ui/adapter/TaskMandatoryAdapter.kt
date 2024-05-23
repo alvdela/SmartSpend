@@ -9,7 +9,7 @@ import com.alvdela.smartspend.model.TaskState
 
 class TaskMandatoryAdapter(
     private val tasks: MutableList<Task> = mutableListOf(),
-    private val completeTask: (Int, Int) -> Unit
+    private val completeTask: (Int) -> Unit
 ) : RecyclerView.Adapter<TaskViewHolder>() {
 
     private val filteredTasks: MutableList<Task> = mutableListOf()
@@ -36,6 +36,11 @@ class TaskMandatoryAdapter(
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = filteredTasks[position]
-        holder.render(task, completeTask, tasks.indexOf(task), position)
+        holder.render(task, completeTask, tasks.indexOf(task))
+    }
+
+    fun removeItem() {
+        filterTasks()
+        notifyDataSetChanged()
     }
 }

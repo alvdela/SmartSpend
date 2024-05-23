@@ -3,7 +3,9 @@ package com.alvdela.smartspend.ui.activity
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Handler
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -22,28 +24,43 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.Utility
 import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
 import com.alvdela.smartspend.model.CashFlow
 import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
-import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
+import com.alvdela.smartspend.firebase.Constants
+import com.alvdela.smartspend.firebase.Constants.FAMILY
+import com.alvdela.smartspend.firebase.Constants.GOALS
+import com.alvdela.smartspend.firebase.Constants.MEMBERS
+import com.alvdela.smartspend.firebase.Constants.TASKS
 import com.alvdela.smartspend.model.GoalType
 import com.alvdela.smartspend.model.SavingGoal
+import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.GoalAdapter
 import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
+import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.math.BigDecimal
 import java.time.LocalDate
 
 class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -80,8 +97,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     //Informacion de la familia y miembro actual
     private var user: String = ""
-    private lateinit var family: Family
+    private val family = ContextFamily.family!!
+    private val isMock = ContextFamily.isMock
     private lateinit var child: Child
+
+    private var uid = "mock"
 
     //Control de la interfaz
     private var expenses = true
@@ -95,12 +115,20 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_children)
         user = intent.getStringExtra("USER_NAME").toString()
-        getFamily()
+        child = family.getMember(user) as Child
+        if (!isMock){
+            uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        }
         initObjects()
         showMoney()
         showCashFlow()
         showTask()
         showGoals()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!ContextFamily.isMock) showProfilePicture()
     }
 
     private fun initObjects() {
@@ -122,6 +150,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         initButtons()
         initToolBar()
         initNavView()
+        if (!ContextFamily.isMock) showProfilePicture()
     }
 
     private fun initButtons() {
@@ -160,6 +189,34 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addGoalButton.setOnClickListener {
             addSaveGoal()
         }
+
+        val quizButton = findViewById<TextView>(R.id.quizButton)
+        quizButton.setOnClickListener {
+            startActivity(Intent(this, QuizActivity::class.java))
+        }
+    }
+
+    private fun showProfilePicture() {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = child.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+
+                    if (bitmap != null) {
+                        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+                        ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
+                        ivCurrentUserImage.setImageBitmap(bitmap)
+                    }
+                }
+            }
+            .addOnFailureListener{
+                //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
+            }
     }
 
     /* Metodos para los objetivos de ahorro */
@@ -190,7 +247,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         addNewGoal.setOnClickListener {
             var allOk = true
             var descripcion = ""
-            var cantidad = 0f
+            var cantidad = BigDecimal(0)
             if (inputDescripcion.text.toString().isBlank()) {
                 inputDescripcion.error = "¡Ups! Parece que olvidaste agregar una descripción"
                 allOk = false
@@ -201,7 +258,8 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 inputCantidad.error = "Necesitas saber el precio de lo que deseas conseguir"
                 allOk = false
             } else {
-                cantidad = inputCantidad.text.toString().toFloat()
+                var cantidadString = inputCantidad.text.toString()
+                cantidad = cantidadString.toBigDecimal()
             }
             if (allOk) {
                 val goal: SavingGoal = when (tipo) {
@@ -212,11 +270,14 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     else -> SavingGoal(descripcion, cantidad, GoalType.TOYS)
 
                 }
-                child.addGoal(goal)
-                goalAdapter.notifyItemInserted(child.getGoals().size)
+                if (!isMock){
+                    addGoalToDatabase(child,goal)
+                }else{
+                    child.addGoal(goal)
+                    goalAdapter.notifyItemInserted(child.getGoals().size)
+                }
                 dialog.dismiss()
             }
-
         }
     }
 
@@ -244,22 +305,22 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         var decimal = 0
 
         if (child.getActualMoney() < goal.getMoneyLeft()){
-            natural = Utility.getNaturalNumber(child.getActualMoney())
-            decimal = Utility.getDecimalNumber(child.getActualMoney())
+            natural = getNaturalNumber(child.getActualMoney())
+            decimal = getDecimalNumber(child.getActualMoney())
             npNumber.maxValue = natural
             if (natural <= 0){
-                npDecimal.maxValue = Utility.getDecimalNumber(child.getActualMoney()) + 1
+                npDecimal.maxValue = getDecimalNumber(child.getActualMoney())
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }else{
                 npDecimal.maxValue = 99
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }
         }else{
-            natural = Utility.getNaturalNumber(goal.getMoneyLeft())
-            decimal = Utility.getDecimalNumber(goal.getMoneyLeft())
+            natural = getNaturalNumber(goal.getMoneyLeft())
+            decimal = getDecimalNumber(goal.getMoneyLeft())
             npNumber.maxValue = natural
             if (npNumber.maxValue <= 0){
-                npDecimal.maxValue = decimal + 1
+                npDecimal.maxValue = decimal
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }else{
                 npDecimal.maxValue = 99
@@ -289,9 +350,15 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         val confirmButtonSave = dialog.findViewById<Button>(R.id.confirmButtonSave)
         confirmButtonSave.setOnClickListener {
-            val value = Utility.formFloatNumber(npNumber.value,npDecimal.value)
+            val value = formBigDecimalNumber(npNumber.value,npDecimal.value)
+
             child.setActualMoney(child.getActualMoney() - value + goal.saveMoney(value))
-            showMoney()
+            if (!isMock){
+                updateGoalToDatabase(child.getId(),goal)
+                setMoneyInDatabase(child.getActualMoney())
+            }else{
+                showMoney()
+            }
             dialog.dismiss()
             goalAdapter.notifyItemChanged(selectedGoal)
         }
@@ -304,15 +371,21 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             showPopUp(R.layout.pop_up_goal_archieved)
             val confirmGoal = dialog.findViewById<Button>(R.id.confirmGoalAchieved)
             confirmGoal.setOnClickListener {
+                if (!isMock){
+                    deleteGoalFromDatabase(child.getId(),child.getGoals()[selectedGoal].getId())
+                }
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
+                showGoals()
                 expenseAdapter.notifyDataSetChanged()
+
                 dialog.dismiss()
             }
         }else{
             showPopUp(R.layout.pop_up_delete)
             val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
             tvDelete.text = resources.getString(R.string.extract_money_of_goal)
+            tvDelete.textSize = 18f
             val cancelDelete = dialog.findViewById<Button>(R.id.cancelDelete)
             cancelDelete.setOnClickListener {
                 dialog.dismiss()
@@ -320,26 +393,33 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             val confirmDelete = dialog.findViewById<Button>(R.id.confirmDelete)
             confirmDelete.text = resources.getString(R.string.aceptar)
             confirmDelete.setOnClickListener {
+                if (!isMock){
+                    deleteGoalFromDatabase(child.getId(),child.getGoals()[selectedGoal].getId())
+                }
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
                 expenseAdapter.notifyDataSetChanged()
-                showMoney()
+                showGoals()
                 dialog.dismiss()
             }
         }
+        Handler().postDelayed({
+            showMoney()
+        }, 2000)
     }
 
     /* Metodos para las tareas */
-    private fun completeTask(selectedTask: Int, recyclePostition: Int) {
+    private fun completeTask(selectedTask: Int) {
         val task = family.getTask(selectedTask)
         task.setState(TaskState.COMPLETE)
         task.setChild(child)
+        if (!isMock){
+            updateTaskInDatabase(task, TASKS)
+        }
         if (task.isMandatory()) {
-            mandatoryTaskAdapter.filterTasks()
-            mandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
+            mandatoryTaskAdapter.removeItem()
         } else {
-            noMandatoryTaskAdapter.filterTasks()
-            noMandatoryTaskAdapter.notifyItemRemoved(recyclePostition)
+            noMandatoryTaskAdapter.removeItem()
         }
     }
 
@@ -369,16 +449,20 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             tipo = selectedRadioButton.tag.toString().toInt()
         }
 
+        val cancelNewSpent = dialog.findViewById<Button>(R.id.cancelNewSpent)
+        cancelNewSpent.setOnClickListener {
+            dialog.dismiss()
+        }
+
         addButton.setOnClickListener {
             val descripcionText = descripcion.text.toString()
-            var amountNumber = 0f
             if (descripcionText.isEmpty()) {
                 descripcion.error = "Se necesita una descripción"
                 Toast.makeText(this, "Se necesita una descripción", Toast.LENGTH_SHORT).show()
             } else if (amount.text.toString().isEmpty()) {
                 amount.error = "La cantidad no puede quedar vacia"
                 Toast.makeText(this, "La cantidad no puede quedar vacia", Toast.LENGTH_SHORT).show()
-            } else if (amount.text.toString().toFloat() > child.getActualMoney()) {
+            } else if (amount.text.toString().toBigDecimal() > child.getActualMoney()) {
                 amount.error = "La cantidad no puede ser mayor que la cantidad disponible"
                 Toast.makeText(
                     this,
@@ -386,7 +470,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                amountNumber = amount.text.toString().toFloat()
+                val amountNumber = amount.text.toString().toBigDecimal()
                 addRecord(descripcionText)
                 when (tipo) {
                     1 -> {
@@ -421,20 +505,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                         child.addExpense(newExpense)
                     }
                 }
-                expenseAdapter.notifyDataSetChanged()
+                Handler().postDelayed({
+                    expenseAdapter.notifyDataSetChanged()
+                    showMoney()
+                }, 1000)
                 dialog.dismiss()
-                showMoney()
             }
-        }
-    }
-
-    /* Metodos para obtener la información de la familia */
-    private fun getFamily() {
-        if (ContextFamily.isMock) {
-            family = ContextFamily.family!!
-            child = family.getMember(user) as Child
-        } else {
-            //TODO caso de error
         }
     }
 
@@ -448,30 +524,28 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     private fun showTask() {
         mandatoryTaskAdapter = TaskMandatoryAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePostition ->
-                completeTask(
-                    selectedTask,
-                    recyclePostition
-                )
-            }
-        )
+            tasks = family.getTaskList()
+        ) { selectedTask ->
+            completeTask(
+                selectedTask
+            )
+        }
         val rvTaskObligatorias = findViewById<RecyclerView>(R.id.rvTaskObligatorias)
         rvTaskObligatorias.layoutManager = LinearLayoutManager(this)
         rvTaskObligatorias.adapter = mandatoryTaskAdapter
+        rvTaskObligatorias.itemAnimator = DefaultItemAnimator()
 
         noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
-            tasks = family.getTaskList(),
-            completeTask = { selectedTask, recyclePostition ->
-                completeTask(
-                    selectedTask,
-                    recyclePostition
-                )
-            }
-        )
+            tasks = family.getTaskList()
+        ) { selectedTask ->
+            completeTask(
+                selectedTask
+            )
+        }
         val rvTaskExtra = findViewById<RecyclerView>(R.id.rvTaskExtra)
         rvTaskExtra.layoutManager = LinearLayoutManager(this)
         rvTaskExtra.adapter = noMandatoryTaskAdapter
+        rvTaskExtra.itemAnimator = DefaultItemAnimator()
     }
 
     private fun showGoals() {
@@ -626,6 +700,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
+        }else if (ProfileFragment.configProfileOpen) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
+            supportFragmentManager.beginTransaction().remove(fragment!!).commit()
+            ProfileFragment.configProfileOpen = false
         } else {
             showPopUp(R.layout.pop_up_back_profiles)
 
@@ -644,9 +722,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
+            R.id.nav_item_settings -> showEditProfile()
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
-
+            R.id.nav_item_share -> share()
         }
 
         drawer.closeDrawer(GravityCompat.START)
@@ -654,17 +733,27 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         return true
     }
 
+    private fun share() {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos!")
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, "SmartSpend")
+        }
+
+        startActivity(Intent.createChooser(shareIntent, "Compartir mediante"))
+    }
+
     private fun backProfiles() {
         startActivity(Intent(this, ProfilesActivity::class.java))
     }
 
     private fun signOut() {
-        //FirebaseAuth.getInstance().signOut()
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.family = null
+        ContextFamily.reset()
     }
 
-    fun addRecord(newString: String){
+    private fun addRecord(newString: String){
         var existe = false
         for (i in record){
             if (newString == i) existe = true
@@ -675,5 +764,157 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         if (record.size > 3){
             record.removeAt(record.size - 1)
         }
+    }
+
+    private fun showEditProfile() {
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf(ProfileFragment.USER_BUNDLE to user)
+        ProfileFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
+    }
+
+    /* Metodos de calculo */
+    private fun getNaturalNumber(number: BigDecimal): Int{
+        val numeroString = number.toString()
+        val partes = numeroString.split(".")
+        return partes[0].toInt()
+    }
+
+    private fun getDecimalNumber(number: BigDecimal): Int{
+        val numeroString = number.toString()
+        val partes = numeroString.split(".").toMutableList()
+        if (partes.size > 1){
+            if (partes[1].length > 2){
+                partes[1] = partes[1].subSequence(0,2).toString()
+            }else if(partes[1].length < 2){
+                partes[1] = partes[1] + "0"
+            }
+        }else{
+            return 0
+        }
+        return partes[1].toInt()
+    }
+
+    private fun formBigDecimalNumber(number: Int, decimal: Int): BigDecimal{
+        val str = "$number.${if(decimal < 10){"0$decimal"} else {"$decimal"}}"
+        return str.toBigDecimal()
+    }
+
+    /* Operaciones de Firebase */
+
+    private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
+        var completedDate = ""
+        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
+            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+        }
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(typeOfTask)
+            .document(task.getId())
+            .update(
+                mapOf(
+                    "state" to TaskState.toString(task.getState()),
+                    "completedDate" to completedDate,
+                    "child" to task.getChildName()
+                )
+            )
+            .addOnSuccessListener {
+                println("Documento actualizado exitosamente.")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar documento: $e")
+            }
+    }
+
+    private fun addGoalToDatabase(child: Child, goal: SavingGoal) {
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(child.getId())
+            .collection(GOALS)
+            .add(
+                hashMapOf(
+                    "description" to goal.getDescription(),
+                    "goal" to goal.getGoal().toString(),
+                    "type" to GoalType.toString(goal.getType()),
+                    "saving" to goal.getSaving().toString(),
+                    "archived" to goal.isArchived()
+                )
+            )
+            .addOnSuccessListener { document ->
+                goal.setId(document.id)
+                child.addGoal(goal)
+                goalAdapter.notifyItemInserted(child.getGoals().size)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al agregar el objetivo", Toast.LENGTH_SHORT).show()
+                println("Error al agregar el objetivo: $e")
+            }
+    }
+
+    private fun updateGoalToDatabase(childId: String, goal: SavingGoal) {
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(childId)
+            .collection(GOALS)
+            .document(goal.getId()) // Suponiendo que tienes un ID para la meta
+            .update(
+                mapOf(
+                    "saving" to goal.getSaving().toString(),
+                    "archived" to goal.isArchived()
+                )
+            )
+            .addOnSuccessListener {
+                println("Meta actualizada correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar meta: $e")
+            }
+    }
+
+    private fun deleteGoalFromDatabase(childId: String, goalId: String) {
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(MEMBERS)
+            .document(childId)
+            .collection(GOALS)
+            .document(goalId)
+            .delete()
+            .addOnSuccessListener {
+                println("Meta eliminada correctamente")
+            }
+            .addOnFailureListener { e ->
+                println("Error al eliminar meta: $e")
+            }
+    }
+
+    private fun setMoneyInDatabase(money: BigDecimal){
+        FirebaseFirestore.getInstance()
+            .collection(FirebaseAuth.getInstance().currentUser!!.uid)
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(child.getId())
+            .update(
+                mapOf(
+                    "money" to money.toString()
+                )
+            )
+            .addOnSuccessListener {
+                showMoney()
+                println("Dinero actualizado correctamente")
+            }
+            .addOnFailureListener {
+                println("Error al actualizar el dinero disponible")
+            }
     }
 }

@@ -8,7 +8,7 @@ import com.alvdela.smartspend.ui.adapter.TaskViewHolder
 
 class TaskCompleteAdapter(
     private var tasks: MutableList<Task> = mutableListOf(),
-    private val completeTask: (Int, Int) -> Unit
+    private val completeTask: (Int) -> Unit
 ) : RecyclerView.Adapter<TaskViewHolder>() {
 
     private val filteredTasks: MutableList<Task> = mutableListOf()
@@ -35,11 +35,16 @@ class TaskCompleteAdapter(
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = filteredTasks[position]
-        holder.render(task, completeTask, tasks.indexOf(task), position)
+        holder.render(task, completeTask, tasks.indexOf(task))
     }
 
     fun notifyNewTask(){
         filterTasks()
         notifyItemInserted(filteredTasks.size)
+    }
+
+    fun removeItem() {
+        filterTasks()
+        notifyDataSetChanged()
     }
 }

@@ -1,13 +1,15 @@
 package com.alvdela.smartspend.model
 
+import java.math.BigDecimal
+
 class SavingGoal(
     private var description: String,
-    private var goal: Float,
+    private var goal: BigDecimal,
     private var type: GoalType
 ) {
     private lateinit var id: String
     private var achived = false
-    private var saving: Float = 0f
+    private var saving: BigDecimal = BigDecimal("0")
 
     fun isArchived(): Boolean{
         return achived
@@ -17,11 +19,11 @@ class SavingGoal(
         return this.description
     }
 
-    fun getGoal(): Float {
+    fun getGoal(): BigDecimal {
         return this.goal
     }
 
-    fun getSaving(): Float{
+    fun getSaving(): BigDecimal{
         return this.saving
     }
 
@@ -37,8 +39,8 @@ class SavingGoal(
         this.id = id
     }
 
-    fun saveMoney(money: Float): Float{
-        var rest = 0F
+    fun saveMoney(money: BigDecimal): BigDecimal{
+        var rest = BigDecimal(0)
         if ((getSaving() + money) > getGoal()){
             rest = (getSaving() + money) - getGoal()
             this.saving = getGoal()
@@ -49,12 +51,12 @@ class SavingGoal(
     }
 
     private fun checkAchieved(){
-        if (getSaving() == getGoal()){
+        if (getSaving().compareTo(getGoal()) == 0){
             achived = true
         }
     }
 
-    fun getMoneyLeft(): Float{
+    fun getMoneyLeft(): BigDecimal{
         return getGoal() - getSaving()
     }
 

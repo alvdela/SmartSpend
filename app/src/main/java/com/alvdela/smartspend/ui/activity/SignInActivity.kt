@@ -3,7 +3,9 @@ package com.alvdela.smartspend.ui.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.service.controls.ControlsProviderService.TAG
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
@@ -18,6 +20,7 @@ import com.alvdela.smartspend.model.MemberType
 import com.alvdela.smartspend.ui.Animations
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.security.MessageDigest
 
 class SignInActivity : AppCompatActivity() {
     companion object {
@@ -44,7 +47,8 @@ class SignInActivity : AppCompatActivity() {
     private var familyName = ""
     private var tutorName = ""
     private var email = ""
-    private var password = ""
+
+    private lateinit var uid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,17 +78,24 @@ class SignInActivity : AppCompatActivity() {
         familyName = familyNameInput.text.toString()
         tutorName = tutorNameInput.text.toString()
         email = emailInput.text.toString()
-        password = passwordInput.text.toString()
     }
 
     private fun register() {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwordInput.text.toString())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
                     addFamily()
-                    startActivity(Intent(this, LoginActivity::class.java))
+                    FirebaseAuth.getInstance().currentUser?.sendEmailVerification()
+                        ?.addOnCompleteListener { verificationTask ->
+                            if (verificationTask.isSuccessful) {
+                                println("Correo electrónico de verificación enviado correctamente")
+                            } else {
+                                println("Error al enviar el correo electrónico de verificación")
+                            }
+                        }
                 } else {
-                    Toast.makeText(this, "Se ha producido un error inesperado", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Correo ya en uso", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -169,12 +180,12 @@ class SignInActivity : AppCompatActivity() {
 
     private fun addFamily() {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(Constants.FAMILY)
             .set(
                 hashMapOf(
                     "familyName" to familyName,
-                    "familyEmail" to email
+                    "familyEmail" to email,
                 )
             )
             .addOnCompleteListener { task ->
@@ -186,10 +197,10 @@ class SignInActivity : AppCompatActivity() {
 
     private fun addParent() {
         FirebaseFirestore.getInstance()
-            .collection(email)
+            .collection(uid)
             .document(Constants.FAMILY)
             .collection(Constants.MEMBERS)
-            .document(tutorName)
+            .document()
             .set(
                 hashMapOf(
                     "user" to tutorName,
@@ -197,6 +208,10 @@ class SignInActivity : AppCompatActivity() {
                     "type" to MemberType.toString(MemberType.PARENT)
                 )
             )
+            .addOnCompleteListener {
+                FirebaseAuth.getInstance().signOut()
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
     }
 
     private fun initShowButtons() {
@@ -213,5 +228,4 @@ class SignInActivity : AppCompatActivity() {
                 if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
     }
-
 }

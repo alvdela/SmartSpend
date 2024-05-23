@@ -1,5 +1,8 @@
 package com.alvdela.smartspend.filters
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.regex.Pattern
 
 object Validator {
@@ -20,9 +23,12 @@ object Validator {
         return pattern.matches(password)
     }
 
-    /*fun validateDate(date: String): Boolean{
-        val pattern = Pattern.compile("[0-9][0-9]\\/[0-9][0-9]\\/[0-9][0-9][0-9][0-9]")
-        val matcher = pattern.matcher(date)
-        return matcher.find()
-    }*/
+    fun isValidDate(dateStr: String, dateFormat: DateTimeFormatter): Boolean {
+        return try {
+            LocalDate.parse(dateStr, dateFormat)
+            true
+        } catch (e: DateTimeParseException) {
+            false
+        }
+    }
 }

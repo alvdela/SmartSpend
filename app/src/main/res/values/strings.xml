@@ -133,7 +133,6 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="objetivos_de_ahorro">Objetivos de ahorro</string>
     <string name="add_goal">Añadir objetivo</string>
     <string name="juegos">Juegos</string>
-    <string name="canguro">Canguro matemático</string>
     <string name="tareas_obligatorias">Tareas obligatorias</string>
     <string name="tareas_extra">Tareas extra</string>
     <string name="descripcion">Descripcion</string>
@@ -195,7 +194,38 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="eliminar_cuenta">Eliminar cuenta</string>
     <string name="aceptar">Aceptar</string>
-    <string name="extract_money_of_goal">¿Estas seguro? El dinero volverá a tu cuenta pero no habrás logrado el objetivo marcado</string>
+    <string name="extract_money_of_goal">¿Estas seguro? Recuperarás el dinero pero no habrás logrado el objetivo</string>
+    <string name="password_min_size">Tamaño minimo de 4 caracteres</string>
+    <string name="he_olvidado">He olvidado la contraseña</string>
+    <string name="recuerda_restablecer">Recuerda restablecer tu contraseña en \'mi perfil\'</string>
+    <string name="forget_in_mock">En el modo invitado no es necesario introducir la contraseña</string>
+    <string name="accede_con_cuenta_smartspend">Accede con la contraseña de tu cuenta SmartSpend</string>
+    <string name="recover_password">¿Has olvidado la contraseña?</string>
+    <string name="recuperar">Recuperar</string>
+    <string name="change_email">Modificar correo electrónico</string>
+    <string name="correo_nuevo">Correo nuevo</string>
+    <string name="note_change_email">Nota: tendrás que verificar el cambio de correo</string>
+    <string name="change_family_name">Cambiar el nombre de la familia</string>
+    <string name="change_user_name">Cambiar el nombre del usuario</string>
+
+    <string name="new_name">Nuevo nombre</string>
+    <string name="old_password">Contraseña antigua</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="change_password">Modificar la contraseña</string>
+    <string name="delete_profile">Eliminar perfil</string>
+    <string name="delete_profile_info">Introduce la contraseña de la cuenta para eliminar el perfil</string>
+    <string name="note_delete_profile">Nota: la cuenta de la familia se dara de baja si no quedan perfiles asociados a esta</string>
+    <string name="reopen_task">¿Desea reabrir esta tarea?</string>
+    <string name="clean_task_history">¿Desea eliminar el historial de tareas?</string>
+    <string name="profile_picture">¿Establecer como foto de perfil?</string>
+    <string name="concurso_smartspend">Concurso SmartSpend</string>
+    <string name="start">Comenzar</string>
+    <string name="salir">Salir</string>
+    <string name="contrareloj">Contrareloj</string>
+    <string name="_20_preguntas">20 preguntas</string>
+    <string name="_15_preguntas">15 preguntas</string>
+    <string name="_10_preguntas">10 preguntas</string>
+    <string name="quiz_explanation">Pon a prueba tus conocimientos sobre el manejo del dinero y las matemáticas</string>
 
 </resources>
 

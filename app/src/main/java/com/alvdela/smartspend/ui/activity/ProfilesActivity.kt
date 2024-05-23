@@ -2,6 +2,15 @@ package com.alvdela.smartspend.ui.activity
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -12,14 +21,17 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
+import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+
 
 class ProfilesActivity : AppCompatActivity() {
 
@@ -29,17 +41,15 @@ class ProfilesActivity : AppCompatActivity() {
     private lateinit var passwordInput: EditText
 
     private lateinit var family: Family
+    private lateinit var email: String
 
     private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_profiles)
         getFamily()
         initObjects()
-        hideButtons()
-        showFamilyData()
         family.checkChildrenPayments()
     }
 
@@ -47,36 +57,21 @@ class ProfilesActivity : AppCompatActivity() {
         super.onStart()
         getFamily()
         initObjects()
-        hideButtons()
-        showFamilyData()
         family.checkChildrenPayments()
     }
 
     private fun getFamily() {
-        if (ContextFamily.isMock) {
-            family = ContextFamily.family!!
-        } else {
-            //TODO consulta a firebase
-        }
-    }
-
-    private fun showFamilyData() {
-        var i = 0
-        for ((clave, valor) in family.getMembers()) {
-            profilesButtons[i].visibility = View.VISIBLE
-            profilesButtons[i].text = clave
-            profilesButtons[i].tag = clave
-            i++
-        }
-    }
-
-    private fun hideButtons() {
-        for (button in profilesButtons) {
-            button.visibility = View.INVISIBLE
-        }
+        family = ContextFamily.family!!
+        email = family.getEmail()
     }
 
     private fun initObjects() {
+        setViews()
+        hideButtons()
+        showFamilyData()
+    }
+
+    private fun setViews() {
         profilesButtons = mutableListOf()
         val button0: Button = findViewById(R.id.button0)
         profilesButtons.add(button0)
@@ -109,6 +104,72 @@ class ProfilesActivity : AppCompatActivity() {
         familyName.text = getString(R.string.familia_display, family.getName())
     }
 
+    private fun hideButtons() {
+        for (button in profilesButtons) {
+            button.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun showFamilyData() {
+
+        var i = 0
+        for ((clave, member) in family.getMembers()) {
+            profilesButtons[i].visibility = View.VISIBLE
+            profilesButtons[i].text = clave
+            profilesButtons[i].tag = clave
+            if(!ContextFamily.isMock){
+                showProfilePicture(profilesButtons[i], member)
+            }
+            i++
+        }
+    }
+
+    private fun showProfilePicture(button: Button, member: Member) {
+        val uuid = FirebaseAuth.getInstance().currentUser!!.uid
+        val fileName = member.getId()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
+        val localFile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                if (localFile.exists() && localFile.length() > 0) {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, true)
+                    val circularImage = getCroppedBitmap(scaledBitmap)
+                    val drawable: Drawable = BitmapDrawable(resources, circularImage)
+                    button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
+                }
+            }
+            .addOnFailureListener{
+                //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
+        val output = Bitmap.createBitmap(
+            bitmap.getWidth(),
+            bitmap.getHeight(), Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(output)
+        val color = -0xbdbdbe
+        val paint = Paint()
+        val rect = Rect(0, 0, bitmap.getWidth(), bitmap.getHeight())
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        paint.setColor(color)
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(
+            (bitmap.getWidth() / 2).toFloat(), (bitmap.getHeight() / 2).toFloat(),
+            (
+                    bitmap.getWidth() / 2).toFloat(), paint
+        )
+        paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
+        canvas.drawBitmap(bitmap, rect, rect, paint)
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output
+    }
+
     fun triggerGoMain(view: View) {
         goMain(view.tag.toString())
     }
@@ -126,6 +187,7 @@ class ProfilesActivity : AppCompatActivity() {
         val passwordWrong = dialog.findViewById<TextView>(R.id.tvWrongPassword)
         passwordWrong.visibility = View.GONE
         passwordInput = dialog.findViewById(R.id.passwordProfile)
+        val forgetButton = dialog.findViewById<TextView>(R.id.forgetButton)
 
         tvProfileName.text = user
 
@@ -133,11 +195,17 @@ class ProfilesActivity : AppCompatActivity() {
             if (member.checkPassword("")) {
                 acceder = true
                 passwordContainer.visibility = View.GONE
+                forgetButton.visibility = View.GONE
                 unlockImage.visibility = View.VISIBLE
             } else {
+                forgetButton.setOnClickListener {
+                    dialog.dismiss()
+                    forgetPassword(member)
+                }
                 passwordContainer.visibility = View.VISIBLE
                 unlockImage.visibility = View.GONE
                 passwordInput.setText("")
+
             }
         } else {
             Toast.makeText(this, "Error: Usuario no existente", Toast.LENGTH_SHORT).show()
@@ -159,8 +227,59 @@ class ProfilesActivity : AppCompatActivity() {
                     dialog.dismiss()
                     goChildMain(user)
                 }
-            }else{
+            } else {
                 passwordWrong.visibility = View.VISIBLE
+            }
+        }
+
+    }
+
+    private fun forgetPassword(member: Member?) {
+        showPopUp(R.layout.pop_up_forgot_password)
+        val passwordProfile = dialog.findViewById<EditText>(R.id.passwordForget)
+        val tvWrongPassword = dialog.findViewById<TextView>(R.id.tvWrongPassword)
+        tvWrongPassword.visibility = View.GONE
+        val passwordButton = dialog.findViewById<CheckBox>(R.id.show_password)
+        passwordButton.setOnCheckedChangeListener { _, isChecked ->
+            passwordProfile.transformationMethod =
+                if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+
+        if (ContextFamily.isMock) {
+            val tvInfo = dialog.findViewById<TextView>(R.id.tvInfo)
+            tvInfo.text = resources.getString(R.string.forget_in_mock)
+            val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
+            passwordContainer.visibility = View.GONE
+        }
+
+        val accessForgetButton = dialog.findViewById<Button>(R.id.accessForgetButton)
+        accessForgetButton.setOnClickListener {
+            if (ContextFamily.isMock) {
+                member!!.setPassword("")
+                if (member is Parent) {
+                    dialog.dismiss()
+                    goParentMain(member.getUser())
+                } else if (member is Child) {
+                    dialog.dismiss()
+                    goChildMain(member.getUser())
+                }
+            } else {
+                FirebaseAuth.getInstance()
+                    .signInWithEmailAndPassword(email, passwordProfile.text.toString())
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            member!!.setPassword("")
+                            if (member is Parent) {
+                                dialog.dismiss()
+                                goParentMain(member.getUser())
+                            } else if (member is Child) {
+                                dialog.dismiss()
+                                goChildMain(member.getUser())
+                            }
+                        } else {
+                            tvWrongPassword.visibility = View.VISIBLE
+                        }
+                    }
             }
         }
 

@@ -17,14 +17,14 @@ import com.alvdela.smartspend.model.Parent
 
 class MemberViewHolder(val view: View) : ViewHolder(view) {
 
-    val ivMemberPicture = view.findViewById<ImageView>(R.id.ivMemberPicture)
-    val tvMemberName = view.findViewById<TextView>(R.id.tvMemberName)
-    val modifyMemberButton = view.findViewById<ImageButton>(R.id.modifyMemberButton)
-    val deleteMemberButton = view.findViewById<ImageButton>(R.id.deleteMemberButton)
-    val asignacionesContainer = view.findViewById<ConstraintLayout>(R.id.asignacionesContainer)
-    val line = view.findViewById<View>(R.id.line8)
-    val rvAsignaciones = view.findViewById<RecyclerView>(R.id.rvAsignaciones)
-    val addAsignacionButton = view.findViewById<TextView>(R.id.addAsignacionButton)
+    private val ivMemberPicture = view.findViewById<ImageView>(R.id.ivMemberPicture)
+    private val tvMemberName = view.findViewById<TextView>(R.id.tvMemberName)
+    private val modifyMemberButton = view.findViewById<ImageButton>(R.id.modifyMemberButton)
+    private val deleteMemberButton = view.findViewById<ImageButton>(R.id.deleteMemberButton)
+    private val asignacionesContainer = view.findViewById<ConstraintLayout>(R.id.asignacionesContainer)
+    private val line = view.findViewById<View>(R.id.line8)
+    private val rvAsignaciones = view.findViewById<RecyclerView>(R.id.rvAsignaciones)
+    private val addAsignacionButton = view.findViewById<TextView>(R.id.addAsignacionButton)
 
     fun render(
         member: Member,

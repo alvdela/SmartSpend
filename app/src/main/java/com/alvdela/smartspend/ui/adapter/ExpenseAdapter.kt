@@ -5,11 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.CashFlow
+import java.time.LocalDate
 
 class ExpenseAdapter(private val cashFlowList: MutableList<CashFlow> = mutableListOf()
 ) : RecyclerView.Adapter<ExpenseViewHolder>() {
 
-    private var lastDate = cashFlowList[0].date
+    private lateinit var lastDate: LocalDate
     private var showDate = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseViewHolder {
@@ -21,10 +22,12 @@ class ExpenseAdapter(private val cashFlowList: MutableList<CashFlow> = mutableLi
 
     override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
         if (position == 0){
+            lastDate = cashFlowList[position].date
             showDate = true
         }
         if (cashFlowList[position].date != lastDate){
             showDate = true
+            lastDate = cashFlowList[position].date
         }
         val item = cashFlowList[position]
         holder.render(item, showDate)

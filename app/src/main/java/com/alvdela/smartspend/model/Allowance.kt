@@ -1,12 +1,17 @@
 package com.alvdela.smartspend.model
 
+import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.firebase.Constants
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import java.math.BigDecimal
 import java.time.LocalDate
 
 
 class Allowance (
     private var name: String,
     private var nextPayment: LocalDate,
-    private var amount: Float,
+    private var amount: BigDecimal,
     private var type: AllowanceType)
 {
     private lateinit var id : String
@@ -29,11 +34,11 @@ class Allowance (
         this.nextPayment = newDay
     }
 
-    fun getAmount(): Float{
+    fun getAmount(): BigDecimal{
         return this.amount
     }
 
-    fun setAmount(newAmount: Float){
+    fun setAmount(newAmount: BigDecimal){
         this.amount = newAmount
     }
 
@@ -46,10 +51,10 @@ class Allowance (
     }
 
     fun getId(): String{
-        return id
+        return this.id
     }
 
-    fun setId(id:String){
+    fun setId(id: String){
         this.id = id
     }
 
@@ -78,7 +83,7 @@ class Allowance (
     /**
      * Metodo para obtener la propina y programar el proximo ingreso automáticamente
      */
-    fun getPayment(): Float{
+    fun getPayment(): BigDecimal{
 
         when(this.type){
             AllowanceType.PUNTUAL -> this.expired = true
