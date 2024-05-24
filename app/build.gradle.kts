@@ -52,6 +52,8 @@ dependencies {
     
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.lottie)
+    implementation(libs.android.holo.graph)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

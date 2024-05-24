@@ -36,9 +36,9 @@
       "respuesta_correcta": "1.5"
     },
     {
-      "pregunta": "Si ahorras 2€ cada día, ¿cuántas monedas tendrás después de una semana?",
-      "opciones": ["10", "12", "14", "16"],
-      "respuesta_correcta": "14"
+      "pregunta": "Si ahorras 2€ cada día, ¿cuánto dinero tendrás después de una semana?",
+      "opciones": ["10€", "12€", "14€", "16€"],
+      "respuesta_correcta": "14€"
     },
     {
       "pregunta": "Si un helado cuesta 3€ y tienes 10€, ¿cuántos helados puedes comprar?",
@@ -571,19 +571,19 @@
       "respuesta_correcta": "21"
     },
     {
-      "pregunta": "Si ahorras 5€ cada día, ¿cuántas monedas tendrás después de una semana?",
-      "opciones": ["30", "32", "34", "35"],
-      "respuesta_correcta": "35"
+      "pregunta": "Si ahorras 5€ cada día, ¿cuánto dinero tendrás después de una semana?",
+      "opciones": ["30€", "32€", "34€", "35€"],
+      "respuesta_correcta": "35€"
     },
     {
       "pregunta": "Si ahorras 4€ cada día, ¿cuánto habrás ahorrado después de dos semanas?",
-      "opciones": ["48", "52", "56", "60"],
-      "respuesta_correcta": "56"
+      "opciones": ["48€", "52€", "56€", "60€"],
+      "respuesta_correcta": "56€"
     },
     {
-      "pregunta": "Si ahorras 6€ cada día, ¿cuántas monedas tendrás después de cinco días?",
-      "opciones": ["24", "25", "26", "30"],
-      "respuesta_correcta": "30"
+      "pregunta": "Si ahorras 6€ cada día, ¿cuánto dinero tendrás después de cinco días?",
+      "opciones": ["24€", "25€", "26€", "30€"],
+      "respuesta_correcta": "30€"
     },
     {
       "pregunta": "Si ahorras 7€ cada día, ¿cuánto habrás ahorrado después de tres días?",
@@ -591,9 +591,9 @@
       "respuesta_correcta": "21"
     },
     {
-      "pregunta": "Si ahorras 1€ cada día, ¿cuántas monedas tendrás después de diez días?",
-      "opciones": ["8", "9", "10", "11"],
-      "respuesta_correcta": "10"
+      "pregunta": "Si ahorras 1€ cada día, ¿cuánto dinero tendrás después de diez días?",
+      "opciones": ["8€", "9€", "10€", "11€"],
+      "respuesta_correcta": "10€"
     },
     {
       "pregunta": "Si ahorras 10€ cada día, ¿cuánto habrás ahorrado después de una semana?",
@@ -601,14 +601,14 @@
       "respuesta_correcta": "70"
     },
     {
-      "pregunta": "Si ahorras 2€ cada día, ¿cuántas monedas tendrás después de cuatro días?",
-      "opciones": ["6", "7", "8", "9"],
-      "respuesta_correcta": "8"
+      "pregunta": "Si ahorras 2€ cada día, ¿cuánto dinero tendrás después de cuatro días?",
+      "opciones": ["6€", "7€", "8€", "9€"],
+      "respuesta_correcta": "8€"
     },
     {
-      "pregunta": "Si ahorras 8€ cada día, ¿cuántas monedas tendrás después de tres días?",
-      "opciones": ["22", "23", "24", "25"],
-      "respuesta_correcta": "24"
+      "pregunta": "Si ahorras 8€ cada día, ¿cuánto dinero tendrás después de tres días?",
+      "opciones": ["22€", "23€", "24€", "25€"],
+      "respuesta_correcta": "24€"
     },
     {
       "pregunta": "Si ahorras 9€ cada día, ¿cuánto habrás ahorrado después de seis días?",
