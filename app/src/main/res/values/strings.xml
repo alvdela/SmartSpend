@@ -228,6 +228,8 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="quiz_explanation">Pon a prueba tus conocimientos sobre el manejo del dinero y las matemáticas</string>
     <string name="resultados">Resultados:</string>
     <string name="retry">Volver a intentar</string>
+    <string name="graficos_tittle">Gráficos de gastos</string>
+    <string name="notificaciones">Notificaciones</string>
 
 </resources>
 

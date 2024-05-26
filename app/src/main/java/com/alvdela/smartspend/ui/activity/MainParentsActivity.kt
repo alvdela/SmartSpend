@@ -62,6 +62,7 @@ import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.adapter.TaskOpenAdapter
+import com.alvdela.smartspend.ui.fragment.GraphFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
 import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
@@ -1034,6 +1035,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
             supportFragmentManager.beginTransaction().remove(fragment!!).commit()
             TaskHistoryFragment.configProfileOpen = false
+        }else if (GraphFragment.configProfileOpen) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
+            supportFragmentManager.beginTransaction().remove(fragment!!).commit()
+            GraphFragment.configProfileOpen = false
         } else {
             showPopUp(R.layout.pop_up_back_profiles)
 
@@ -1056,10 +1061,24 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
             R.id.nav_item_share -> share()
+            R.id.nav_item_chart -> showGraphs()
+            R.id.nav_item_notifications -> Toast.makeText(this,"Esto servira para ajustar preferencias de notificaciones", Toast.LENGTH_SHORT).show()
         }
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    private fun showGraphs() {
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf()
+        GraphFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<GraphFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
     }
 
     private fun showTaskHistory() {
@@ -1069,6 +1088,18 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             add<TaskHistoryFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
+    }
+
+    private fun showEditProfile() {
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf(USER_BUNDLE to user)
+        ProfileFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
         }
         fragmentView.translationX = 500f
         Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
@@ -1096,7 +1127,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun initSpinner() {
         val options = family.getChildrenNames()
-        println(options)
         val adapter = CustomSpinnerAdapter(this, options)
         seleccionarMiembro.adapter = adapter
         seleccionarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -1114,18 +1144,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 //Do nothing
             }
         }
-    }
-
-    private fun showEditProfile() {
-        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
-        val bundle = bundleOf(USER_BUNDLE to user)
-        ProfileFragment.configProfileOpen = true
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
-        }
-        fragmentView.translationX = 500f
-        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
     }
 
     /* Operaciones de Firebase */

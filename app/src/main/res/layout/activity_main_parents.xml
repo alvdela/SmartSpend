@@ -29,7 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:translationX="0dp"
-            tools:translationX="-1000dp">
+            >
 
             <TextView
                 android:id="@+id/tvConsultarMovimiento"
@@ -297,7 +297,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:translationX="1000dp"
-            tools:translationX="0dp">
+            tools:translationX="1000dp">
 
             <TextView
                 android:id="@+id/tvAdministarFamilia"
