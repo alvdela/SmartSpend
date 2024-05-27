@@ -1,7 +1,6 @@
 package com.alvdela.smartspend.ui.fragment
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -19,10 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.firebase.Constants
+import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
-import com.alvdela.smartspend.ui.activity.MainParentsActivity
 import com.alvdela.smartspend.ui.activity.ProfilesActivity
 import com.alvdela.smartspend.ui.adapter.TaskHistoryAdapter
 import com.google.firebase.auth.FirebaseAuth

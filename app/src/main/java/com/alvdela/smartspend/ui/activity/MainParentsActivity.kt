@@ -3,6 +3,7 @@ package com.alvdela.smartspend.ui.activity
 import TaskCompleteAdapter
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -26,6 +27,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -42,14 +44,15 @@ import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.filters.Validator
-import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
-import com.alvdela.smartspend.firebase.Constants.CASHFLOW
-import com.alvdela.smartspend.firebase.Constants.FAMILY
-import com.alvdela.smartspend.firebase.Constants.GOALS
-import com.alvdela.smartspend.firebase.Constants.HISTORIC
-import com.alvdela.smartspend.firebase.Constants.MEMBERS
-import com.alvdela.smartspend.firebase.Constants.TASKS
-import com.alvdela.smartspend.firebase.Constants.dateFormat
+import com.alvdela.smartspend.util.Constants
+import com.alvdela.smartspend.util.Constants.ALLOWANCES
+import com.alvdela.smartspend.util.Constants.CASHFLOW
+import com.alvdela.smartspend.util.Constants.FAMILY
+import com.alvdela.smartspend.util.Constants.GOALS
+import com.alvdela.smartspend.util.Constants.HISTORIC
+import com.alvdela.smartspend.util.Constants.MEMBERS
+import com.alvdela.smartspend.util.Constants.TASKS
+import com.alvdela.smartspend.util.Constants.dateFormat
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
@@ -1062,11 +1065,37 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_item_backprofiles -> backProfiles()
             R.id.nav_item_share -> share()
             R.id.nav_item_chart -> showGraphs()
-            R.id.nav_item_notifications -> Toast.makeText(this,"Esto servira para ajustar preferencias de notificaciones", Toast.LENGTH_SHORT).show()
+            R.id.nav_item_notifications -> notificationSettings()
         }
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    private fun notificationSettings() {
+        showPopUp(R.layout.pop_up_notification_preferences)
+        val sharedPreferences = getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE)
+
+        val backNotification = dialog.findViewById<ImageView>(R.id.backNotification)
+        backNotification.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val switchEmailNotification = dialog.findViewById<SwitchCompat>(R.id.switchEmailNotification)
+        switchEmailNotification.isChecked = sharedPreferences.getBoolean(Constants.EMAIL_NOTIFICATIONS, false)
+        switchEmailNotification.setOnClickListener {
+            sharedPreferences.edit()
+                .putBoolean(Constants.EMAIL_NOTIFICATIONS,switchEmailNotification.isChecked)
+                .apply()
+        }
+
+        val switchPushNotification = dialog.findViewById<SwitchCompat>(R.id.switchPushNotification)
+        switchPushNotification.isChecked = sharedPreferences.getBoolean(Constants.PUSH_NOTIFICATIONS, false)
+        switchPushNotification.setOnClickListener {
+            sharedPreferences.edit()
+                .putBoolean(Constants.PUSH_NOTIFICATIONS,switchPushNotification.isChecked)
+                .apply()
+        }
     }
 
     private fun showGraphs() {

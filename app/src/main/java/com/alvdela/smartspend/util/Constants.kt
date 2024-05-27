@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.firebase
+package com.alvdela.smartspend.util
 
 import java.time.format.DateTimeFormatter
 
@@ -12,6 +12,10 @@ object Constants {
     const val ALLOWANCES = "allowances"
     const val CASHFLOW = "cashFlow"
     const val GOALS = "goals"
+
+    const val PREFERENCES = "preferences"
+    const val EMAIL_NOTIFICATIONS = "emailNotifications"
+    const val PUSH_NOTIFICATIONS = "pushNotifications"
 
     val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 

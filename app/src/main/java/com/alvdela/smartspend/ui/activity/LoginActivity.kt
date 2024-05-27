@@ -20,13 +20,13 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.firebase.Constants
-import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
-import com.alvdela.smartspend.firebase.Constants.CASHFLOW
-import com.alvdela.smartspend.firebase.Constants.FAMILY
-import com.alvdela.smartspend.firebase.Constants.GOALS
-import com.alvdela.smartspend.firebase.Constants.MEMBERS
-import com.alvdela.smartspend.firebase.Constants.dateFormat
+import com.alvdela.smartspend.util.Constants
+import com.alvdela.smartspend.util.Constants.ALLOWANCES
+import com.alvdela.smartspend.util.Constants.CASHFLOW
+import com.alvdela.smartspend.util.Constants.FAMILY
+import com.alvdela.smartspend.util.Constants.GOALS
+import com.alvdela.smartspend.util.Constants.MEMBERS
+import com.alvdela.smartspend.util.Constants.dateFormat
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.model.CashFlow
@@ -175,7 +175,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun createMockFamily() {
         ContextFamily.isMock = true
-        email = "mock"
+        uid = "mock"
         getFamily()
     }
 

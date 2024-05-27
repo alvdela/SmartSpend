@@ -10,7 +10,6 @@ object ContextFamily {
 
     fun reset() {
         family = null
-        isMock = false
         FirebaseAuth.getInstance().signOut()
     }
 }

@@ -1,7 +1,7 @@
 package com.alvdela.smartspend.model
 
 import com.alvdela.smartspend.ContextFamily
-import com.alvdela.smartspend.firebase.Constants
+import com.alvdela.smartspend.util.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.math.BigDecimal

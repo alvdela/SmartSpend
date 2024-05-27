@@ -3,9 +3,7 @@ package com.alvdela.smartspend.ui.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.service.controls.ControlsProviderService.TAG
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
@@ -15,12 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.filters.Validator
-import com.alvdela.smartspend.firebase.Constants
+import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.model.MemberType
 import com.alvdela.smartspend.ui.Animations
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.security.MessageDigest
 
 class SignInActivity : AppCompatActivity() {
     companion object {

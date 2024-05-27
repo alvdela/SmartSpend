@@ -230,6 +230,9 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="retry">Volver a intentar</string>
     <string name="graficos_tittle">Gráficos de gastos</string>
     <string name="notificaciones">Notificaciones</string>
+    <string name="notificaciones_por_email">Notificaciones por email</string>
+    <string name="email_notification_info">Recibe notificaciones por email cada vez que uno de los niños de la familia añada un gasto</string>
+    <string name="push_notification_info">Recibe notificaciones push cada vez que uno de los niños de la familia añada un gasto</string>
 
 </resources>
 

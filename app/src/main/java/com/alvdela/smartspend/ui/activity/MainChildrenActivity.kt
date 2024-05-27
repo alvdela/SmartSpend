@@ -2,6 +2,7 @@ package com.alvdela.smartspend.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -42,11 +43,11 @@ import com.alvdela.smartspend.model.CashFlow
 import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
-import com.alvdela.smartspend.firebase.Constants
-import com.alvdela.smartspend.firebase.Constants.FAMILY
-import com.alvdela.smartspend.firebase.Constants.GOALS
-import com.alvdela.smartspend.firebase.Constants.MEMBERS
-import com.alvdela.smartspend.firebase.Constants.TASKS
+import com.alvdela.smartspend.util.Constants
+import com.alvdela.smartspend.util.Constants.FAMILY
+import com.alvdela.smartspend.util.Constants.GOALS
+import com.alvdela.smartspend.util.Constants.MEMBERS
+import com.alvdela.smartspend.util.Constants.TASKS
 import com.alvdela.smartspend.model.GoalType
 import com.alvdela.smartspend.model.SavingGoal
 import com.alvdela.smartspend.model.Task
@@ -55,13 +56,19 @@ import com.alvdela.smartspend.ui.adapter.GoalAdapter
 import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
+import com.alvdela.smartspend.util.EmailSender
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import javax.mail.MessagingException
 
 class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -479,6 +486,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if (!isMock){
+                            notifyParents(newExpense)
+                        }
                     }
 
                     2 -> {
@@ -487,6 +497,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if (!isMock){
+                            notifyParents(newExpense)
+                        }
                     }
 
                     3 -> {
@@ -495,6 +508,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if (!isMock){
+                            notifyParents(newExpense)
+                        }
                     }
 
                     else -> {
@@ -503,6 +519,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
+                        if (!isMock){
+                            notifyParents(newExpense)
+                        }
                     }
                 }
                 Handler().postDelayed({
@@ -511,6 +530,37 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 }, 1000)
                 dialog.dismiss()
             }
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun notifyParents(newExpense: CashFlow) {
+        val sharedPreferences = getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE)
+
+        val email = family.getEmail()
+        val subject = "$user ha añadido un nuevo gasto"
+        val message = "$user ha añadido un nuevo gasto de ${newExpense.amount}€," +
+                " con nombre ${newExpense.description} y tipo ${newExpense.type}."
+
+        val sendEmail = sharedPreferences.getBoolean(Constants.EMAIL_NOTIFICATIONS, false)
+        if (sendEmail){
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val emailSender = EmailSender()
+                    emailSender.sendEmail(email,subject,message)
+                    showToast("Correo electrónico enviado con éxito")
+                }catch (e: MessagingException){
+                    e.printStackTrace()
+                    showToast("Error al enviar el correo electrónico: ${e.message}")
+                }
+            }
+
+        }
+    }
+
+    private fun showToast(message: String) {
+        runOnUiThread {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
 

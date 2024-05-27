@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -41,7 +43,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    packaging {
+        resources.excludes.add("META-INF/NOTICE.md")
+        resources.excludes.add("META-INF/LICENSE.txt")
+        resources.excludes.add("META-INF/LICENSE.md")
+    }
 }
+
+
 
 dependencies {
 
@@ -74,4 +83,9 @@ dependencies {
 
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
+
+    //email
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
+    implementation(libs.config)
 }
