@@ -169,8 +169,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         containerCompletadas = findViewById(R.id.containerCompletadas)
         rvTaskCompletadas = findViewById(R.id.rvTaskCompletadas)
 
-
-        //val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+        val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
+        currentUserName.text = user
         changeButtonState(seguimientoButton)
 
         seguimientoButton.setOnClickListener {

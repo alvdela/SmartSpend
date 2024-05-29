@@ -17,6 +17,8 @@ object Constants {
     const val EMAIL_NOTIFICATIONS = "emailNotifications"
     const val PUSH_NOTIFICATIONS = "pushNotifications"
 
+    const val CHANNEL_ID = "0"
+
     val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
 }

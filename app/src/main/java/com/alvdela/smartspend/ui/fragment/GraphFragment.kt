@@ -177,23 +177,26 @@ class GraphFragment : Fragment() {
         comidaSlice.color = resources.getColor(R.color.color2)
         comidaSlice.value = comida.toFloat()
         pieGraphExpenses.addSlice(comidaSlice)
+
         val ocioSlice = PieSlice()
         ocioSlice.color = resources.getColor(R.color.color3)
         ocioSlice.value = ocio.toFloat()
         pieGraphExpenses.addSlice(ocioSlice)
+
         val comprasSlice = PieSlice()
-        comprasSlice.color = resources.getColor(com.alvdela.smartspend.R.color.color4)
+        comprasSlice.color = resources.getColor(R.color.color4)
         comprasSlice.value = compras.toFloat()
         pieGraphExpenses.addSlice(comprasSlice)
+
         val otrosSlice = PieSlice()
         otrosSlice.color = resources.getColor(R.color.color7)
         otrosSlice.value = otros.toFloat()
         pieGraphExpenses.addSlice(otrosSlice)
 
-        tvFood.text = "Comida: $comida"
-        tvOcio.text = "Ocio: $ocio"
-        tvCompras.text = "Compras: $compras"
-        tvOtros.text = "Otros: $otros"
+        tvFood.text = "Comida: $comida€"
+        tvOcio.text = "Ocio: $ocio€"
+        tvCompras.text = "Compras: $compras€"
+        tvOtros.text = "Otros: $otros€"
     }
 
     private fun makeBarGraph(childName: String) {
@@ -211,6 +214,9 @@ class GraphFragment : Fragment() {
                 monthExpense += cashFlow.amount
             }else{
                 expenses.add(0,monthExpense)
+                if (expenses.size >= 6){
+                    break
+                }
 
                 monthExpense = BigDecimal(0)
                 monthExpense += cashFlow.amount

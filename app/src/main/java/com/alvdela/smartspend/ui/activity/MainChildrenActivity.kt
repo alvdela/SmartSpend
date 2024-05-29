@@ -1,9 +1,15 @@
 package com.alvdela.smartspend.ui.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
@@ -24,6 +30,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -548,20 +557,51 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 try {
                     val emailSender = EmailSender()
                     emailSender.sendEmail(email,subject,message)
-                    showToast("Correo electrónico enviado con éxito")
+                    //showToast("Correo electrónico enviado con éxito")
                 }catch (e: MessagingException){
                     e.printStackTrace()
-                    showToast("Error al enviar el correo electrónico: ${e.message}")
+                    //showToast("Error al enviar el correo electrónico: ${e.message}")
                 }
             }
-
+        }
+        val sendPush = sharedPreferences.getBoolean(Constants.PUSH_NOTIFICATIONS, false)
+        if (sendPush){
+            createNotificationChannel()
+            createNotification(subject,message)
         }
     }
 
-    private fun showToast(message: String) {
-        runOnUiThread {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun createNotificationChannel() {
+        val channelImportance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(Constants.CHANNEL_ID,"alvdela.smartspend", channelImportance)
+
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
+    }
+
+    private fun createNotification(subject: String, message: String) {
+        val resultIntent = Intent(applicationContext, LoginActivity::class.java)
+        val resultPendingIntent = TaskStackBuilder.create(applicationContext).run {
+            addNextIntentWithParentStack(resultIntent)
+            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT)
         }
+
+        val notification = NotificationCompat.Builder(this, Constants.CHANNEL_ID).also {
+            it.setContentTitle(subject)
+            it.setContentText(message)
+            it.setSmallIcon(R.drawable.ic_launcher_foreground)
+            it.priority = NotificationCompat.PRIORITY_DEFAULT
+            it.setContentIntent(resultPendingIntent)
+            it.setAutoCancel(true)
+        }.build()
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        if (ActivityCompat
+                .checkSelfPermission
+                    (this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+            return
+        }
+        notificationManager.notify(Constants.CHANNEL_ID.toInt(), notification)
     }
 
     /* Metodo para actualizar el dinero disponible */
