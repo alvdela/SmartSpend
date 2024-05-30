@@ -207,13 +207,13 @@ class QuizActivity : AppCompatActivity() {
         }else{
             wrongAnswer()
         }
+        currentQuestion++
         //Salida de la pregunta
         Animations.animateViewOfFloat(tvQuestion,"translationX", -2000f, 500)
         Animations.animateViewOfFloat(clAnswers,"translationX", -2000f, 500)
 
         Handler().postDelayed({
             if (currentQuestion < totalQuestions && timeInSeconds > 0){
-                currentQuestion++
                 nextQuestion()
             }else{
                 endGame()

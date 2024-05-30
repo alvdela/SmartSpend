@@ -7,6 +7,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -65,6 +67,8 @@ import com.alvdela.smartspend.ui.adapter.GoalAdapter
 import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
+import com.alvdela.smartspend.ui.widget.TaskChildWidget
+import com.alvdela.smartspend.ui.widget.TaskParentWidget
 import com.alvdela.smartspend.util.EmailSender
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -125,7 +129,10 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private var goals = false
     private var games = false
 
-    var record = mutableListOf("Gasto")
+    private var record = mutableListOf("Gasto")
+
+    private lateinit var widget: TaskParentWidget
+    private lateinit var mAppWidgetManager: AppWidgetManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,6 +147,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         showCashFlow()
         showTask()
         showGoals()
+        initWidget()
     }
 
     override fun onStart() {
@@ -233,6 +241,21 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             .addOnFailureListener{
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun initWidget(){
+        widget = TaskParentWidget()
+        mAppWidgetManager = AppWidgetManager.getInstance(this)
+        updateWidgets(this)
+    }
+
+    private fun updateWidgets(context: Context) {
+        val intent = Intent(context, TaskChildWidget::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskChildWidget::class.java))
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        }
+        context.sendBroadcast(intent)
     }
 
     /* Metodos para los objetivos de ahorro */
@@ -437,6 +460,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         } else {
             noMandatoryTaskAdapter.removeItem()
         }
+        updateWidgets(this)
     }
 
     /* Metodos para los gastos*/

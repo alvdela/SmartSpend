@@ -1,6 +1,9 @@
 package com.alvdela.smartspend.ui.activity
 
 import android.app.Dialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -28,6 +31,8 @@ import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
+import com.alvdela.smartspend.ui.widget.TaskChildWidget
+import com.alvdela.smartspend.ui.widget.TaskParentWidget
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
@@ -69,6 +74,7 @@ class ProfilesActivity : AppCompatActivity() {
         setViews()
         hideButtons()
         showFamilyData()
+        updateWidgets(this)
     }
 
     private fun setViews() {
@@ -122,6 +128,23 @@ class ProfilesActivity : AppCompatActivity() {
             }
             i++
         }
+    }
+
+    private fun updateWidgets(context: Context) {
+        val mAppWidgetManager = AppWidgetManager.getInstance(context)
+        val intent = Intent(context, TaskParentWidget::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskParentWidget::class.java))
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        }
+        context.sendBroadcast(intent)
+
+        val intent2 = Intent(context, TaskChildWidget::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskChildWidget::class.java))
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        }
+        context.sendBroadcast(intent2)
     }
 
     private fun showProfilePicture(button: Button, member: Member) {

@@ -18,7 +18,7 @@ class TaskOpenAdapter(
         filterTasks()
     }
 
-    fun filterTasks() {
+    private fun filterTasks() {
         filteredTasks.clear()
         for (task in tasks) {
             if (task.getState() == TaskState.OPEN) {

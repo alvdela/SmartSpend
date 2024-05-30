@@ -19,6 +19,12 @@ object Constants {
 
     const val CHANNEL_ID = "0"
 
+    const val WIDGET_TASK = "TASK_TYPE"
+    const val PENDIENTES = "PENDIENTES"
+    const val COMPLETADAS = "COMPLETADAS"
+    const val OBLIGATORIAS = "OBLIGATORIAS"
+    const val EXTRA = "EXTRA"
+
     val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
 }

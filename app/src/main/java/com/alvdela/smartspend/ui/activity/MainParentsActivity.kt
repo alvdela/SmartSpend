@@ -3,6 +3,8 @@ package com.alvdela.smartspend.ui.activity
 import TaskCompleteAdapter
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -69,6 +71,7 @@ import com.alvdela.smartspend.ui.fragment.GraphFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
 import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
+import com.alvdela.smartspend.ui.widget.TaskParentWidget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -129,6 +132,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var completeTaskAdapter: TaskCompleteAdapter
     private lateinit var openTaskAdapter: TaskOpenAdapter
 
+    private lateinit var widget: TaskParentWidget
+    private lateinit var mAppWidgetManager: AppWidgetManager
+
     //Constantes
     private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
@@ -146,6 +152,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initSpinner()
         showTasks()
         showMembers()
+        initWidget()
         if (!ContextFamily.isMock) showProfilePicture()
     }
 
@@ -226,6 +233,21 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
+    private fun initWidget(){
+        widget = TaskParentWidget()
+        mAppWidgetManager = AppWidgetManager.getInstance(this)
+        updateWidgets(this)
+    }
+
+    private fun updateWidgets(context: Context) {
+        val intent = Intent(context, TaskParentWidget::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskParentWidget::class.java))
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        }
+        context.sendBroadcast(intent)
+    }
+
     private fun showProfilePicture() {
         val uuid = FirebaseAuth.getInstance().currentUser!!.uid
         val fileName = family.getMember(user)!!.getId()
@@ -270,6 +292,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             family.removeTask(selectedTask)
             dialog.dismiss()
             openTaskAdapter.removeItem()
+            updateWidgets(this)
         }
 
     }
@@ -299,6 +322,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             family.removeTask(selectedTask)
             dialog.dismiss()
             completeTaskAdapter.removeItem()
+            updateWidgets(this)
         }
     }
 
@@ -362,6 +386,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 } else {
                     completeTaskAdapter.notifyNewTask()
                 }
+                updateWidgets(this)
                 dialog.dismiss()
             }
         }

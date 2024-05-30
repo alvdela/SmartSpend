@@ -419,11 +419,7 @@ class LoginActivity : AppCompatActivity() {
 
                     val price = document.getString("price")!!.toBigDecimal()
 
-                    var state = TaskState.OPEN
-                    when (document.getString("state")!!) {
-                        "OPEN" -> state = TaskState.OPEN
-                        "COMPLETE" -> state = TaskState.COMPLETE
-                    }
+                    var state: TaskState = TaskState.fromString(document.getString("state")!!)!!
 
                     val task = Task(description, limitDate, mandatory, price, state)
                     val id = document.id
