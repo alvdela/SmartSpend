@@ -16,8 +16,10 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
+import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -82,8 +84,10 @@ import java.time.LocalDate
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.mail.MessagingException
+import kotlin.math.abs
 
-class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainChildrenActivity : AppCompatActivity(),
+    NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener {
 
     private val MAX_DECIMALS = 2
 
@@ -134,12 +138,14 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private lateinit var widget: TaskParentWidget
     private lateinit var mAppWidgetManager: AppWidgetManager
 
+    private lateinit var gestureDetector: GestureDetector
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_children)
         user = intent.getStringExtra("USER_NAME").toString()
         child = family.getMember(user) as Child
-        if (!isMock){
+        if (!isMock) {
             uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         }
         initObjects()
@@ -148,6 +154,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         showTask()
         showGoals()
         initWidget()
+        initGestures()
     }
 
     override fun onStart() {
@@ -238,12 +245,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     }
                 }
             }
-            .addOnFailureListener{
+            .addOnFailureListener {
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
     }
 
-    private fun initWidget(){
+    private fun initWidget() {
         widget = TaskParentWidget()
         mAppWidgetManager = AppWidgetManager.getInstance(this)
         updateWidgets(this)
@@ -252,10 +259,25 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private fun updateWidgets(context: Context) {
         val intent = Intent(context, TaskChildWidget::class.java).apply {
             action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskChildWidget::class.java))
+            val ids = mAppWidgetManager.getAppWidgetIds(
+                ComponentName(
+                    context,
+                    TaskChildWidget::class.java
+                )
+            )
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
         }
         context.sendBroadcast(intent)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initGestures() {
+        gestureDetector = GestureDetector(this, this)
+        val mainView = findViewById<View>(R.id.main_children)
+        mainView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
     }
 
     /* Metodos para los objetivos de ahorro */
@@ -309,9 +331,9 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     else -> SavingGoal(descripcion, cantidad, GoalType.TOYS)
 
                 }
-                if (!isMock){
-                    addGoalToDatabase(child,goal)
-                }else{
+                if (!isMock) {
+                    addGoalToDatabase(child, goal)
+                } else {
                     child.addGoal(goal)
                     goalAdapter.notifyItemInserted(child.getGoals().size)
                 }
@@ -343,39 +365,39 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         var natural = 0
         var decimal = 0
 
-        if (child.getActualMoney() < goal.getMoneyLeft()){
+        if (child.getActualMoney() < goal.getMoneyLeft()) {
             natural = getNaturalNumber(child.getActualMoney())
             decimal = getDecimalNumber(child.getActualMoney())
             npNumber.maxValue = natural
-            if (natural <= 0){
+            if (natural <= 0) {
                 npDecimal.maxValue = getDecimalNumber(child.getActualMoney())
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
-            }else{
+            } else {
                 npDecimal.maxValue = 99
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }
-        }else{
+        } else {
             natural = getNaturalNumber(goal.getMoneyLeft())
             decimal = getDecimalNumber(goal.getMoneyLeft())
             npNumber.maxValue = natural
-            if (npNumber.maxValue <= 0){
+            if (npNumber.maxValue <= 0) {
                 npDecimal.maxValue = decimal
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
-            }else{
+            } else {
                 npDecimal.maxValue = 99
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
             }
         }
 
         npNumber.setOnValueChangedListener { _, _, newVal ->
-            if (newVal == npNumber.maxValue && decimal == 0){
+            if (newVal == npNumber.maxValue && decimal == 0) {
                 npDecimal.value = 0
                 npDecimal.isEnabled = false
-            }else if(newVal == npNumber.maxValue && decimal != 0){
+            } else if (newVal == npNumber.maxValue && decimal != 0) {
                 npDecimal.maxValue = decimal
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
                 npDecimal.isEnabled = true
-            }else{
+            } else {
                 npDecimal.isEnabled = true
                 npDecimal.maxValue = 99
                 npDecimal.setFormatter { i -> String.format("%02d", i) }
@@ -389,13 +411,13 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         val confirmButtonSave = dialog.findViewById<Button>(R.id.confirmButtonSave)
         confirmButtonSave.setOnClickListener {
-            val value = formBigDecimalNumber(npNumber.value,npDecimal.value)
+            val value = formBigDecimalNumber(npNumber.value, npDecimal.value)
 
             child.setActualMoney(child.getActualMoney() - value + goal.saveMoney(value))
-            if (!isMock){
-                updateGoalToDatabase(child.getId(),goal)
+            if (!isMock) {
+                updateGoalToDatabase(child.getId(), goal)
                 setMoneyInDatabase(child.getActualMoney())
-            }else{
+            } else {
                 showMoney()
             }
             dialog.dismiss()
@@ -406,12 +428,12 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     @SuppressLint("NotifyDataSetChanged")
     private fun extractMoney(selectedGoal: Int) {
         val goal = child.getGoals()[selectedGoal]
-        if (goal.isArchived()){
+        if (goal.isArchived()) {
             showPopUp(R.layout.pop_up_goal_archieved)
             val confirmGoal = dialog.findViewById<Button>(R.id.confirmGoalAchieved)
             confirmGoal.setOnClickListener {
-                if (!isMock){
-                    deleteGoalFromDatabase(child.getId(),child.getGoals()[selectedGoal].getId())
+                if (!isMock) {
+                    deleteGoalFromDatabase(child.getId(), child.getGoals()[selectedGoal].getId())
                 }
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
@@ -420,7 +442,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
                 dialog.dismiss()
             }
-        }else{
+        } else {
             showPopUp(R.layout.pop_up_delete)
             val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
             tvDelete.text = resources.getString(R.string.extract_money_of_goal)
@@ -432,8 +454,8 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             val confirmDelete = dialog.findViewById<Button>(R.id.confirmDelete)
             confirmDelete.text = resources.getString(R.string.aceptar)
             confirmDelete.setOnClickListener {
-                if (!isMock){
-                    deleteGoalFromDatabase(child.getId(),child.getGoals()[selectedGoal].getId())
+                if (!isMock) {
+                    deleteGoalFromDatabase(child.getId(), child.getGoals()[selectedGoal].getId())
                 }
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
@@ -452,7 +474,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val task = family.getTask(selectedTask)
         task.setState(TaskState.COMPLETE)
         task.setChild(child)
-        if (!isMock){
+        if (!isMock) {
             updateTaskInDatabase(task, TASKS)
         }
         if (task.isMandatory()) {
@@ -519,7 +541,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
-                        if (!isMock){
+                        if (!isMock) {
                             notifyParents(newExpense)
                         }
                     }
@@ -530,7 +552,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
-                        if (!isMock){
+                        if (!isMock) {
                             notifyParents(newExpense)
                         }
                     }
@@ -541,7 +563,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
-                        if (!isMock){
+                        if (!isMock) {
                             notifyParents(newExpense)
                         }
                     }
@@ -552,7 +574,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                             LocalDate.now()
                         )
                         child.addExpense(newExpense)
-                        if (!isMock){
+                        if (!isMock) {
                             notifyParents(newExpense)
                         }
                     }
@@ -576,28 +598,29 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 " con nombre ${newExpense.description} y tipo ${newExpense.type}."
 
         val sendEmail = sharedPreferences.getBoolean(Constants.EMAIL_NOTIFICATIONS, false)
-        if (sendEmail){
+        if (sendEmail) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val emailSender = EmailSender()
-                    emailSender.sendEmail(email,subject,message)
+                    emailSender.sendEmail(email, subject, message)
                     //showToast("Correo electrónico enviado con éxito")
-                }catch (e: MessagingException){
+                } catch (e: MessagingException) {
                     e.printStackTrace()
                     //showToast("Error al enviar el correo electrónico: ${e.message}")
                 }
             }
         }
         val sendPush = sharedPreferences.getBoolean(Constants.PUSH_NOTIFICATIONS, false)
-        if (sendPush){
+        if (sendPush) {
             createNotificationChannel()
-            createNotification(subject,message)
+            createNotification(subject, message)
         }
     }
 
     private fun createNotificationChannel() {
         val channelImportance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(Constants.CHANNEL_ID,"alvdela.smartspend", channelImportance)
+        val channel =
+            NotificationChannel(Constants.CHANNEL_ID, "alvdela.smartspend", channelImportance)
 
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)
@@ -607,7 +630,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val resultIntent = Intent(applicationContext, LoginActivity::class.java)
         val resultPendingIntent = TaskStackBuilder.create(applicationContext).run {
             addNextIntentWithParentStack(resultIntent)
-            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT)
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         val notification = NotificationCompat.Builder(this, Constants.CHANNEL_ID).also {
@@ -622,7 +645,11 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val notificationManager = NotificationManagerCompat.from(this)
         if (ActivityCompat
                 .checkSelfPermission
-                    (this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+                    (
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+        ) {
             return
         }
         notificationManager.notify(Constants.CHANNEL_ID.toInt(), notification)
@@ -814,7 +841,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
-        }else if (ProfileFragment.configProfileOpen) {
+        } else if (ProfileFragment.configProfileOpen) {
             val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
             supportFragmentManager.beginTransaction().remove(fragment!!).commit()
             ProfileFragment.configProfileOpen = false
@@ -867,15 +894,15 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         ContextFamily.reset()
     }
 
-    private fun addRecord(newString: String){
+    private fun addRecord(newString: String) {
         var existe = false
-        for (i in record){
+        for (i in record) {
             if (newString == i) existe = true
         }
-        if (!existe){
-            record.add(0,newString)
+        if (!existe) {
+            record.add(0, newString)
         }
-        if (record.size > 3){
+        if (record.size > 3) {
             record.removeAt(record.size - 1)
         }
     }
@@ -893,29 +920,35 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     /* Metodos de calculo */
-    private fun getNaturalNumber(number: BigDecimal): Int{
+    private fun getNaturalNumber(number: BigDecimal): Int {
         val numeroString = number.toString()
         val partes = numeroString.split(".")
         return partes[0].toInt()
     }
 
-    private fun getDecimalNumber(number: BigDecimal): Int{
+    private fun getDecimalNumber(number: BigDecimal): Int {
         val numeroString = number.toString()
         val partes = numeroString.split(".").toMutableList()
-        if (partes.size > 1){
-            if (partes[1].length > 2){
-                partes[1] = partes[1].subSequence(0,2).toString()
-            }else if(partes[1].length < 2){
+        if (partes.size > 1) {
+            if (partes[1].length > 2) {
+                partes[1] = partes[1].subSequence(0, 2).toString()
+            } else if (partes[1].length < 2) {
                 partes[1] = partes[1] + "0"
             }
-        }else{
+        } else {
             return 0
         }
         return partes[1].toInt()
     }
 
-    private fun formBigDecimalNumber(number: Int, decimal: Int): BigDecimal{
-        val str = "$number.${if(decimal < 10){"0$decimal"} else {"$decimal"}}"
+    private fun formBigDecimalNumber(number: Int, decimal: Int): BigDecimal {
+        val str = "$number.${
+            if (decimal < 10) {
+                "0$decimal"
+            } else {
+                "$decimal"
+            }
+        }"
         return str.toBigDecimal()
     }
 
@@ -1012,7 +1045,7 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
     }
 
-    private fun setMoneyInDatabase(money: BigDecimal){
+    private fun setMoneyInDatabase(money: BigDecimal) {
         FirebaseFirestore.getInstance()
             .collection(FirebaseAuth.getInstance().currentUser!!.uid)
             .document(Constants.FAMILY)
@@ -1030,5 +1063,103 @@ class MainChildrenActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             .addOnFailureListener {
                 println("Error al actualizar el dinero disponible")
             }
+    }
+
+    /* Metodos de control de gestos */
+
+    override fun onDown(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onShowPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onScroll(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onLongPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onFling(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        val swipe = 100
+        val swipeVelocity = 100
+
+        if (e1 != null) {
+            val diffY = e2.y - e1.y
+            val diffX = e2.x - e1.x
+
+            if (abs(diffX) > abs(diffY)) {
+                if (abs(diffX) > swipe && abs(velocityX) > swipeVelocity) {
+                    if (diffX > 0) {
+                        onSwipeRight()
+                    } else {
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun onSwipeLeft() {
+        if (!drawer.isDrawerOpen(GravityCompat.START)) {
+            if (expenses) {
+                restartButtons()
+                changeButtonState(taskButton)
+                animateTareas()
+            } else if (tareas) {
+                restartButtons()
+                changeButtonState(goalsButton)
+                animateGoals()
+            } else if (goals) {
+                restartButtons()
+                changeButtonState(gameButton)
+                animateGames()
+            }
+        } else {
+            drawer.closeDrawer(GravityCompat.START)
+        }
+
+    }
+
+    private fun onSwipeRight() {
+        if (!drawer.isDrawerOpen(GravityCompat.START)) {
+            if (tareas) {
+                restartButtons()
+                changeButtonState(expensesButton)
+                animateExpenses()
+            } else if (goals) {
+                restartButtons()
+                changeButtonState(taskButton)
+                animateTareas()
+            } else if (games) {
+                restartButtons()
+                changeButtonState(goalsButton)
+                animateGoals()
+            } else if (expenses) {
+                drawer.openDrawer(GravityCompat.START)
+            }
+        }
     }
 }

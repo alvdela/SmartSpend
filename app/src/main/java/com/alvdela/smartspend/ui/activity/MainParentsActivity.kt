@@ -1,6 +1,7 @@
 package com.alvdela.smartspend.ui.activity
 
 import TaskCompleteAdapter
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.appwidget.AppWidgetManager
@@ -12,8 +13,10 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -81,8 +84,10 @@ import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
-class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+class MainParentsActivity : AppCompatActivity(),
+    NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener{
 
     //Informacion de la familia y miembro actual
     private val family = ContextFamily.family!!
@@ -97,6 +102,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private var seguimiento = true
     private var tareas = false
     private var administracion = false
+
     private var isPendientesShow = true
     private var isCompletadasShow = true
 
@@ -139,6 +145,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
 
+    private lateinit var gestureDetector: GestureDetector
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_parents)
@@ -153,6 +161,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         showTasks()
         showMembers()
         initWidget()
+        initGestures()
         if (!ContextFamily.isMock) showProfilePicture()
     }
 
@@ -269,6 +278,16 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             .addOnFailureListener{
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initGestures(){
+        gestureDetector = GestureDetector(this, this)
+        val mainView = findViewById<View>(R.id.main_parents)
+        mainView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
     }
 
     /* Metodo para la gestion de las tareas */
@@ -1498,5 +1517,94 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             .addOnFailureListener{exc ->
                 Log.e("FirebaseStorage", "Error al eliminar el archivo", exc)
             }
+    }
+
+    /* Metodos de control de gestos */
+
+    override fun onDown(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onShowPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onScroll(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onLongPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onFling(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        val swipe = 100
+        val swipeVelocity = 100
+
+        if (e1 != null) {
+            val diffY = e2.y - e1.y
+            val diffX = e2.x - e1.x
+
+            if (abs(diffX) > abs(diffY)) {
+                if (abs(diffX) > swipe && abs(velocityX) > swipeVelocity) {
+                    if (diffX > 0) {
+                        onSwipeRight()
+                    } else {
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun onSwipeLeft() {
+        if (!drawer.isDrawerOpen(GravityCompat.START)) {
+            if (seguimiento){
+                restartButtons()
+                changeButtonState(taskButton)
+                animateTareas()
+            }else if (tareas){
+                restartButtons()
+                changeButtonState(adminButton)
+                animateAdministracion()
+            }
+        }else{
+            drawer.closeDrawer(GravityCompat.START)
+        }
+    }
+
+    private fun onSwipeRight() {
+        if (!drawer.isDrawerOpen(GravityCompat.START)) {
+            if (administracion){
+                restartButtons()
+                changeButtonState(taskButton)
+                animateTareas()
+            }else if (tareas){
+                restartButtons()
+                changeButtonState(seguimientoButton)
+                animateSegimiento()
+            }else if (seguimiento){
+                drawer.openDrawer(GravityCompat.START)
+            }
+        }
     }
 }

@@ -40,6 +40,8 @@ import com.alvdela.smartspend.model.SavingGoal
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.Animations
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
@@ -78,6 +80,9 @@ class LoginActivity : AppCompatActivity() {
         val screenSplash: SplashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_main)
+        FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance(),
+        )
         screenSplash.setKeepOnScreenCondition{
             false
         }
@@ -175,6 +180,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun createMockFamily() {
         ContextFamily.isMock = true
+        FirebaseAuth.getInstance().signInAnonymously()
         uid = "mock"
         getFamily()
     }

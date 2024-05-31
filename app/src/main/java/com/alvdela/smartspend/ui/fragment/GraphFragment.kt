@@ -1,8 +1,11 @@
 package com.alvdela.smartspend.ui.fragment
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -27,9 +30,10 @@ import com.echo.holographlibrary.PieGraph
 import com.echo.holographlibrary.PieSlice
 import java.math.BigDecimal
 import java.time.Month
+import kotlin.math.abs
 
 
-class GraphFragment : Fragment() {
+class GraphFragment : Fragment(), GestureDetector.OnGestureListener {
 
     private lateinit var family: Family
 
@@ -41,8 +45,12 @@ class GraphFragment : Fragment() {
     private lateinit var pieGraphExpenses: PieGraph
     private lateinit var barGraphExpenses: BarGraph
     private lateinit var clExpenseNumbers: ConstraintLayout
+    private lateinit var pieGraphButton: ImageView
+    private lateinit var barGraphButton: ImageView
 
     private var interfaceFlag = true
+
+    private lateinit var gestureDetector: GestureDetector
 
     companion object {
         var configProfileOpen = false
@@ -84,9 +92,9 @@ class GraphFragment : Fragment() {
         pieGraphExpenses = view.findViewById(R.id.pieGraphExpenses)
         barGraphExpenses = view.findViewById(R.id.barGraphExpenses)
 
-        val pieGraphButton = view.findViewById<ImageView>(R.id.pieGraphButton)
+        pieGraphButton = view.findViewById<ImageView>(R.id.pieGraphButton)
         changeButtonState(pieGraphButton, true)
-        val barGraphButton = view.findViewById<ImageView>(R.id.barGraphButton)
+        barGraphButton = view.findViewById<ImageView>(R.id.barGraphButton)
 
         pieGraphButton.setOnClickListener {
             if (!interfaceFlag) {
@@ -105,8 +113,18 @@ class GraphFragment : Fragment() {
                 interfaceFlag = false
             }
         }
-
         initSpinner()
+        initGestures(view)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initGestures(view: View) {
+        gestureDetector = GestureDetector(requireContext(), this)
+        val mainView = view.findViewById<View>(R.id.fragmentGraph)
+        mainView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
     }
 
     private fun animatePieGraph() {
@@ -163,14 +181,14 @@ class GraphFragment : Fragment() {
         var ocio = BigDecimal(0)
         var compras = BigDecimal(0)
         var otros = BigDecimal(0)
-        for (cashFlow in child.getCashFlow()){
-            when(cashFlow.type){
+        for (cashFlow in child.getCashFlow()) {
+            when (cashFlow.type) {
                 CashFlowType.COMIDA -> comida += cashFlow.amount
                 CashFlowType.OCIO -> ocio += cashFlow.amount
                 CashFlowType.COMPRAS -> compras += cashFlow.amount
                 CashFlowType.OTROS -> otros += cashFlow.amount
-                CashFlowType.INGRESO -> { }
-                CashFlowType.RECOMPENSA -> { }
+                CashFlowType.INGRESO -> {}
+                CashFlowType.RECOMPENSA -> {}
             }
         }
         val comidaSlice = PieSlice()
@@ -209,12 +227,12 @@ class GraphFragment : Fragment() {
         val months = mutableListOf<Month>()
         months.add(month)
 
-        for (cashFlow in child.getCashFlow()){
-            if (cashFlow.date.month == month){
+        for (cashFlow in child.getCashFlow()) {
+            if (cashFlow.date.month == month) {
                 monthExpense += cashFlow.amount
-            }else{
-                expenses.add(0,monthExpense)
-                if (expenses.size >= 6){
+            } else {
+                expenses.add(0, monthExpense)
+                if (expenses.size >= 6) {
                     break
                 }
 
@@ -222,16 +240,16 @@ class GraphFragment : Fragment() {
                 monthExpense += cashFlow.amount
 
                 month = cashFlow.date.month
-                months.add(0,month)
+                months.add(0, month)
             }
         }
-        expenses.add(0,monthExpense)
+        expenses.add(0, monthExpense)
 
         val expensesGraph = ArrayList<Bar>()
-        for ((index, expense) in expenses.withIndex()){
+        for ((index, expense) in expenses.withIndex()) {
             val bar = Bar()
             bar.color = Color.parseColor("#6887e1")
-            when(months[index]){
+            when (months[index]) {
                 Month.JANUARY -> bar.name = "Enero"
                 Month.FEBRUARY -> bar.name = "Febrero"
                 Month.MARCH -> bar.name = "Marzo"
@@ -249,5 +267,80 @@ class GraphFragment : Fragment() {
             expensesGraph.add(bar)
         }
         barGraphExpenses.setBars(expensesGraph)
+    }
+
+    /* Metodos de control de gestos */
+
+    override fun onDown(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onShowPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onScroll(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onLongPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onFling(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        val swipe = 100
+        val swipeVelocity = 100
+
+        if (e1 != null) {
+            val diffY = e2.y - e1.y
+            val diffX = e2.x - e1.x
+
+            if (abs(diffX) > abs(diffY)) {
+                if (abs(diffX) > swipe && abs(velocityX) > swipeVelocity) {
+                    if (diffX > 0) {
+                        onSwipeRight()
+                    } else {
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun onSwipeLeft() {
+        if (interfaceFlag) {
+            animateBarGraph()
+            changeButtonState(pieGraphButton, false)
+            changeButtonState(barGraphButton, true)
+            interfaceFlag = false
+        }
+    }
+
+    private fun onSwipeRight() {
+        if (!interfaceFlag) {
+            animatePieGraph()
+            changeButtonState(pieGraphButton, true)
+            changeButtonState(barGraphButton, false)
+            interfaceFlag = true
+        }
     }
 }
