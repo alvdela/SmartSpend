@@ -31,7 +31,7 @@
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.widget.RemoteViewsService"/>
             </intent-filter>
         </service>
 

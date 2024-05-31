@@ -135,9 +135,6 @@ class MainChildrenActivity : AppCompatActivity(),
 
     private var record = mutableListOf("Gasto")
 
-    private lateinit var widget: TaskParentWidget
-    private lateinit var mAppWidgetManager: AppWidgetManager
-
     private lateinit var gestureDetector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,15 +142,12 @@ class MainChildrenActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main_children)
         user = intent.getStringExtra("USER_NAME").toString()
         child = family.getMember(user) as Child
-        if (!isMock) {
-            uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        }
+        if (!isMock) uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         initObjects()
         showMoney()
         showCashFlow()
         showTask()
         showGoals()
-        initWidget()
         initGestures()
     }
 
@@ -248,26 +242,6 @@ class MainChildrenActivity : AppCompatActivity(),
             .addOnFailureListener {
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
-    }
-
-    private fun initWidget() {
-        widget = TaskParentWidget()
-        mAppWidgetManager = AppWidgetManager.getInstance(this)
-        updateWidgets(this)
-    }
-
-    private fun updateWidgets(context: Context) {
-        val intent = Intent(context, TaskChildWidget::class.java).apply {
-            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            val ids = mAppWidgetManager.getAppWidgetIds(
-                ComponentName(
-                    context,
-                    TaskChildWidget::class.java
-                )
-            )
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-        }
-        context.sendBroadcast(intent)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -482,7 +456,7 @@ class MainChildrenActivity : AppCompatActivity(),
         } else {
             noMandatoryTaskAdapter.removeItem()
         }
-        updateWidgets(this)
+        ProfilesActivity.updateWidgets(this)
     }
 
     /* Metodos para los gastos*/

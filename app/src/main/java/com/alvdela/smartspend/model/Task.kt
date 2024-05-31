@@ -47,7 +47,7 @@ class Task (
         this.price = price
     }
 
-    fun setCompletedDate(date: LocalDate){
+    fun setCompletedDate(date: LocalDate?){
         this.completedDate = date
     }
 
@@ -64,7 +64,7 @@ class Task (
         this.state = state
     }
 
-    fun setChild(child: Child){
+    fun setChild(child: Child?){
         this.child = child
     }
 

@@ -41,7 +41,7 @@ class TaskParentWidget : AppWidgetProvider() {
             views.setRemoteAdapter(R.id.listViewCompletadas, intentCompletadas)
 
             val iLogin: PendingIntent = Intent(context, LoginActivity::class.java).let {
-                PendingIntent.getActivity(context, 0, it,0)
+                PendingIntent.getActivity(context, 0, it,PendingIntent.FLAG_IMMUTABLE)
             }
             views.apply{setOnClickPendingIntent(R.id.btAddTask,iLogin)}
 

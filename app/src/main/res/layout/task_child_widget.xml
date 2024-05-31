@@ -12,15 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="5dp">
+        >
         <TextView
             android:id="@+id/tittleParents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tareas_pendientes"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:fontFamily="@font/andika_regular"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:layout_marginStart="5dp"/>
     </LinearLayout>
 
     <TextView
@@ -33,15 +34,14 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:layout_margin="5dp"/>
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
 
     <ListView
         android:id="@+id/listViewObligatorias"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        android:background="@color/transparent" />
+        android:layout_height="100dp"
+        android:background="@color/background" />
 
     <TextView
         android:id="@+id/tvTareasExtra"
@@ -53,14 +53,13 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:layout_margin="5dp"/>
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
 
     <ListView
         android:id="@+id/listViewExtra"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        android:background="@color/transparent" />
+        android:layout_height="100dp"
+        android:background="@color/background" />
 
 </LinearLayout>

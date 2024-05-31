@@ -425,14 +425,16 @@ class LoginActivity : AppCompatActivity() {
 
                     val price = document.getString("price")!!.toBigDecimal()
 
-                    var state: TaskState = TaskState.fromString(document.getString("state")!!)!!
+                    val state: TaskState = TaskState.fromString(document.getString("state")!!)!!
 
                     val task = Task(description, limitDate, mandatory, price, state)
                     val id = document.id
                     task.setId(id)
                     if (state == TaskState.COMPLETE) {
-                        val child = family.getMember(document.getString("child")!!) as Child
-                        task.setChild(child)
+                        if (document.getString("child")!! != ""){
+                            val child = family.getMember(document.getString("child")!!) as Child
+                            task.setChild(child)
+                        }
                     }
                     if (typeOfTask == Constants.HISTORIC) {
                         val completedDateString = document.getString("completedDate")!!

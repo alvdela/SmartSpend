@@ -138,9 +138,6 @@ class MainParentsActivity : AppCompatActivity(),
     private lateinit var completeTaskAdapter: TaskCompleteAdapter
     private lateinit var openTaskAdapter: TaskOpenAdapter
 
-    private lateinit var widget: TaskParentWidget
-    private lateinit var mAppWidgetManager: AppWidgetManager
-
     //Constantes
     private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
@@ -160,7 +157,6 @@ class MainParentsActivity : AppCompatActivity(),
         initSpinner()
         showTasks()
         showMembers()
-        initWidget()
         initGestures()
         if (!ContextFamily.isMock) showProfilePicture()
     }
@@ -242,21 +238,6 @@ class MainParentsActivity : AppCompatActivity(),
         }
     }
 
-    private fun initWidget(){
-        widget = TaskParentWidget()
-        mAppWidgetManager = AppWidgetManager.getInstance(this)
-        updateWidgets(this)
-    }
-
-    private fun updateWidgets(context: Context) {
-        val intent = Intent(context, TaskParentWidget::class.java).apply {
-            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskParentWidget::class.java))
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-        }
-        context.sendBroadcast(intent)
-    }
-
     private fun showProfilePicture() {
         val uuid = FirebaseAuth.getInstance().currentUser!!.uid
         val fileName = family.getMember(user)!!.getId()
@@ -311,7 +292,7 @@ class MainParentsActivity : AppCompatActivity(),
             family.removeTask(selectedTask)
             dialog.dismiss()
             openTaskAdapter.removeItem()
-            updateWidgets(this)
+            ProfilesActivity.updateWidgets(this)
         }
 
     }
@@ -326,9 +307,15 @@ class MainParentsActivity : AppCompatActivity(),
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
             task.setState(TaskState.OPEN)
+            task.setChild(null)
+            task.setCompletedDate(null)
+            if (!isMock){
+                updateTaskInDatabase(task, TASKS)
+            }
             completeTaskAdapter.removeItem()
             openTaskAdapter.removeItem()
             dialog.dismiss()
+            ProfilesActivity.updateWidgets(this)
         }
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
         closeTask.setOnClickListener {
@@ -341,7 +328,7 @@ class MainParentsActivity : AppCompatActivity(),
             family.removeTask(selectedTask)
             dialog.dismiss()
             completeTaskAdapter.removeItem()
-            updateWidgets(this)
+            ProfilesActivity.updateWidgets(this)
         }
     }
 
@@ -405,7 +392,7 @@ class MainParentsActivity : AppCompatActivity(),
                 } else {
                     completeTaskAdapter.notifyNewTask()
                 }
-                updateWidgets(this)
+                ProfilesActivity.updateWidgets(this)
                 dialog.dismiss()
             }
         }
@@ -1503,6 +1490,31 @@ class MainParentsActivity : AppCompatActivity(),
             }
             .addOnFailureListener { e ->
                 println("Error al eliminar la tarea: $e")
+            }
+    }
+
+    private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
+        var completedDate = ""
+        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
+            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+        }
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(typeOfTask)
+            .document(task.getId())
+            .update(
+                mapOf(
+                    "state" to TaskState.toString(task.getState()),
+                    "completedDate" to "",
+                    "child" to ""
+                )
+            )
+            .addOnSuccessListener {
+                println("Documento actualizado exitosamente.")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar documento: $e")
             }
     }
 

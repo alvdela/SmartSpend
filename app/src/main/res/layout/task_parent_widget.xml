@@ -10,8 +10,7 @@
         android:id="@+id/appBarTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="5dp">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tittleParents"
@@ -21,7 +20,8 @@
             android:gravity="center"
             android:text="@string/tareas_pendientes"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="16sp"
+            android:layout_marginStart="5dp"/>
 
         <ImageView
             android:id="@+id/btAddTask"
@@ -41,16 +41,15 @@
         android:text="@string/pendientes"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:textSize="18sp" />
 
     <ListView
         android:id="@+id/listViewPendientes"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        android:background="@color/transparent" />
+        android:layout_height="100dp"
+        android:background="@color/background" />
 
 
     <TextView
@@ -62,16 +61,15 @@
         android:text="@string/completadas"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:textSize="18sp" />
 
     <ListView
         android:id="@+id/listViewCompletadas"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        android:background="@color/transparent"
+        android:layout_height="100dp"
+        android:background="@color/background"
         android:layout_marginBottom="10dp"
         />
 

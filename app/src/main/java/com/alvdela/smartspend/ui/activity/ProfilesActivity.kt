@@ -15,6 +15,7 @@ import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Button
@@ -50,6 +51,48 @@ class ProfilesActivity : AppCompatActivity() {
 
     private lateinit var dialog: Dialog
 
+    companion object {
+        private lateinit var widgetParent: TaskParentWidget
+        private lateinit var widgetChild: TaskChildWidget
+        private lateinit var mAppWidgetManager: AppWidgetManager
+
+        private fun initWidgets(context: Context) {
+            widgetParent = TaskParentWidget()
+            widgetChild = TaskChildWidget()
+            mAppWidgetManager = AppWidgetManager.getInstance(context)
+            updateWidgets(context)
+        }
+
+        fun updateWidgets(context: Context) {
+            if (!ContextFamily.isMock) {
+                var intent = Intent(context, TaskParentWidget::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    val ids = mAppWidgetManager.getAppWidgetIds(
+                        ComponentName(
+                            context,
+                            TaskParentWidget::class.java
+                        )
+                    )
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                }
+                context.sendBroadcast(intent)
+                Handler().postDelayed({
+                    intent = Intent(context, TaskChildWidget::class.java).apply {
+                        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                        val ids = mAppWidgetManager.getAppWidgetIds(
+                            ComponentName(
+                                context,
+                                TaskChildWidget::class.java
+                            )
+                        )
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                    }
+                    context.sendBroadcast(intent)
+                }, 5000)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profiles)
@@ -74,7 +117,7 @@ class ProfilesActivity : AppCompatActivity() {
         setViews()
         hideButtons()
         showFamilyData()
-        updateWidgets(this)
+        if (!ContextFamily.isMock) initWidgets(this)
     }
 
     private fun setViews() {
@@ -123,28 +166,11 @@ class ProfilesActivity : AppCompatActivity() {
             profilesButtons[i].visibility = View.VISIBLE
             profilesButtons[i].text = clave
             profilesButtons[i].tag = clave
-            if(!ContextFamily.isMock){
+            if (!ContextFamily.isMock) {
                 showProfilePicture(profilesButtons[i], member)
             }
             i++
         }
-    }
-
-    private fun updateWidgets(context: Context) {
-        val mAppWidgetManager = AppWidgetManager.getInstance(context)
-        val intent = Intent(context, TaskParentWidget::class.java).apply {
-            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskParentWidget::class.java))
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-        }
-        context.sendBroadcast(intent)
-
-        val intent2 = Intent(context, TaskChildWidget::class.java).apply {
-            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            val ids = mAppWidgetManager.getAppWidgetIds(ComponentName(context, TaskChildWidget::class.java))
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-        }
-        context.sendBroadcast(intent2)
     }
 
     private fun showProfilePicture(button: Button, member: Member) {
@@ -157,13 +183,13 @@ class ProfilesActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 if (localFile.exists() && localFile.length() > 0) {
                     val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, true)
+                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 260, 260, true)
                     val circularImage = getCroppedBitmap(scaledBitmap)
                     val drawable: Drawable = BitmapDrawable(resources, circularImage)
                     button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
                 }
             }
-            .addOnFailureListener{
+            .addOnFailureListener {
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
     }

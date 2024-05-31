@@ -87,8 +87,8 @@ class TaskWidgetFactory(private val context: Context, private val intent: Intent
         when (taskType) {
             Constants.PENDIENTES -> filteredTasks.addAll(tasks.filter { it.getState() == TaskState.OPEN })
             Constants.COMPLETADAS -> filteredTasks.addAll(tasks.filter { it.getState() == TaskState.COMPLETE })
-            Constants.OBLIGATORIAS -> filteredTasks.addAll(tasks.filter { it.isMandatory() })
-            Constants.EXTRA -> filteredTasks.addAll(tasks.filter { !it.isMandatory() })
+            Constants.OBLIGATORIAS -> filterMandatory(tasks)
+            Constants.EXTRA -> filterNoMandatory(tasks)
             else -> {}
         }
     }
@@ -99,5 +99,23 @@ class TaskWidgetFactory(private val context: Context, private val intent: Intent
             tasks = ContextFamily.family!!.getTaskList()
         }
         filterTasks(taskType, tasks)
+    }
+
+    private fun filterMandatory(tasks: MutableList<Task>) {
+        filteredTasks.clear()
+        for (task in tasks) {
+            if (task.isMandatory() && task.getState() == TaskState.OPEN) {
+                filteredTasks.add(task)
+            }
+        }
+    }
+
+    private fun filterNoMandatory(tasks: MutableList<Task>) {
+        filteredTasks.clear()
+        for (task in tasks) {
+            if (!task.isMandatory() && task.getState() == TaskState.OPEN) {
+                filteredTasks.add(task)
+            }
+        }
     }
 }

@@ -39,6 +39,8 @@ class TaskChildWidget : AppWidgetProvider() {
             views.setRemoteAdapter(R.id.listViewExtra, intentExtra)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.listViewObligatorias)
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.listViewExtra)
         }
     }
 
