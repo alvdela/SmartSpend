@@ -22,7 +22,7 @@ import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.activity.ProfilesActivity
-import com.alvdela.smartspend.ui.adapter.TaskHistoryAdapter
+import com.alvdela.smartspend.adapter.TaskHistoryAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 

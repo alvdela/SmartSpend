@@ -50,8 +50,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
-import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
+import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
+import com.alvdela.smartspend.adapter.ExpenseAdapter
 import com.alvdela.smartspend.model.CashFlow
 import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
@@ -65,9 +65,9 @@ import com.alvdela.smartspend.model.GoalType
 import com.alvdela.smartspend.model.SavingGoal
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
-import com.alvdela.smartspend.ui.adapter.GoalAdapter
-import com.alvdela.smartspend.ui.adapter.TaskMandatoryAdapter
-import com.alvdela.smartspend.ui.adapter.TaskNoMandatoryAdapter
+import com.alvdela.smartspend.adapter.GoalAdapter
+import com.alvdela.smartspend.adapter.TaskMandatoryAdapter
+import com.alvdela.smartspend.adapter.TaskNoMandatoryAdapter
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.alvdela.smartspend.ui.widget.TaskChildWidget
 import com.alvdela.smartspend.ui.widget.TaskParentWidget

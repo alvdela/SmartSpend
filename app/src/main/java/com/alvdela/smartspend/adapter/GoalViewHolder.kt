@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.ui.adapter
+package com.alvdela.smartspend.adapter
 
 import android.view.View
 import android.view.animation.AnimationUtils

@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
-import com.alvdela.smartspend.ui.adapter.TaskViewHolder
+import com.alvdela.smartspend.adapter.TaskViewHolder
 
 class TaskCompleteAdapter(
     private var tasks: MutableList<Task> = mutableListOf(),

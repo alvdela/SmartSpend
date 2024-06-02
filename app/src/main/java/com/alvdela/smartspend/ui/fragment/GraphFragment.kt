@@ -23,7 +23,7 @@ import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.ui.Animations
-import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
+import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.echo.holographlibrary.Bar
 import com.echo.holographlibrary.BarGraph
 import com.echo.holographlibrary.PieGraph
