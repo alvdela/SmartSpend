@@ -32,7 +32,7 @@ class TaskViewHolder(val view: View): ViewHolder(view) {
         }else{
             fechaLimiteTarea.visibility = View.VISIBLE
             fechaLimiteTarea.text = "Dias restantes: $days"
-            if(days <= 0) {
+            if(days < 0) {
                 fechaLimiteTarea.setTextColor(Color.RED)
             }
         }

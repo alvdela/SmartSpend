@@ -68,7 +68,7 @@ class Child(user: String, password: String) : Member(user, password) {
     }
 
     fun addExpense(cashFlow: CashFlow): Int {
-        if (cashFlow.amount.compareTo(getActualMoney()) == -1) {
+        if (cashFlow.amount.compareTo(getActualMoney()) == -1 || cashFlow.amount.compareTo(getActualMoney()) == 0) {
             var index = 0
             while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
                 index++

@@ -51,7 +51,7 @@ class TaskWidgetFactory(private val context: Context, private val intent: Intent
         } else {
             views.setViewVisibility(R.id.fechaLimiteTarea, View.VISIBLE)
             views.setTextViewText(R.id.fechaLimiteTarea, "Dias restantes: $days.")
-            if (days <= 0) {
+            if (days < 0) {
                 views.setTextColor(R.id.fechaLimiteTarea, Color.RED)
             }
         }

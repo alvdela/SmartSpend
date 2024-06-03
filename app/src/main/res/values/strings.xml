@@ -7,7 +7,7 @@
     <string name="password">Contraseña</string>
     <string name="login_incorrectos">Usuario o contraseña incorrectos</string>
     <string name="nombre_de_la_familia">Nombre de la familia</string>
-    <string name="nombre_del_tutor">Nombre del tutor</string>
+    <string name="nombre_del_tutor">Nombre del tutor legal</string>
     <string name="ejemplo_nombre_tutor">Ejemplo: maria02 o pedro24</string>
     <string name="email">Email</string>
     <string name="ejemplo_correo">ejemplo@ejemplo.com</string>
@@ -227,13 +227,14 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="_10_preguntas">10 preguntas</string>
     <string name="quiz_explanation">Pon a prueba tus conocimientos sobre el manejo del dinero y las matemáticas</string>
     <string name="resultados">Resultados:</string>
-    <string name="retry">Volver a intentar</string>
+    <string name="retry">Volver al inicio</string>
     <string name="graficos_tittle">Gráficos de gastos</string>
     <string name="notificaciones">Notificaciones</string>
     <string name="notificaciones_por_email">Notificaciones por email</string>
     <string name="email_notification_info">Recibe notificaciones por email cada vez que uno de los niños de la familia añada un gasto</string>
     <string name="push_notification_info">Recibe notificaciones push cada vez que uno de los niños de la familia añada un gasto</string>
     <string name="tareas_pendientes">Tareas pendientes</string>
+    <string name="remember_change_password">Su perfil no tiene contraseña.\n Recuerde crear una desde Mi perfil</string>
 
 </resources>
 

@@ -22,10 +22,12 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
@@ -156,6 +158,8 @@ class ProfilesActivity : AppCompatActivity() {
     private fun hideButtons() {
         for (button in profilesButtons) {
             button.visibility = View.INVISIBLE
+            val drawable: Drawable? = AppCompatResources.getDrawable(this,R.drawable.ic_default_profile)
+            button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
         }
     }
 
@@ -230,7 +234,7 @@ class ProfilesActivity : AppCompatActivity() {
         initShowButtons()
 
         val tvProfileName = dialog.findViewById<TextView>(R.id.tvProfile)
-        val unlockImage = dialog.findViewById<ImageView>(R.id.ivUnlock)
+        val unlockImage = dialog.findViewById<LinearLayout>(R.id.ivUnlock)
         val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
         val accessButton = dialog.findViewById<Button>(R.id.accessButton)
         val passwordWrong = dialog.findViewById<TextView>(R.id.tvWrongPassword)

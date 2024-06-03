@@ -183,6 +183,14 @@ class MainParentsActivity : AppCompatActivity(),
 
         val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
         currentUserName.text = user
+        currentUserName.setOnClickListener {
+            showEditProfile()
+        }
+        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+        ivCurrentUserImage.setOnClickListener {
+            showEditProfile()
+        }
+
         changeButtonState(seguimientoButton)
 
         seguimientoButton.setOnClickListener {
@@ -375,6 +383,12 @@ class MainParentsActivity : AppCompatActivity(),
                     tvAdviseDate.text = resources.getString(R.string.mal_formato_fecha)
                 }
             }
+            if (fecha != null) {
+                if (fecha.isBefore(LocalDate.now())) {
+                    allOk = false
+                    tvAdviseDate.text = resources.getString(R.string.fecha_anterior_a_hoy)
+                }
+            }
             if (allOk) {
                 val description = inputDescripcionTarea.text.toString()
                 var recompensa = BigDecimal(0)
@@ -495,9 +509,9 @@ class MainParentsActivity : AppCompatActivity(),
                 isCorrect = false
                 inputNombreAsignacion.error = "Falta un nombre para la asignación"
             }
-            if (inputNombreAsignacion.text.toString().length > 10) {
+            if (inputNombreAsignacion.text.toString().length > 20) {
                 isCorrect = false
-                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 10)"
+                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 20)"
             }
             if (fecha != null) {
                 if (fecha.isBefore(LocalDate.now())) {
@@ -588,15 +602,15 @@ class MainParentsActivity : AppCompatActivity(),
                 isCorrect = false
                 inputNombreAsignacion.error = "Falta un nombre para la asignación"
             }
-            /*if (inputNombreAsignacion.text.toString().length > 10) {
+            if (inputNombreAsignacion.text.toString().length > 20) {
                 isCorrect = false
-                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 10)"
-            }*/
+                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 20)"
+            }
             if (fecha != null) {
                 if (fecha.isBefore(LocalDate.now())) {
                     isCorrect = false
                     tvErrorFecha.visibility = View.VISIBLE
-                    tvErrorFecha.text = resources.getString(R.string.mal_formato_fecha)
+                    tvErrorFecha.text = resources.getString(R.string.fecha_anterior_a_hoy)
                 }
             }
             if (frecuencia == null) {
@@ -730,6 +744,7 @@ class MainParentsActivity : AppCompatActivity(),
                                 memberAdapter.notifyDataSetChanged()
                                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                             }
+                            initSpinner()
                         }
 
                         else -> {
@@ -1192,7 +1207,7 @@ class MainParentsActivity : AppCompatActivity(),
         seleccionarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
-                view: android.view.View?,
+                view: View?,
                 position: Int,
                 id: Long
             ) {

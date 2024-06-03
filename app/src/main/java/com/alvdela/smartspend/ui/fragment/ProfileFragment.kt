@@ -89,6 +89,13 @@ class ProfileFragment : Fragment() {
             lyEmail.visibility = View.GONE
         }
 
+        val tvPasswordProfile = view.findViewById<TextView>(R.id.tvPasswordProfile)
+        if (member.getPassword() == ""){
+            tvPasswordProfile.text = ""
+        }else{
+            tvPasswordProfile.text = "********"
+        }
+
         initButtons()
         showProfilePicture()
 

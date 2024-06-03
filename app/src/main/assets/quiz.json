@@ -107,7 +107,7 @@
     },
     {
       "pregunta": "Si una entrada al cine cuesta 7€ y tienes 20€, ¿cuántas entradas puedes comprar?",
-      "opciones": ["2", "2.5", "3", "3.5"],
+      "opciones": ["2", "4", "3", "1"],
       "respuesta_correcta": "2"
     },
     {

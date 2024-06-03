@@ -170,6 +170,14 @@ class MainChildrenActivity : AppCompatActivity(),
 
         val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
         currentUserName.text = user
+        currentUserName.setOnClickListener {
+            showProfilePicture()
+        }
+        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+        ivCurrentUserImage.setOnClickListener {
+            showEditProfile()
+        }
+
         changeButtonState(expensesButton)
 
         initButtons()
@@ -322,10 +330,10 @@ class MainChildrenActivity : AppCompatActivity(),
 
         val npNumber = dialog.findViewById<NumberPicker>(R.id.npNumber)
         val editText: EditText = npNumber.getChildAt(0) as EditText
-        editText.inputType = InputType.TYPE_NULL
+        editText.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         val npDecimal = dialog.findViewById<NumberPicker>(R.id.npDecimal)
         val editText2: EditText = npDecimal.getChildAt(0) as EditText
-        editText2.inputType = InputType.TYPE_NULL
+        editText2.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
 
         npNumber.minValue = 0
         npNumber.wrapSelectorWheel = true
