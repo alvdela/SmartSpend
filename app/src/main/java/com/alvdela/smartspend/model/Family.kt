@@ -68,6 +68,9 @@ class Family(
                 childList.add(userName)
             }
         }
+        if (childList.size > 1){
+            childList.removeAt(0)
+        }
         return childList.toList()
     }
 

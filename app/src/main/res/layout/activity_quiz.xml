@@ -168,12 +168,13 @@
 
         <TextView
             android:id="@+id/answer1"
-            android:layout_width="150dp"
-            android:layout_height="75dp"
+            android:layout_width="160dp"
+            android:minHeight="75dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/andika_regular"
             android:textColor="@color/white"
             android:textAlignment="center"
-            android:textSize="20sp"
+            android:textSize="14sp"
             android:background="@drawable/answer1"
             android:padding="5dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -182,39 +183,42 @@
 
         <TextView
             android:id="@+id/answer2"
-            android:layout_width="150dp"
-            android:layout_height="75dp"
+            android:layout_width="160dp"
+            android:minHeight="75dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/andika_regular"
             android:textColor="@color/white"
             android:textAlignment="center"
             android:padding="5dp"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:background="@drawable/answer2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/answer3"
-            android:layout_width="150dp"
-            android:layout_height="75dp"
+            android:layout_width="160dp"
+            android:minHeight="75dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/andika_regular"
             android:textColor="@color/white"
             android:textAlignment="center"
             android:padding="5dp"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:background="@drawable/answer3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/answer4"
-            android:layout_width="150dp"
-            android:layout_height="75dp"
+            android:layout_width="160dp"
+            android:minHeight="75dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/andika_regular"
             android:textColor="@color/white"
             android:textAlignment="center"
             android:padding="5dp"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:background="@drawable/answer4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -226,29 +230,64 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"
-        android:visibility="gone"
-        >
+        android:layout_marginTop="22dp">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_correct_answers"
-            />
+            android:scaleType="centerInside"
+             />
         <TextView
             android:id="@+id/tvCorrectAnswers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:fontFamily="@font/andika_regular"
-            android:textColor="@color/darker_gray"
-            android:textAlignment="center"
             android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/darker_gray"
             android:textSize="25sp"
-            tools:text="12"
-            />
+            tools:text="12" />
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cyTimeLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center"
+        >
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieTime"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="centerInside"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/lottie_timer" />
+
+        <ProgressBar
+            android:id="@+id/pbTime"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:progressBackgroundTint="@color/dark_gray"
+            android:progressTint="@color/color3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="85dp"
+            tools:progress="20" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

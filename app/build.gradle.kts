@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -41,7 +43,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    packaging {
+        resources.excludes.add("META-INF/NOTICE.md")
+        resources.excludes.add("META-INF/LICENSE.txt")
+        resources.excludes.add("META-INF/LICENSE.md")
+    }
 }
+
+
 
 dependencies {
 
@@ -49,9 +58,12 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
-    
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.lottie)
+    implementation(libs.android.holo.graph)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -72,4 +84,9 @@ dependencies {
 
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
+
+    //email
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
+    implementation(libs.config)
 }

@@ -1,14 +1,13 @@
-package com.alvdela.smartspend.ui.adapter
-
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
+import com.alvdela.smartspend.adapter.TaskViewHolder
 
-class TaskOpenAdapter(
-    private val tasks: MutableList<Task> = mutableListOf(),
+class TaskCompleteAdapter(
+    private var tasks: MutableList<Task> = mutableListOf(),
     private val completeTask: (Int) -> Unit
 ) : RecyclerView.Adapter<TaskViewHolder>() {
 
@@ -18,10 +17,10 @@ class TaskOpenAdapter(
         filterTasks()
     }
 
-    fun filterTasks() {
+    private fun filterTasks() {
         filteredTasks.clear()
         for (task in tasks) {
-            if (task.getState() == TaskState.OPEN) {
+            if (task.getState() == TaskState.COMPLETE) {
                 filteredTasks.add(task)
             }
         }

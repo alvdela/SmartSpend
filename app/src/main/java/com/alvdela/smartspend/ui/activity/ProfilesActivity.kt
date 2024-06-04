@@ -1,6 +1,9 @@
 package com.alvdela.smartspend.ui.activity
 
 import android.app.Dialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,22 +15,27 @@ import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
+import com.alvdela.smartspend.ui.widget.TaskChildWidget
+import com.alvdela.smartspend.ui.widget.TaskParentWidget
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
@@ -44,6 +52,48 @@ class ProfilesActivity : AppCompatActivity() {
     private lateinit var email: String
 
     private lateinit var dialog: Dialog
+
+    companion object {
+        private lateinit var widgetParent: TaskParentWidget
+        private lateinit var widgetChild: TaskChildWidget
+        private lateinit var mAppWidgetManager: AppWidgetManager
+
+        private fun initWidgets(context: Context) {
+            widgetParent = TaskParentWidget()
+            widgetChild = TaskChildWidget()
+            mAppWidgetManager = AppWidgetManager.getInstance(context)
+            updateWidgets(context)
+        }
+
+        fun updateWidgets(context: Context) {
+            if (!ContextFamily.isMock) {
+                var intent = Intent(context, TaskParentWidget::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    val ids = mAppWidgetManager.getAppWidgetIds(
+                        ComponentName(
+                            context,
+                            TaskParentWidget::class.java
+                        )
+                    )
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                }
+                context.sendBroadcast(intent)
+                Handler().postDelayed({
+                    intent = Intent(context, TaskChildWidget::class.java).apply {
+                        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                        val ids = mAppWidgetManager.getAppWidgetIds(
+                            ComponentName(
+                                context,
+                                TaskChildWidget::class.java
+                            )
+                        )
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                    }
+                    context.sendBroadcast(intent)
+                }, 5000)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +119,7 @@ class ProfilesActivity : AppCompatActivity() {
         setViews()
         hideButtons()
         showFamilyData()
+        if (!ContextFamily.isMock) initWidgets(this)
     }
 
     private fun setViews() {
@@ -107,6 +158,8 @@ class ProfilesActivity : AppCompatActivity() {
     private fun hideButtons() {
         for (button in profilesButtons) {
             button.visibility = View.INVISIBLE
+            val drawable: Drawable? = AppCompatResources.getDrawable(this,R.drawable.ic_default_profile)
+            button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
         }
     }
 
@@ -117,7 +170,7 @@ class ProfilesActivity : AppCompatActivity() {
             profilesButtons[i].visibility = View.VISIBLE
             profilesButtons[i].text = clave
             profilesButtons[i].tag = clave
-            if(!ContextFamily.isMock){
+            if (!ContextFamily.isMock) {
                 showProfilePicture(profilesButtons[i], member)
             }
             i++
@@ -134,13 +187,13 @@ class ProfilesActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 if (localFile.exists() && localFile.length() > 0) {
                     val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, true)
+                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 260, 260, true)
                     val circularImage = getCroppedBitmap(scaledBitmap)
                     val drawable: Drawable = BitmapDrawable(resources, circularImage)
                     button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
                 }
             }
-            .addOnFailureListener{
+            .addOnFailureListener {
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
     }
@@ -181,7 +234,7 @@ class ProfilesActivity : AppCompatActivity() {
         initShowButtons()
 
         val tvProfileName = dialog.findViewById<TextView>(R.id.tvProfile)
-        val unlockImage = dialog.findViewById<ImageView>(R.id.ivUnlock)
+        val unlockImage = dialog.findViewById<LinearLayout>(R.id.ivUnlock)
         val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
         val accessButton = dialog.findViewById<Button>(R.id.accessButton)
         val passwordWrong = dialog.findViewById<TextView>(R.id.tvWrongPassword)

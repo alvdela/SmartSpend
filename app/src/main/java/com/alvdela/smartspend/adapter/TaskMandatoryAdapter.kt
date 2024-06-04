@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.ui.adapter
+package com.alvdela.smartspend.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 
-class TaskNoMandatoryAdapter(
+class TaskMandatoryAdapter(
     private val tasks: MutableList<Task> = mutableListOf(),
     private val completeTask: (Int) -> Unit
 ) : RecyclerView.Adapter<TaskViewHolder>() {
@@ -18,10 +18,10 @@ class TaskNoMandatoryAdapter(
         filterTasks()
     }
 
-    fun filterTasks() {
+    private fun filterTasks() {
         filteredTasks.clear()
         for (task in tasks) {
-            if (!task.isMandatory() && task.getState() == TaskState.OPEN) {
+            if (task.isMandatory() && task.getState() == TaskState.OPEN) {
                 filteredTasks.add(task)
             }
         }

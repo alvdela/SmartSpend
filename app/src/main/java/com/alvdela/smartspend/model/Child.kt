@@ -1,7 +1,7 @@
 package com.alvdela.smartspend.model
 
 import com.alvdela.smartspend.ContextFamily
-import com.alvdela.smartspend.firebase.Constants
+import com.alvdela.smartspend.util.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.math.BigDecimal
@@ -51,10 +51,11 @@ class Child(user: String, password: String) : Member(user, password) {
                     LocalDate.now()
                 )
                 addIncome(payment)
-                this.actualMoney += allowance.getPayment()
                 if (!ContextFamily.isMock){
                     updateAllowanceInDatabase(allowance)
                     updateMoneyInDatabase(true, allowance.getPayment())
+                }else{
+                    this.actualMoney += allowance.getPayment()
                 }
             }
             if (allowance.allowanceExpired()) {
@@ -67,7 +68,7 @@ class Child(user: String, password: String) : Member(user, password) {
     }
 
     fun addExpense(cashFlow: CashFlow): Int {
-        if (cashFlow.amount.compareTo(getActualMoney()) == -1) {
+        if (cashFlow.amount.compareTo(getActualMoney()) == -1 || cashFlow.amount.compareTo(getActualMoney()) == 0) {
             var index = 0
             while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
                 index++

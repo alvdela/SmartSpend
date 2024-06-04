@@ -1,4 +1,4 @@
-package com.alvdela.smartspend.ui.adapter
+package com.alvdela.smartspend.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 
-class TaskMandatoryAdapter(
+class TaskOpenAdapter(
     private val tasks: MutableList<Task> = mutableListOf(),
     private val completeTask: (Int) -> Unit
 ) : RecyclerView.Adapter<TaskViewHolder>() {
@@ -18,10 +18,10 @@ class TaskMandatoryAdapter(
         filterTasks()
     }
 
-    fun filterTasks() {
+    private fun filterTasks() {
         filteredTasks.clear()
         for (task in tasks) {
-            if (task.isMandatory() && task.getState() == TaskState.OPEN) {
+            if (task.getState() == TaskState.OPEN) {
                 filteredTasks.add(task)
             }
         }
@@ -37,6 +37,11 @@ class TaskMandatoryAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = filteredTasks[position]
         holder.render(task, completeTask, tasks.indexOf(task))
+    }
+
+    fun notifyNewTask(){
+        filterTasks()
+        notifyItemInserted(filteredTasks.size)
     }
 
     fun removeItem() {

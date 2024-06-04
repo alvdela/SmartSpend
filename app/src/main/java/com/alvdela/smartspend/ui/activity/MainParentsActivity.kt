@@ -1,16 +1,22 @@
 package com.alvdela.smartspend.ui.activity
 
 import TaskCompleteAdapter
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -26,6 +32,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -42,29 +49,32 @@ import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.filters.Validator
-import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
-import com.alvdela.smartspend.firebase.Constants.CASHFLOW
-import com.alvdela.smartspend.firebase.Constants.FAMILY
-import com.alvdela.smartspend.firebase.Constants.GOALS
-import com.alvdela.smartspend.firebase.Constants.HISTORIC
-import com.alvdela.smartspend.firebase.Constants.MEMBERS
-import com.alvdela.smartspend.firebase.Constants.TASKS
-import com.alvdela.smartspend.firebase.Constants.dateFormat
+import com.alvdela.smartspend.util.Constants
+import com.alvdela.smartspend.util.Constants.ALLOWANCES
+import com.alvdela.smartspend.util.Constants.CASHFLOW
+import com.alvdela.smartspend.util.Constants.FAMILY
+import com.alvdela.smartspend.util.Constants.GOALS
+import com.alvdela.smartspend.util.Constants.HISTORIC
+import com.alvdela.smartspend.util.Constants.MEMBERS
+import com.alvdela.smartspend.util.Constants.TASKS
+import com.alvdela.smartspend.util.Constants.dateFormat
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
-import com.alvdela.smartspend.ui.adapter.CustomSpinnerAdapter
-import com.alvdela.smartspend.ui.adapter.ExpenseAdapter
-import com.alvdela.smartspend.ui.adapter.MemberAdapter
+import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
+import com.alvdela.smartspend.adapter.ExpenseAdapter
+import com.alvdela.smartspend.adapter.MemberAdapter
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.MemberType
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
-import com.alvdela.smartspend.ui.adapter.TaskOpenAdapter
+import com.alvdela.smartspend.adapter.TaskOpenAdapter
+import com.alvdela.smartspend.ui.fragment.GraphFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
 import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
+import com.alvdela.smartspend.ui.widget.TaskParentWidget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -74,8 +84,10 @@ import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
-class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+class MainParentsActivity : AppCompatActivity(),
+    NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener{
 
     //Informacion de la familia y miembro actual
     private val family = ContextFamily.family!!
@@ -90,6 +102,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private var seguimiento = true
     private var tareas = false
     private var administracion = false
+
     private var isPendientesShow = true
     private var isCompletadasShow = true
 
@@ -129,6 +142,8 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
 
+    private lateinit var gestureDetector: GestureDetector
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_parents)
@@ -142,6 +157,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initSpinner()
         showTasks()
         showMembers()
+        initGestures()
         if (!ContextFamily.isMock) showProfilePicture()
     }
 
@@ -165,8 +181,16 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         containerCompletadas = findViewById(R.id.containerCompletadas)
         rvTaskCompletadas = findViewById(R.id.rvTaskCompletadas)
 
+        val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
+        currentUserName.text = user
+        currentUserName.setOnClickListener {
+            showEditProfile()
+        }
+        val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
+        ivCurrentUserImage.setOnClickListener {
+            showEditProfile()
+        }
 
-        //val currentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
         changeButtonState(seguimientoButton)
 
         seguimientoButton.setOnClickListener {
@@ -245,6 +269,16 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initGestures(){
+        gestureDetector = GestureDetector(this, this)
+        val mainView = findViewById<View>(R.id.main_parents)
+        mainView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
+    }
+
     /* Metodo para la gestion de las tareas */
 
     private fun closeTask(selectedTask: Int) {
@@ -266,6 +300,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             family.removeTask(selectedTask)
             dialog.dismiss()
             openTaskAdapter.removeItem()
+            ProfilesActivity.updateWidgets(this)
         }
 
     }
@@ -280,9 +315,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
             task.setState(TaskState.OPEN)
+            task.setChild(null)
+            task.setCompletedDate(null)
+            if (!isMock){
+                updateTaskInDatabase(task, TASKS)
+            }
             completeTaskAdapter.removeItem()
             openTaskAdapter.removeItem()
             dialog.dismiss()
+            ProfilesActivity.updateWidgets(this)
         }
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
         closeTask.setOnClickListener {
@@ -295,6 +336,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             family.removeTask(selectedTask)
             dialog.dismiss()
             completeTaskAdapter.removeItem()
+            ProfilesActivity.updateWidgets(this)
         }
     }
 
@@ -341,6 +383,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     tvAdviseDate.text = resources.getString(R.string.mal_formato_fecha)
                 }
             }
+            if (fecha != null) {
+                if (fecha.isBefore(LocalDate.now())) {
+                    allOk = false
+                    tvAdviseDate.text = resources.getString(R.string.fecha_anterior_a_hoy)
+                }
+            }
             if (allOk) {
                 val description = inputDescripcionTarea.text.toString()
                 var recompensa = BigDecimal(0)
@@ -358,6 +406,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 } else {
                     completeTaskAdapter.notifyNewTask()
                 }
+                ProfilesActivity.updateWidgets(this)
                 dialog.dismiss()
             }
         }
@@ -460,9 +509,9 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 isCorrect = false
                 inputNombreAsignacion.error = "Falta un nombre para la asignación"
             }
-            if (inputNombreAsignacion.text.toString().length > 10) {
+            if (inputNombreAsignacion.text.toString().length > 20) {
                 isCorrect = false
-                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 10)"
+                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 20)"
             }
             if (fecha != null) {
                 if (fecha.isBefore(LocalDate.now())) {
@@ -553,15 +602,15 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 isCorrect = false
                 inputNombreAsignacion.error = "Falta un nombre para la asignación"
             }
-            /*if (inputNombreAsignacion.text.toString().length > 10) {
+            if (inputNombreAsignacion.text.toString().length > 20) {
                 isCorrect = false
-                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 10)"
-            }*/
+                inputNombreAsignacion.error = "Nombre demasiado largo (Max. 20)"
+            }
             if (fecha != null) {
                 if (fecha.isBefore(LocalDate.now())) {
                     isCorrect = false
                     tvErrorFecha.visibility = View.VISIBLE
-                    tvErrorFecha.text = resources.getString(R.string.mal_formato_fecha)
+                    tvErrorFecha.text = resources.getString(R.string.fecha_anterior_a_hoy)
                 }
             }
             if (frecuencia == null) {
@@ -695,6 +744,7 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                 memberAdapter.notifyDataSetChanged()
                                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
                             }
+                            initSpinner()
                         }
 
                         else -> {
@@ -1034,6 +1084,10 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
             supportFragmentManager.beginTransaction().remove(fragment!!).commit()
             TaskHistoryFragment.configProfileOpen = false
+        }else if (GraphFragment.configProfileOpen) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentProfile)
+            supportFragmentManager.beginTransaction().remove(fragment!!).commit()
+            GraphFragment.configProfileOpen = false
         } else {
             showPopUp(R.layout.pop_up_back_profiles)
 
@@ -1056,10 +1110,50 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_item_signout -> signOut()
             R.id.nav_item_backprofiles -> backProfiles()
             R.id.nav_item_share -> share()
+            R.id.nav_item_chart -> showGraphs()
+            R.id.nav_item_notifications -> notificationSettings()
         }
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    private fun notificationSettings() {
+        showPopUp(R.layout.pop_up_notification_preferences)
+        val sharedPreferences = getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE)
+
+        val backNotification = dialog.findViewById<ImageView>(R.id.backNotification)
+        backNotification.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val switchEmailNotification = dialog.findViewById<SwitchCompat>(R.id.switchEmailNotification)
+        switchEmailNotification.isChecked = sharedPreferences.getBoolean(Constants.EMAIL_NOTIFICATIONS, false)
+        switchEmailNotification.setOnClickListener {
+            sharedPreferences.edit()
+                .putBoolean(Constants.EMAIL_NOTIFICATIONS,switchEmailNotification.isChecked)
+                .apply()
+        }
+
+        val switchPushNotification = dialog.findViewById<SwitchCompat>(R.id.switchPushNotification)
+        switchPushNotification.isChecked = sharedPreferences.getBoolean(Constants.PUSH_NOTIFICATIONS, false)
+        switchPushNotification.setOnClickListener {
+            sharedPreferences.edit()
+                .putBoolean(Constants.PUSH_NOTIFICATIONS,switchPushNotification.isChecked)
+                .apply()
+        }
+    }
+
+    private fun showGraphs() {
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf()
+        GraphFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<GraphFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
     }
 
     private fun showTaskHistory() {
@@ -1069,6 +1163,18 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             add<TaskHistoryFragment>(R.id.fragmentProfile, args = bundle)
+        }
+        fragmentView.translationX = 500f
+        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
+    }
+
+    private fun showEditProfile() {
+        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
+        val bundle = bundleOf(USER_BUNDLE to user)
+        ProfileFragment.configProfileOpen = true
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
         }
         fragmentView.translationX = 500f
         Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
@@ -1096,13 +1202,12 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun initSpinner() {
         val options = family.getChildrenNames()
-        println(options)
         val adapter = CustomSpinnerAdapter(this, options)
         seleccionarMiembro.adapter = adapter
         seleccionarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
-                view: android.view.View?,
+                view: View?,
                 position: Int,
                 id: Long
             ) {
@@ -1114,18 +1219,6 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 //Do nothing
             }
         }
-    }
-
-    private fun showEditProfile() {
-        val fragmentView = findViewById<FragmentContainerView>(R.id.fragmentProfile)
-        val bundle = bundleOf(USER_BUNDLE to user)
-        ProfileFragment.configProfileOpen = true
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            add<ProfileFragment>(R.id.fragmentProfile, args = bundle)
-        }
-        fragmentView.translationX = 500f
-        Animations.animateViewOfFloat(fragmentView, "translationX", 0f, 300)
     }
 
     /* Operaciones de Firebase */
@@ -1415,6 +1508,31 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             }
     }
 
+    private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
+        var completedDate = ""
+        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
+            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+        }
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(FAMILY)
+            .collection(typeOfTask)
+            .document(task.getId())
+            .update(
+                mapOf(
+                    "state" to TaskState.toString(task.getState()),
+                    "completedDate" to "",
+                    "child" to ""
+                )
+            )
+            .addOnSuccessListener {
+                println("Documento actualizado exitosamente.")
+            }
+            .addOnFailureListener { e ->
+                println("Error al actualizar documento: $e")
+            }
+    }
+
     private fun deletePictures(userId: String){
         val uuid = FirebaseAuth.getInstance().currentUser!!.uid
 
@@ -1426,5 +1544,94 @@ class MainParentsActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             .addOnFailureListener{exc ->
                 Log.e("FirebaseStorage", "Error al eliminar el archivo", exc)
             }
+    }
+
+    /* Metodos de control de gestos */
+
+    override fun onDown(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onShowPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onScroll(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        //do nothing
+        return true
+    }
+
+    override fun onLongPress(e: MotionEvent) {
+        //do nothing
+    }
+
+    override fun onFling(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        val swipe = 100
+        val swipeVelocity = 100
+
+        if (e1 != null) {
+            val diffY = e2.y - e1.y
+            val diffX = e2.x - e1.x
+
+            if (abs(diffX) > abs(diffY)) {
+                if (abs(diffX) > swipe && abs(velocityX) > swipeVelocity) {
+                    if (diffX > 0) {
+                        onSwipeRight()
+                    } else {
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun onSwipeLeft() {
+        if (!drawer.isDrawerOpen(GravityCompat.START)) {
+            if (seguimiento){
+                restartButtons()
+                changeButtonState(taskButton)
+                animateTareas()
+            }else if (tareas){
+                restartButtons()
+                changeButtonState(adminButton)
+                animateAdministracion()
+            }
+        }else{
+            drawer.closeDrawer(GravityCompat.START)
+        }
+    }
+
+    private fun onSwipeRight() {
+        if (!drawer.isDrawerOpen(GravityCompat.START)) {
+            if (administracion){
+                restartButtons()
+                changeButtonState(taskButton)
+                animateTareas()
+            }else if (tareas){
+                restartButtons()
+                changeButtonState(seguimientoButton)
+                animateSegimiento()
+            }else if (seguimiento){
+                drawer.openDrawer(GravityCompat.START)
+            }
+        }
     }
 }

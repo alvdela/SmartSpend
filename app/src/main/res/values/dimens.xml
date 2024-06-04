@@ -6,4 +6,5 @@
     <dimen name="margin_small">32dp</dimen>
     <dimen name="round_button_large">70dp</dimen>
     <dimen name="shutter_button_margin">60dp</dimen>
+
 </resources>

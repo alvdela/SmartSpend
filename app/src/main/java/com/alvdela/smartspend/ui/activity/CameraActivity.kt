@@ -378,7 +378,7 @@ class CameraActivity : AppCompatActivity() {
     private fun showPopUp(layout: Int) {
         dialog = Dialog(this)
         dialog.setContentView(layout)
-        dialog.setCancelable(true)
+        dialog.setCancelable(false)
         dialog.show()
     }
 

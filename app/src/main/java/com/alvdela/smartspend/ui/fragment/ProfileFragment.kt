@@ -22,15 +22,11 @@ import androidx.fragment.app.Fragment
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.filters.Validator
-import com.alvdela.smartspend.firebase.Constants
-import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
-import com.alvdela.smartspend.model.Task
-import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.activity.CameraActivity
 import com.alvdela.smartspend.ui.activity.LoginActivity
-import com.alvdela.smartspend.ui.activity.MainParentsActivity
 import com.alvdela.smartspend.ui.activity.ProfilesActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
@@ -91,6 +87,13 @@ class ProfileFragment : Fragment() {
         } else {
             val lyEmail = view.findViewById<LinearLayout>(R.id.lyEmailProfile)
             lyEmail.visibility = View.GONE
+        }
+
+        val tvPasswordProfile = view.findViewById<TextView>(R.id.tvPasswordProfile)
+        if (member.getPassword() == ""){
+            tvPasswordProfile.text = ""
+        }else{
+            tvPasswordProfile.text = "********"
         }
 
         initButtons()
@@ -329,7 +332,7 @@ class ProfileFragment : Fragment() {
         showPopUp(R.layout.pop_up_change_email)
 
         val inputNewEmail = dialog.findViewById<EditText>(R.id.inputNewEmail)
-        inputNewEmail.setText(ContextFamily.family!!.getEmail())
+        inputNewEmail.setText("")
 
         val buttonCancelChangeEmail = dialog.findViewById<Button>(R.id.buttonCancelChangeEmail)
         buttonCancelChangeEmail.setOnClickListener {

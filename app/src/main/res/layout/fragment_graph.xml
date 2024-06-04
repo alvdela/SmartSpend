@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:id="@+id/fragmentGraph"
+    tools:context=".ui.fragment.GraphFragment">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/app_bar_graph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clConsultaGraph"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="@drawable/corners_white"
+        android:layout_margin="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" >
+
+        <TextView
+            android:id="@+id/tvMiembro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/andika_regular"
+            android:text="@string/miembro_de_la_familia"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="@+id/clConsultaGraph"
+            app:layout_constraintBottom_toBottomOf="@+id/clConsultaGraph"
+            app:layout_constraintTop_toTopOf="@+id/clConsultaGraph" />
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/tvMiembro"
+            app:layout_constraintTop_toTopOf="@+id/clConsultaGraph"
+            app:layout_constraintBottom_toBottomOf="@+id/clConsultaGraph"                android:layout_weight=".28"
+            android:background="@color/transparent"
+            android:layout_marginStart="15dp"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinnerMembers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:background="@drawable/edge_white"
+                android:gravity="center"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/andika_regular"
+                android:textColor="@color/black"
+                android:spinnerMode="dropdown"
+                android:overlapAnchor="false"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_extend" />
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clExpenseNumbers"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clConsultaGraph">
+
+        <TextView
+            android:id="@+id/tvFood"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge_white"
+            android:backgroundTint="@color/color2"
+            android:fontFamily="@font/andika_regular"
+            android:maxWidth="150dp"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Comida: 20€" />
+
+        <TextView
+            android:id="@+id/tvOcio"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge_white"
+            android:backgroundTint="@color/color3"
+            android:fontFamily="@font/andika_regular"
+            android:maxWidth="150dp"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Ocio: 20€" />
+
+        <TextView
+            android:id="@+id/tvCompras"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge_white"
+            android:backgroundTint="@color/color4"
+            android:fontFamily="@font/andika_regular"
+            android:maxWidth="150dp"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Compras: 20€" />
+
+        <TextView
+            android:id="@+id/tvOtros"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge_white"
+            android:backgroundTint="@color/color7"
+            android:fontFamily="@font/andika_regular"
+            android:maxWidth="150dp"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Otros: 20€" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.echo.holographlibrary.PieGraph
+        android:id="@+id/pieGraphExpenses"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clExpenseNumbers" />
+
+    <com.echo.holographlibrary.BarGraph
+        android:id="@+id/barGraphExpenses"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:translationX="2000dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clConsultaGraph" />
+
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/pieGraphButton"
+            android:layout_marginEnd="1dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/dark_blue"
+            android:src="@drawable/ic_chart_arc_button"
+            app:tint="@color/dark_gray" />
+
+        <ImageButton
+            android:id="@+id/barGraphButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/dark_blue"
+            android:src="@drawable/ic_chart_bar"
+            app:tint="@color/dark_gray" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

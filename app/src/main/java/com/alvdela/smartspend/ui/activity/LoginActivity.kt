@@ -20,13 +20,13 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
-import com.alvdela.smartspend.firebase.Constants
-import com.alvdela.smartspend.firebase.Constants.ALLOWANCES
-import com.alvdela.smartspend.firebase.Constants.CASHFLOW
-import com.alvdela.smartspend.firebase.Constants.FAMILY
-import com.alvdela.smartspend.firebase.Constants.GOALS
-import com.alvdela.smartspend.firebase.Constants.MEMBERS
-import com.alvdela.smartspend.firebase.Constants.dateFormat
+import com.alvdela.smartspend.util.Constants
+import com.alvdela.smartspend.util.Constants.ALLOWANCES
+import com.alvdela.smartspend.util.Constants.CASHFLOW
+import com.alvdela.smartspend.util.Constants.FAMILY
+import com.alvdela.smartspend.util.Constants.GOALS
+import com.alvdela.smartspend.util.Constants.MEMBERS
+import com.alvdela.smartspend.util.Constants.dateFormat
 import com.alvdela.smartspend.model.Allowance
 import com.alvdela.smartspend.model.AllowanceType
 import com.alvdela.smartspend.model.CashFlow
@@ -40,6 +40,8 @@ import com.alvdela.smartspend.model.SavingGoal
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.Animations
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
@@ -78,6 +80,9 @@ class LoginActivity : AppCompatActivity() {
         val screenSplash: SplashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_main)
+        FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance(),
+        )
         screenSplash.setKeepOnScreenCondition{
             false
         }
@@ -175,7 +180,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun createMockFamily() {
         ContextFamily.isMock = true
-        email = "mock"
+        FirebaseAuth.getInstance().signInAnonymously()
+        uid = "mock"
         getFamily()
     }
 
@@ -419,18 +425,16 @@ class LoginActivity : AppCompatActivity() {
 
                     val price = document.getString("price")!!.toBigDecimal()
 
-                    var state = TaskState.OPEN
-                    when (document.getString("state")!!) {
-                        "OPEN" -> state = TaskState.OPEN
-                        "COMPLETE" -> state = TaskState.COMPLETE
-                    }
+                    val state: TaskState = TaskState.fromString(document.getString("state")!!)!!
 
                     val task = Task(description, limitDate, mandatory, price, state)
                     val id = document.id
                     task.setId(id)
                     if (state == TaskState.COMPLETE) {
-                        val child = family.getMember(document.getString("child")!!) as Child
-                        task.setChild(child)
+                        if (document.getString("child")!! != ""){
+                            val child = family.getMember(document.getString("child")!!) as Child
+                            task.setChild(child)
+                        }
                     }
                     if (typeOfTask == Constants.HISTORIC) {
                         val completedDateString = document.getString("completedDate")!!
