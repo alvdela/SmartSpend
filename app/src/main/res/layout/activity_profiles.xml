@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.activity.ProfilesActivity">
+
+    <TextView
+        android:id="@+id/familyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/familia_display"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="38sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/familyName" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:columnCount="3"
+        android:rowCount="6"
+        app:layout_constraintTop_toBottomOf="@+id/line">
+
+        <!-- Row 1 -->
+        <Button
+            android:id="@+id/button0"
+            style="@style/ProfileText"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color1"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            tools:text="Invitadooooo"
+            android:tag="0" />
+
+        <Button
+            android:id="@+id/button1"
+            style="@style/ProfileText"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color2"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            tools:text="Invitadooooo"
+            android:tag="1" />
+
+        <Button
+            android:id="@+id/button2"
+            style="@style/ProfileText"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color3"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            tools:text="Invitadooooo"
+            android:tag="2" />
+
+        <!-- Row 2 -->
+        <Button
+            android:id="@+id/button3"
+            style="@style/ProfileText"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color4"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="3" />
+
+        <Button
+            android:id="@+id/button4"
+            style="@style/ProfileText"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color5"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="4" />
+
+        <Button
+            android:id="@+id/button5"
+            style="@style/ProfileText"
+            android:layout_row="1"
+            android:layout_column="2"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color6"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="5" />
+
+        <!-- Row 3 -->
+
+        <Button
+            android:id="@+id/button6"
+            style="@style/ProfileText"
+            android:layout_row="2"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color7"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="6" />
+
+        <Button
+            android:id="@+id/button7"
+            style="@style/ProfileText"
+            android:layout_row="2"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color8"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="7" />
+
+        <Button
+            android:id="@+id/button8"
+            style="@style/ProfileText"
+            android:layout_row="2"
+            android:layout_column="2"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color9"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="8" />
+
+        <!-- Row 4 -->
+
+        <Button
+            android:id="@+id/button9"
+            style="@style/ProfileText"
+            android:layout_row="3"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color10"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="9" />
+
+        <Button
+            android:id="@+id/button10"
+            style="@style/ProfileText"
+            android:layout_row="3"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color11"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="10" />
+
+        <Button
+            android:id="@+id/button11"
+            style="@style/ProfileText"
+            android:layout_row="3"
+            android:layout_column="2"
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/color12"
+            android:drawableTop="@drawable/ic_default_profile"
+            android:onClick="triggerGoMain"
+            android:tag="11" />
+
+    </GridLayout>
+
+    <include
+        layout="@layout/pop_up_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+    <include
+        layout="@layout/pop_up_log_out"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

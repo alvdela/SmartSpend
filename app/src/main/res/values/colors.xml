@@ -2,4 +2,38 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="background">#F7F7FA</color>
+    <color name="cash">#D9D9D9</color>
+    <color name="light_blue">#2196F3</color>
+    <color name="dark_blue">#095280</color>
+    <color name="red">#E00C0C</color>
+    <color name="green">#009F4D</color>
+    <color name="green_lime">#b7f195</color>
+    <color name="mid_gray">#E6E6E6</color>
+    <color name="dark_gray">#B5B5B5</color>
+    <color name="darker_gray">#787878</color>
+
+
+    <color name="transparent">#00ffffff</color>
+
+    <color name="color1">#6887e1</color>
+    <color name="color2">#20acd9</color>
+    <color name="color3">#6bd786</color>
+    <color name="color4">#dd83a0</color>
+    <color name="color5">#aeeceb</color>
+    <color name="color6">#d67ad7</color>
+    <color name="color7">#9c96c9</color>
+    <color name="color8">#c79858</color>
+    <color name="color9">#aad852</color>
+    <color name="color10">#2bc8c8</color>
+    <color name="color11">#c34b46</color>
+    <color name="color12">#bd7395</color>
+
+    <color name="gray_light_trans">#9Ff7f7f7</color>
+    <color name="light_blue_50">#FFE1F5FE</color>
+    <color name="light_blue_200">#FF81D4FA</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+
 </resources>

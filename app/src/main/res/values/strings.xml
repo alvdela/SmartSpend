@@ -1,3 +1,240 @@
 <resources>
     <string name="app_name">SmartSpend</string>
+    <string name="familia">Familia</string>
+    <string name="ejemplo_familia">Ejemplo: perez92 o rodriguez21</string>
+    <string name="acceder">Acceder</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="password">Contraseña</string>
+    <string name="login_incorrectos">Usuario o contraseña incorrectos</string>
+    <string name="nombre_de_la_familia">Nombre de la familia</string>
+    <string name="nombre_del_tutor">Nombre del tutor legal</string>
+    <string name="ejemplo_nombre_tutor">Ejemplo: maria02 o pedro24</string>
+    <string name="email">Email</string>
+    <string name="ejemplo_correo">ejemplo@ejemplo.com</string>
+    <string name="repetir_password">Repetir la contraseña</string>
+    <string name="advise_email">El email no es valido</string>
+    <string name="advise_email2">Este email ya esta en uso</string>
+    <string name="registrame">Registrame</string>
+    <string name="nombre_ocupado">El nombre de usuario ya está ocupado</string>
+    <string name="correo_invalido">El correo no es valido</string>
+    <string name="password_advise">Debe tener un tamaño de 8 con numeros y letras</string>
+    <string name="password_not_equals">Las contraseñas no coinciden</string>
+    <string name="terms1">"He leido y acepto la "</string>
+    <string name="terms2">politica de privacidad</string>
+    <string name="forgot">Recuperar contraseña</string>
+    <string name="toolbar_example">Usuario</string>
+    <string name="settings">Editar perfil</string>
+    <string name="historial">Historial de tareas</string>
+    <string name="share">Compartir aplicación</string>
+    <string name="back_profiles">Volver a perfiles</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="bar_tittle"></string>
+    <string name="navigation_drawer_close" />
+
+    <!--Politica de privacidad-->
+
+    <string name="privacidad1">Politica de privacidad</string>
+    <string name="privacidad2">Última actualización: 27 de marzo de 2024\nEsta Política de Privacidad describe nuestras políticas y procedimientos sobre la recopilación, uso y divulgación de su información cuando utiliza la aplicación y le informa sobre sus derechos de privacidad y cómo la ley lo protege.\n
+Utilizamos sus datos personales para proporcionar y mejorar el servicio. Al utilizar el servicio, acepta la recopilación y el uso de información de acuerdo con esta Política de Privacidad.</string>
+    <string name="privacidad3">Interpretación y Definiciones</string>
+    <string name="privacidad4">Interpretación</string>
+    <string name="privacidad5">Las palabras cuya inicial está en mayúscula tienen significados definidos bajo las siguientes condiciones. Las siguientes definiciones tendrán el mismo significado independientemente de si aparecen en singular o en plural.</string>
+    <string name="privacidad6">Definiciones</string>
+    <string name="privacidad7">A los efectos de esta política de privacidad:\n
+– Cuenta: significa una cuenta única creada para que usted acceda a nuestro Servicio.\n
+– Aplicación: se refiere a SmartSpend, el programa de software proporcionado por el estudiante.\n
+– País: se refiere a: España.\n
+– Dispositivo: significa cualquier dispositivo que pueda acceder al Servicio, como una computadora, un teléfono movil  o una tableta digital.\n
+– Datos personales: es cualquier información que se refiere a un individuo identificado o identificable.\n
+– Servicio: se refiere a la Aplicación.\n
+– Datos de uso: se refiere a datos recopilados automáticamente, generados ya sea por el uso del Servicio o desde la infraestructura del Servicio en sí misma (por ejemplo, la duración de una visita a una página).\n
+– Usted: significa el individuo que accede o utiliza el Servicio.
+</string>
+    <string name="privacidad8">Recopilación y uso de datos personales</string>
+    <string name="privacidad9">Tipos de datos recopilados</string>
+    <string name="privacidad10">Datos personales</string>
+    <string name="privacidad11">Mientras utiliza nuestro Servicio, es posible que le pidamos que nos proporcione cierta información que se pueda utilizar para contactarlo o identificarlo. La información personalmente identificable puede incluir, entre otros:\n
+Correo electrónico\n
+Datos de uso</string>
+    <string name="privacidad12">Datos de uso</string>
+    <string name="privacidad13">Los datos de uso pueden incluir información como el modo de uso de la aplicación, la hora y la fecha de uso, el tiempo que pasa en la aplicación,  y otros datos de diagnóstico.\n
+Cuando accede al Servicio a través de un dispositivo móvil, es posible que recopilemos cierta información automáticamente, incluido, entre otros, el tipo de dispositivo móvil que utiliza o su sistema operativo móvil, únicamente con el objetivo de mejorar la experiencia del usuario.</string>
+    <string name="privacidad14">Información Recopilada Mientras Usa la Aplicación</string>
+    <string name="privacidad15">Mientras usa nuestra Aplicación, para proporcionar funciones de nuestra Aplicación, podemos recopilar, con su permiso previo:\n
+· Fotografías y otra información de la cámara y la biblioteca de fotos de su dispositivo.\n
+Utilizamos esta información para proporcionar funciones de nuestro Servicio, para mejorar y personalizar nuestro Servicio. La información puede cargarse en los servidores de Firebase y/o simplemente en su dispositivo.\n
+Puede habilitar o deshabilitar el acceso a esta información en cualquier momento, a través de la configuración de su dispositivo.
+</string>
+    <string name="privacidad16">Uso de los datos personales</string>
+    <string name="privacidad17">Usaremos los Datos Personales para los siguientes propósitos:\n
+- Para proporcionar y mantener nuestro Servicio, incluido para monitorear el uso.\n
+- Para administrar su cuenta: para administrar su registro como usuario del Servicio. \n
+- Para contactarlo: para contactarlo por correo electrónico u otras formas equivalentes de comunicación electrónica, como notificaciones push de la aplicación móvil sobre actualizaciones o comunicaciones informativas relacionadas con las funcionalidades, productos o servicios contratados, incluidas las actualizaciones de seguridad.\n
+- Para administrar sus solicitudes: para atender y administrar sus solicitudes.\n
+
+Podemos compartir su información personal en las siguientes situaciones:\n
+- Con Proveedores de Servicios: Podemos compartir su información con Proveedores de Servicios (Firebase) para monitorear y analizar el uso de nuestro Servicio, y para contactarlo.\n
+- Con su consentimiento: Podemos divulgar su información personal para propósitos académicos, con su consentimiento.
+</string>
+    <string name="privacidad18">Retención de datos personales
+</string>
+    <string name="privacidad19">Recopilación y uso de datos personales</string>
+    <string name="privacidad20">Retendremos sus Datos Personales solo durante el tiempo que sea necesario para los fines establecidos en esta Política de Privacidad. Retendremos y utilizaremos sus Datos Personales en la medida necesaria para cumplir con nuestras obligaciones legales (por ejemplo, si estamos obligados a retener sus datos para cumplir con las leyes aplicables), resolver disputas y hacer cumplir nuestros acuerdos y políticas legales.\n
+También retendrá Datos de Uso con fines de análisis. Los Datos de Uso generalmente se retienen por un período de tiempo más corto, excepto cuando estos datos se utilizan para fortalecer la seguridad o mejorar funcionalidades de Nuestro Servicio, o cuando estamos legalmente obligados a retener estos datos por períodos de tiempo más largos.
+</string>
+    <string name="privacidad21">Transferencia de sus Datos Personales</string>
+    <string name="privacidad22">Se tomarán todas las medidas razonablemente necesarias para garantizar que sus datos se traten de manera segura y de acuerdo con esta Política de Privacidad y ninguna transferencia de sus Datos Personales se realizará a una organización o país a menos que haya controles adecuados en vigor, incluida la seguridad de sus datos y otra información personal.</string>
+    <string name="privacidad23">Eliminar sus datos personales</string>
+    <string name="privacidad24">Usted tiene derecho a eliminar o solicitar que ayudemos a eliminar los Datos Personales que hemos recopilado sobre usted.\n
+Nuestro Servicio puede brindarle la capacidad de eliminar cierta información sobre usted desde dentro del Servicio.\n
+Puede actualizar, modificar o eliminar su información en cualquier momento iniciando sesión en Su Cuenta, si tiene una, y visitando la sección de configuración de la cuenta que le permite administrar Su información personal. También puede comunicarse con Nosotros para solicitar acceso, corrección o eliminación de cualquier información personal que nos haya proporcionado.
+</string>
+    <string name="privacidad25">Divulgación de los datos personales</string>
+    <string name="privacidad26">Podremos divulgar Sus Datos Personales para acciones necesarias para:\n
+- Cumplir con una obligación legal\n
+- Prevenir o investigar posibles conductas indebidas en relación con el Servicio\n
+- Proteger la seguridad personal de los Usuarios del Servicio o del público\n
+- Protegerse contra responsabilidades legales
+</string>
+    <string name="privacidad27">Seguridad de sus datos personales.</string>
+    <string name="privacidad28">La seguridad de Sus Datos Personales es importante para Nosotros, pero recuerde que ningún método de transmisión a través de Internet o método de almacenamiento electrónico es 100% seguro. Aunque nos esforzamos por utilizar medios comercialmente aceptables para proteger Sus Datos Personales, no podemos garantizar su seguridad absoluta.
+</string>
+    <string name="privacidad29">Privacidad de menores
+</string>
+    <string name="privacidad30">No recopilamos información de identificación personal de ninguna persona menor de 13 años. Si usted es padre, madre o tutor, y tiene conocimiento de que su hijo nos ha proporcionado Datos Personales, por favor contáctenos. Si nos damos cuenta de que hemos recopilado Datos Personales de cualquier persona menor de 13 años sin verificación del consentimiento parental, tomaremos medidas para eliminar esa información de nuestros servidores.
+</string>
+    <string name="privacidad31">Cambios en la politica de privacidad</string>
+    <string name="privacidad32">Podemos actualizar nuestra Política de Privacidad de vez en cuando. Le notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página.\n
+Le informaremos por correo electrónico y/o mediante un aviso prominente en nuestro Servicio, antes de que el cambio entre en vigencia y actualizaremos la fecha de "Última actualización" en la parte superior de esta Política de Privacidad.\n
+Se le aconseja revisar esta Política de Privacidad periódicamente para cualquier cambio.
+</string>
+    <string name="privacidad33">Contactanos
+</string>
+    <string name="privacidad34">Si tiene alguna pregunta sobre esta Política de Privacidad, puede contactarnos:\n
+- Por correo electrónico: alvdela.rosa.zarzuelo@gmail.com
+</string>
+    <!--Fin de Politica de privacidad-->
+
+    <string name="acceder_como_invitado">Acceder como invitado</string>
+    <string name="familia_display">Familia: %s</string>
+
+    <string name="ingreso">+ %s€</string>
+    <string name="spent">- %s€</string>
+    <string name="consultar_movimientos">Consultar movimientos</string>
+    <string name="miembro_de_la_familia">Miembro de la familia:</string>
+    <string name="tareas">Tareas</string>
+    <string name="administrar_la_familia">Administrar la familia</string>
+    <string name="add_member">Añadir miembro</string>
+    <string name="nueva_tarea">Nueva tarea</string>
+    <string name="advise_name">Tamaño máximo de 12 caracteres</string>
+    <string name="mis_movimientos">Mis movimientos</string>
+    <string name="dinero_disponible">Dinero disponible</string>
+    <string name="add_spent">Añadir gasto</string>
+    <string name="objetivos_de_ahorro">Objetivos de ahorro</string>
+    <string name="add_goal">Añadir objetivo</string>
+    <string name="juegos">Juegos</string>
+    <string name="tareas_obligatorias">Tareas obligatorias</string>
+    <string name="tareas_extra">Tareas extra</string>
+    <string name="descripcion">Descripcion</string>
+    <string name="cantidad">Cantidad</string>
+    <string name="tipo_de_gasto">Tipo de gasto</string>
+    <string name="comida">Comida</string>
+    <string name="compras">Compras</string>
+    <string name="ocio">Ocio</string>
+    <string name="otros">Otros</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="add">Añadir</string>
+    <string name="adulto">Adulto</string>
+    <string name="menor">Menor</string>
+    <string name="crear_un_nuevo_miembro">Crear un nuevo miembro</string>
+    <string name="nombre_del_usuario">Nombre del usuario</string>
+    <string name="miembro_registrado">Este miembro ya está registrado</string>
+    <string name="opcional_pero_recomendado">Opcional pero recomendado</string>
+    <string name="objetivo">Objetivo</string>
+    <string name="nuevo_objetivo">Crear nuevo objetivo</string>
+    <string name="fecha_limite">Fecha limite</string>
+    <string name="obligatoria">Obligatoria</string>
+    <string name="recompensa">Recompensa</string>
+    <string name="add_recompensa">Añadir recompensa</string>
+    <string name="nueva_asignacion">Nueva asignación</string>
+    <string name="nombre_de_la_asignacion">Nombre de la asignación</string>
+    <string name="fecha_de_inicio">Fecha de inicio</string>
+    <string name="frecuencia">Frecuencia</string>
+    <string name="pop_up_log_out">¿Desea volver a la pantalla de inicio y cerrar sesión?</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="pop_up_back_profiles">¿Desea regresar a la selección de perfil?</string>
+    <string name="asignaciones">Asignaciones</string>
+    <string name="add_asignacion">Añadir asignación</string>
+    <string name="pop_up_delete_member">¿Desea realmente eliminar este miembro de la familia?</string>
+    <string name="pop_up_edit_member">Editar datos del miembro</string>
+    <string name="cantidad_inicial">Cantidad inicial</string>
+    <string name="error_frecuencia">Es necesario especificar la frecuencia</string>
+    <string name="se_necesita_una_fecha_inicial">Se necesita una fecha inicial</string>
+    <string name="fecha_anterior_a_hoy">La fecha debe ser posterior a hoy</string>
+    <string name="mal_formato_fecha">El formato de la fecha debe ser dd/mm/yyyy</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="pop_up_delete_allowance">¿Desea realmente eliminar esta asignación?</string>
+    <string name="pendientes">Pendientes</string>
+    <string name="completadas">Completadas</string>
+    <string name="opcional">Opcional</string>
+    <string name="delete_task">Nadie ha completado esta tarea ¿Esta seguro de que desea marcarla como completada?</string>
+    <string name="complete_task">¿Desea marcar esta tarea como completada?</string>
+    <string name="close_task">Cerrar\n la tarea</string>
+    <string name="re_open_task">Reabrir\n la tarea</string>
+    <string name="complete_task_note">Nota: se dara automaticamente la recompensa al niño que la realizó</string>
+    <string name="password_wrong">Contraseña incorrecta</string>
+    <string name="precio">Precio</string>
+    <string name="juguetes_o_juegos">Juguetes o Juegos</string>
+    <string name="actividades">Actividades</string>
+    <string name="regalo">Regalo</string>
+    <string name="libros_o_material_escolar">Libros o Material Escolar</string>
+    <string name="ahorrar">Ahorrar</string>
+    <string name="ask_save_money">¿Cuanto dinero quieres ahorrar?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="eliminar_cuenta">Eliminar cuenta</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="extract_money_of_goal">¿Estas seguro? Recuperarás el dinero pero no habrás logrado el objetivo</string>
+    <string name="password_min_size">Tamaño minimo de 4 caracteres</string>
+    <string name="he_olvidado">He olvidado la contraseña</string>
+    <string name="recuerda_restablecer">Recuerda restablecer tu contraseña en \'mi perfil\'</string>
+    <string name="forget_in_mock">En el modo invitado no es necesario introducir la contraseña</string>
+    <string name="accede_con_cuenta_smartspend">Accede con la contraseña de tu cuenta SmartSpend</string>
+    <string name="recover_password">¿Has olvidado la contraseña?</string>
+    <string name="recuperar">Recuperar</string>
+    <string name="change_email">Modificar correo electrónico</string>
+    <string name="correo_nuevo">Correo nuevo</string>
+    <string name="note_change_email">Nota: tendrás que verificar el cambio de correo</string>
+    <string name="change_family_name">Cambiar el nombre de la familia</string>
+    <string name="change_user_name">Cambiar el nombre del usuario</string>
+
+    <string name="new_name">Nuevo nombre</string>
+    <string name="old_password">Contraseña antigua</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="change_password">Modificar la contraseña</string>
+    <string name="delete_profile">Eliminar perfil</string>
+    <string name="delete_profile_info">Introduce la contraseña de la cuenta para eliminar el perfil</string>
+    <string name="note_delete_profile">Nota: la cuenta de la familia se dara de baja si no quedan perfiles asociados a esta</string>
+    <string name="reopen_task">¿Desea reabrir esta tarea?</string>
+    <string name="clean_task_history">¿Desea eliminar el historial de tareas?</string>
+    <string name="profile_picture">¿Establecer como foto de perfil?</string>
+    <string name="concurso_smartspend">Concurso SmartSpend</string>
+    <string name="start">Comenzar</string>
+    <string name="salir">Salir</string>
+    <string name="contrareloj">Contrareloj</string>
+    <string name="_20_preguntas">20 preguntas</string>
+    <string name="_15_preguntas">15 preguntas</string>
+    <string name="_10_preguntas">10 preguntas</string>
+    <string name="quiz_explanation">Pon a prueba tus conocimientos sobre el manejo del dinero y las matemáticas</string>
+    <string name="resultados">Resultados:</string>
+    <string name="retry">Volver al inicio</string>
+    <string name="graficos_tittle">Gráficos de gastos</string>
+    <string name="notificaciones">Notificaciones</string>
+    <string name="notificaciones_por_email">Notificaciones por email</string>
+    <string name="email_notification_info">Recibe notificaciones por email cada vez que uno de los niños de la familia añada un gasto</string>
+    <string name="push_notification_info">Recibe notificaciones push cada vez que uno de los niños de la familia añada un gasto</string>
+    <string name="tareas_pendientes">Tareas pendientes</string>
+    <string name="remember_change_password">Su perfil no tiene contraseña.\n Recuerde crear una desde Mi perfil</string>
+
 </resources>
+

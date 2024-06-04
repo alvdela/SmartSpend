@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.SmartSpend.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:theme="@style/Theme.AppCompat.NoActionBar.AppWidgetContainer"
+    android:background="@drawable/widget_background"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:id="@+id/app_bar_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:id="@+id/tittleParents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tareas_pendientes"
+            android:textSize="16sp"
+            android:fontFamily="@font/andika_regular"
+            android:textColor="@color/white"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTareasObligatorias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color11"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/tareas_obligatorias"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
+
+    <ListView
+        android:id="@+id/listViewObligatorias"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/background" />
+
+    <TextView
+        android:id="@+id/tvTareasExtra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color10"
+        android:fontFamily="@font/andika_regular"
+        android:text="@string/tareas_extra"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
+
+    <ListView
+        android:id="@+id/listViewExtra"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/background" />
+
+</LinearLayout>

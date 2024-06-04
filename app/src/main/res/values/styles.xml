@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ProfileText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/andika_regular</item>
+    </style>
+
+    <style name="DropDownItemStyle" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/corners_white</item>
+    </style>
+
+    <style name="NumberPickerTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/white</item>
+        <!-- To remove divider of the number picker -->
+        <item name="colorControlNormal">@android:color/transparent</item>
+        <!--<item name="colorControlNormal">@color/gray_dark</item>-->
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:background">@color/dark_gray</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="Widget.SmartSpend.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Widget.SmartSpend.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+</resources>

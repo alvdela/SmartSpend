@@ -1,0 +1,719 @@
+{
+  "preguntas": [
+    {
+      "pregunta": "¿Cuánto es 13 + 14?",
+      "opciones": ["25", "26", "27", "28"],
+      "respuesta_correcta": "27"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 5 x 6?",
+      "opciones": ["25", "30", "35", "40"],
+      "respuesta_correcta": "30"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 1/3 o 1/4?",
+      "opciones": ["1/3", "1/4"],
+      "respuesta_correcta": "1/3"
+    },
+    {
+      "pregunta": "¿Cuál es el perímetro de un cuadrado con lados de 4 cm?",
+      "opciones": ["12 cm", "16 cm", "18 cm", "20 cm"],
+      "respuesta_correcta": "16 cm"
+    },
+    {
+      "pregunta": "Si un tren recorre 60 km en 1 hora, ¿cuánto tiempo tardará en recorrer 180 km?",
+      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
+      "respuesta_correcta": "3 horas"
+    },
+    {
+      "pregunta": "¿Qué número falta en la secuencia: 5, 10, __, 20, 25?",
+      "opciones": ["12", "13", "14", "15"],
+      "respuesta_correcta": "15"
+    },
+    {
+      "pregunta": "Si tienes 5€ y compras algo que cuesta 3.5€, ¿cuánto dinero te quedan?",
+      "opciones": ["1.5", "2.5", "3", "4"],
+      "respuesta_correcta": "1.5"
+    },
+    {
+      "pregunta": "Si ahorras 2€ cada día, ¿cuánto dinero tendrás después de una semana?",
+      "opciones": ["10€", "12€", "14€", "16€"],
+      "respuesta_correcta": "14€"
+    },
+    {
+      "pregunta": "Si un helado cuesta 3€ y tienes 10€, ¿cuántos helados puedes comprar?",
+      "opciones": ["2", "3", "4", "5"],
+      "respuesta_correcta": "3"
+    },
+    {
+      "pregunta": "¿Qué es el ahorro?",
+      "opciones": ["Gastar todo el dinero", "Guardar dinero para el futuro", "Pedir dinero prestado", "Comprar cosas con descuento"],
+      "respuesta_correcta": "Guardar dinero para el futuro"
+    },
+    {
+      "pregunta": "Si compras un libro por 8€ y te dan 2€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["6€", "8€", "10€", "12€"],
+      "respuesta_correcta": "10€"
+    },
+    {
+      "pregunta": "¿Qué es un presupuesto?",
+      "opciones": ["Un plan para gastar dinero", "Una lista de compras", "Una tienda de descuentos", "Una alcancía"],
+      "respuesta_correcta": "Un plan para gastar dinero"
+    },
+    {
+      "pregunta": "Si recibes una paga semanal de 20€ y decides ahorrar el 25%, ¿cuánto ahorras cada semana?",
+      "opciones": ["3€", "4€", "5€", "6€"],
+      "respuesta_correcta": "5€"
+    },
+    {
+      "pregunta": "¿Cuánto es 23 + 16?",
+      "opciones": ["38", "39", "40", "36"],
+      "respuesta_correcta": "39"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 9 x 3?",
+      "opciones": ["27", "28", "29", "30"],
+      "respuesta_correcta": "27"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 2/5 o 3/5?",
+      "opciones": ["2/5", "3/5"],
+      "respuesta_correcta": "3/5"
+    },
+    {
+      "pregunta": "¿Cuál es el área de un rectángulo con lados de 3 cm y 6 cm?",
+      "opciones": ["18 cm²", "15 cm²", "12 cm²", "9 cm²"],
+      "respuesta_correcta": "18 cm²"
+    },
+    {
+      "pregunta": "Si un coche viaja a 50 km/h, ¿cuánto tiempo tardará en recorrer 200 km?",
+      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
+      "respuesta_correcta": "4 horas"
+    },
+    {
+      "pregunta": "¿Qué número falta en la secuencia: 2, 4, __, 8, 10?",
+      "opciones": ["5", "6", "7", "8"],
+      "respuesta_correcta": "6"
+    },
+    {
+      "pregunta": "Si tienes 8€ y compras un lápiz que cuesta 4.75€, ¿cuánto dinero te queda?",
+      "opciones": ["2.75", "3.25", "4.25", "5"],
+      "respuesta_correcta": "3.25"
+    },
+    {
+      "pregunta": "Si ahorras 5€ cada día, ¿cuánto dinero tendrás después de 4 días?",
+      "opciones": ["15€", "18€", "20€", "25€"],
+      "respuesta_correcta": "20€"
+    },
+    {
+      "pregunta": "Si una entrada al cine cuesta 7€ y tienes 20€, ¿cuántas entradas puedes comprar?",
+      "opciones": ["2", "4", "3", "1"],
+      "respuesta_correcta": "2"
+    },
+    {
+      "pregunta": "¿Qué es una inversión?",
+      "opciones": ["Gastar dinero en juegos", "Guardar dinero en el banco", "Usar dinero para obtener ganancias en el futuro", "Pedir dinero prestado"],
+      "respuesta_correcta": "Usar dinero para obtener ganancias en el futuro"
+    },
+    {
+      "pregunta": "Si compras una pelota por 10€ y te dan 5€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["10€", "12€", "15€", "20€"],
+      "respuesta_correcta": "15€"
+    },
+    {
+      "pregunta": "¿Qué es el interés?",
+      "opciones": ["El costo de un préstamo", "El dinero que ahorras", "El dinero extra que pagas o recibes por un préstamo o inversión", "Un descuento en una tienda"],
+      "respuesta_correcta": "El dinero extra que pagas o recibes por un préstamo o inversión"
+    },
+    {
+      "pregunta": "Si ganas 50€ al mes y decides ahorrar el 10%, ¿cuánto ahorras cada mes?",
+      "opciones": ["3€", "4€", "5€", "6€"],
+      "respuesta_correcta": "5€"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 7 x 8?",
+      "opciones": ["54", "56", "58", "60"],
+      "respuesta_correcta": "56"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 3/7 o 4/7?",
+      "opciones": ["3/7", "4/7"],
+      "respuesta_correcta": "4/7"
+    },
+    {
+      "pregunta": "¿Qué número falta en la secuencia: 3, 6, __, 12, 15?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "¿Qué es un préstamo?",
+      "opciones": ["Dinero que gastas en compras", "Dinero que ahorras en el banco", "Dinero que pides y debes devolver", "Dinero que ganas trabajando"],
+      "respuesta_correcta": "Dinero que pides y debes devolver"
+    },
+    {
+      "pregunta": "Si compras dos lápices por 3€ cada uno y pagas con 10€, ¿cuánto cambio recibirás?",
+      "opciones": ["2€", "3€", "4€", "5€"],
+      "respuesta_correcta": "4€"
+    },
+    {
+      "pregunta": "Si recibes una paga mensual de 40€ y decides ahorrar el 25%, ¿cuánto ahorras cada mes?",
+      "opciones": ["8€", "9€", "10€", "11€"],
+      "respuesta_correcta": "10€"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 12 ÷ 4?",
+      "opciones": ["2", "3", "4", "5"],
+      "respuesta_correcta": "3"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 2/3 o 3/4?",
+      "opciones": ["2/3", "3/4"],
+      "respuesta_correcta": "3/4"
+    },
+    {
+      "pregunta": "¿Cuál es el perímetro de un triángulo con lados de 3 cm, 4 cm y 5 cm?",
+      "opciones": ["10 cm", "11 cm", "12 cm", "13 cm"],
+      "respuesta_correcta": "12 cm"
+    },
+    {
+      "pregunta": "¿Qué es un gasto?",
+      "opciones": ["Dinero que ahorras", "Dinero que recibes", "Dinero que gastas en bienes y servicios", "Dinero que prestas"],
+      "respuesta_correcta": "Dinero que gastas en bienes y servicios"
+    },
+    {
+      "pregunta": "¿Qué es un ingreso?",
+      "opciones": ["Dinero que gastas", "Dinero que recibes", "Dinero que prestas", "Dinero que debes"],
+      "respuesta_correcta": "Dinero que recibes"
+    },
+    {
+      "pregunta": "¿Cuánto es 18 - 9?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "¿Cuánto es 20 - 11?",
+      "opciones": ["8", "9", "10", "11"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "¿Cuánto es 13 - 6?",
+      "opciones": ["5", "6", "7", "8"],
+      "respuesta_correcta": "7"
+    },
+    {
+      "pregunta": "¿Cuánto es 22 - 14?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 17 - 8?",
+      "opciones": ["8", "9", "10", "11"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "¿Cuánto es 14 - 5?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "¿Cuánto es 19 - 10?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "¿Cuánto es 21 - 12?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "¿Cuánto es 16 - 8?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 23 - 15?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 12 - 4?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 25 - 17?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 30 - 22?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 27 - 19?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 24 - 16?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 29 - 21?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 26 - 18?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 32 - 24?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 35 - 27?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuánto es 40 - 32?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "Si recibes una paga mensual de 50€ y decides ahorrar el 20%, ¿cuánto ahorras cada mes?",
+      "opciones": ["8€", "9€", "10€", "11€"],
+      "respuesta_correcta": "10€"
+    },
+    {
+      "pregunta": "Si ganas 30€ al mes y ahorras el 10%, ¿cuánto ahorras cada mes?",
+      "opciones": ["2€", "3€", "4€", "5€"],
+      "respuesta_correcta": "3€"
+    },
+    {
+      "pregunta": "Si tienes 60€ y decides gastar el 50% en un videojuego, ¿cuánto gastas?",
+      "opciones": ["20€", "25€", "30€", "35€"],
+      "respuesta_correcta": "30€"
+    },
+    {
+      "pregunta": "Si ahorras el 15% de 80€, ¿cuánto ahorras?",
+      "opciones": ["10€", "12€", "15€", "20€"],
+      "respuesta_correcta": "12€"
+    },
+    {
+      "pregunta": "Si recibes una paga semanal de 20€ y decides ahorrar el 10%, ¿cuánto ahorras cada semana?",
+      "opciones": ["1€", "2€", "3€", "4€"],
+      "respuesta_correcta": "2€"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 20 ÷ 5?",
+      "opciones": ["2", "3", "4", "5"],
+      "respuesta_correcta": "4"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 16 ÷ 2?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 24 ÷ 6?",
+      "opciones": ["2", "3", "4", "5"],
+      "respuesta_correcta": "4"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 18 ÷ 3?",
+      "opciones": ["5", "6", "7", "8"],
+      "respuesta_correcta": "6"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 36 ÷ 4?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "9"
+    },
+    {
+      "pregunta": "Si tienes 45€ y decides ahorrar el 10%, ¿cuánto ahorras?",
+      "opciones": ["3€", "4.5€", "5€", "6€"],
+      "respuesta_correcta": "4.5€"
+    },
+    {
+      "pregunta": "Si ganas 120€ al mes y decides ahorrar el 25%, ¿cuánto ahorras cada mes?",
+      "opciones": ["25€", "30€", "35€", "40€"],
+      "respuesta_correcta": "30€"
+    },
+    {
+      "pregunta": "Si recibes una paga mensual de 75€ y decides ahorrar el 20%, ¿cuánto ahorras cada mes?",
+      "opciones": ["10€", "12.5€", "15€", "17.5€"],
+      "respuesta_correcta": "15€"
+    },
+    {
+      "pregunta": "Si ahorras el 5% de 200€, ¿cuánto ahorras?",
+      "opciones": ["8€", "9€", "10€", "11€"],
+      "respuesta_correcta": "10€"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 40 ÷ 8?",
+      "opciones": ["4", "5", "6", "7"],
+      "respuesta_correcta": "5"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 25 ÷ 5?",
+      "opciones": ["4", "5", "6", "7"],
+      "respuesta_correcta": "5"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 28 ÷ 7?",
+      "opciones": ["3", "4", "5", "6"],
+      "respuesta_correcta": "4"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 30 ÷ 6?",
+      "opciones": ["4", "5", "6", "7"],
+      "respuesta_correcta": "5"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 42 ÷ 7?",
+      "opciones": ["5", "6", "7", "8"],
+      "respuesta_correcta": "6"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 48 ÷ 8?",
+      "opciones": ["5", "6", "7", "8"],
+      "respuesta_correcta": "6"
+    },
+    {
+      "pregunta": "Si tienes 10€ y compras una libreta que cuesta 6.50€, ¿cuánto dinero te queda?",
+      "opciones": ["3.00", "3.50", "4.00", "4.50"],
+      "respuesta_correcta": "3.50"
+    },
+    {
+      "pregunta": "Si tienes 15€ y compras una goma de borrar que cuesta 2.75€, ¿cuánto dinero te queda?",
+      "opciones": ["11.75", "12.25", "12.50", "13.00"],
+      "respuesta_correcta": "12.25"
+    },
+    {
+      "pregunta": "Si tienes 20€ y compras un libro que cuesta 13.40€, ¿cuánto dinero te queda?",
+      "opciones": ["6.40", "6.50", "6.60", "6.70"],
+      "respuesta_correcta": "6.60"
+    },
+    {
+      "pregunta": "Si tienes 5€ y compras un chocolate que cuesta 1.80€, ¿cuánto dinero te queda?",
+      "opciones": ["2.20", "3.10", "3.20", "3.30"],
+      "respuesta_correcta": "3.20"
+    },
+    {
+      "pregunta": "Si tienes 12€ y compras una pluma que cuesta 7.25€, ¿cuánto dinero te queda?",
+      "opciones": ["4.25", "4.50", "4.75", "5.00"],
+      "respuesta_correcta": "4.75"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 8 x 4?",
+      "opciones": ["32", "33", "34", "35"],
+      "respuesta_correcta": "32"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 7 x 5?",
+      "opciones": ["34", "35", "36", "37"],
+      "respuesta_correcta": "35"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 6 x 6?",
+      "opciones": ["35", "36", "37", "38"],
+      "respuesta_correcta": "36"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 5 x 7?",
+      "opciones": ["34", "35", "36", "37"],
+      "respuesta_correcta": "35"
+    },
+    {
+      "pregunta": "¿Cuál es el resultado de 4 x 9?",
+      "opciones": ["35", "36", "37", "38"],
+      "respuesta_correcta": "36"
+    },
+    {
+      "pregunta": "Si compras una camiseta por 15€ y te dan 5€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["15€", "18€", "20€", "25€"],
+      "respuesta_correcta": "20€"
+    },
+    {
+      "pregunta": "Si compras un juguete por 12€ y te dan 3€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["12€", "15€", "18€", "20€"],
+      "respuesta_correcta": "15€"
+    },
+    {
+      "pregunta": "Si compras una entrada de cine por 7€ y te dan 3€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["8€", "10€", "12€", "14€"],
+      "respuesta_correcta": "10€"
+    },
+    {
+      "pregunta": "Si compras una mochila por 20€ y te dan 5€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["20€", "25€", "30€", "35€"],
+      "respuesta_correcta": "25€"
+    },
+    {
+      "pregunta": "Si compras una bicicleta por 50€ y te dan 10€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["50€", "55€", "60€", "70€"],
+      "respuesta_correcta": "60€"
+    },
+    {
+      "pregunta": "Si compras una pelota por 5€ y te dan 1€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["6€", "7€", "8€", "9€"],
+      "respuesta_correcta": "6€"
+    },
+    {
+      "pregunta": "Si compras unos zapatos por 25€ y te dan 10€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["30€", "35€", "40€", "45€"],
+      "respuesta_correcta": "35€"
+    },
+    {
+      "pregunta": "Si compras un bolso por 18€ y te dan 2€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["18€", "20€", "22€", "24€"],
+      "respuesta_correcta": "20€"
+    },
+    {
+      "pregunta": "Si compras una bufanda por 8€ y te dan 4€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["10€", "11€", "12€", "13€"],
+      "respuesta_correcta": "12€"
+    },
+    {
+      "pregunta": "Si compras una muñeca por 10€ y te dan 5€ de cambio, ¿cuánto pagaste inicialmente?",
+      "opciones": ["12€", "13€", "14€", "15€"],
+      "respuesta_correcta": "15€"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 2/5 o 3/7?",
+      "opciones": ["2/5", "3/7"],
+      "respuesta_correcta": "2/5"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 1/2 o 3/8?",
+      "opciones": ["1/2", "3/8"],
+      "respuesta_correcta": "1/2"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 5/6 o 4/5?",
+      "opciones": ["5/6", "4/5"],
+      "respuesta_correcta": "5/6"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 3/4 o 2/3?",
+      "opciones": ["3/4", "2/3"],
+      "respuesta_correcta": "3/4"
+    },
+    {
+      "pregunta": "¿Qué fracción es mayor: 7/10 o 6/9?",
+      "opciones": ["7/10", "6/9"],
+      "respuesta_correcta": "7/10"
+    },
+    {
+      "pregunta": "¿Cuál es el perímetro de un cuadrado con lados de 5 cm?",
+      "opciones": ["15 cm", "20 cm", "25 cm", "30 cm"],
+      "respuesta_correcta": "20 cm"
+    },
+    {
+      "pregunta": "¿Cuál es el perímetro de un cuadrado con lados de 6 cm?",
+      "opciones": ["18 cm", "20 cm", "24 cm", "26 cm"],
+      "respuesta_correcta": "24 cm"
+    },
+    {
+      "pregunta": "¿Cuál es el perímetro de un cuadrado con lados de 7 cm?",
+      "opciones": ["21 cm", "24 cm", "26 cm", "28 cm"],
+      "respuesta_correcta": "28 cm"
+    },
+    {
+      "pregunta": "¿Cuál es el perímetro de un cuadrado con lados de 8 cm?",
+      "opciones": ["28 cm", "30 cm", "32 cm", "34 cm"],
+      "respuesta_correcta": "32 cm"
+    },
+    {
+      "pregunta": "¿Cuál es el perímetro de un cuadrado con lados de 9 cm?",
+      "opciones": ["32 cm", "34 cm", "36 cm", "38 cm"],
+      "respuesta_correcta": "36 cm"
+    },
+    {
+      "pregunta": "¿Qué es una deuda?",
+      "opciones": ["Dinero que ahorras", "Dinero que prestas", "Dinero que recibes", "Dinero que debes a alguien"],
+      "respuesta_correcta": "Dinero que debes a alguien"
+    },
+    {
+      "pregunta": "¿Qué es un salario?",
+      "opciones": ["Dinero que recibes por tu trabajo", "Dinero que gastas en bienes y servicios", "Dinero que ahorras", "Dinero que debes"],
+      "respuesta_correcta": "Dinero que recibes por tu trabajo"
+    },
+    {
+      "pregunta": "¿Qué es un impuesto?",
+      "opciones": ["Dinero que recibes", "Dinero que debes", "Dinero que pagas al gobierno", "Dinero que ahorras"],
+      "respuesta_correcta": "Dinero que pagas al gobierno"
+    },
+    {
+      "pregunta": "¿Qué es un banco?",
+      "opciones": ["Un lugar donde compras bienes", "Un lugar donde guardas dinero", "Un lugar donde trabajas", "Un lugar donde pagas impuestos"],
+      "respuesta_correcta": "Un lugar donde guardas dinero"
+    },
+    {
+      "pregunta": "¿Qué es un cheque?",
+      "opciones": ["Un tipo de ahorro", "Un método de pago que usas en lugar de efectivo", "Un tipo de ingreso", "Un gasto"],
+      "respuesta_correcta": "Un método de pago que usas en lugar de efectivo"
+    },
+    {
+      "pregunta": "¿Qué es una tarjeta de crédito?",
+      "opciones": ["Una tarjeta que te permite gastar dinero prestado", "Una tarjeta que usas para ahorrar", "Una tarjeta que te da ingresos", "Una tarjeta que pagas al gobierno"],
+      "respuesta_correcta": "Una tarjeta que te permite gastar dinero prestado"
+    },
+    {
+      "pregunta": "Si ahorras 3€ cada día, ¿cuánto habrás ahorrado después de una semana?",
+      "opciones": ["18", "19", "20", "21"],
+      "respuesta_correcta": "21"
+    },
+    {
+      "pregunta": "Si ahorras 5€ cada día, ¿cuánto dinero tendrás después de una semana?",
+      "opciones": ["30€", "32€", "34€", "35€"],
+      "respuesta_correcta": "35€"
+    },
+    {
+      "pregunta": "Si ahorras 4€ cada día, ¿cuánto habrás ahorrado después de dos semanas?",
+      "opciones": ["48€", "52€", "56€", "60€"],
+      "respuesta_correcta": "56€"
+    },
+    {
+      "pregunta": "Si ahorras 6€ cada día, ¿cuánto dinero tendrás después de cinco días?",
+      "opciones": ["24€", "25€", "26€", "30€"],
+      "respuesta_correcta": "30€"
+    },
+    {
+      "pregunta": "Si ahorras 7€ cada día, ¿cuánto habrás ahorrado después de tres días?",
+      "opciones": ["20", "21", "22", "23"],
+      "respuesta_correcta": "21"
+    },
+    {
+      "pregunta": "Si ahorras 1€ cada día, ¿cuánto dinero tendrás después de diez días?",
+      "opciones": ["8€", "9€", "10€", "11€"],
+      "respuesta_correcta": "10€"
+    },
+    {
+      "pregunta": "Si ahorras 10€ cada día, ¿cuánto habrás ahorrado después de una semana?",
+      "opciones": ["50", "60", "70", "80"],
+      "respuesta_correcta": "70"
+    },
+    {
+      "pregunta": "Si ahorras 2€ cada día, ¿cuánto dinero tendrás después de cuatro días?",
+      "opciones": ["6€", "7€", "8€", "9€"],
+      "respuesta_correcta": "8€"
+    },
+    {
+      "pregunta": "Si ahorras 8€ cada día, ¿cuánto dinero tendrás después de tres días?",
+      "opciones": ["22€", "23€", "24€", "25€"],
+      "respuesta_correcta": "24€"
+    },
+    {
+      "pregunta": "Si ahorras 9€ cada día, ¿cuánto habrás ahorrado después de seis días?",
+      "opciones": ["45", "48", "54", "60"],
+      "respuesta_correcta": "54"
+    },
+    {
+      "pregunta": "Si un tren viaja a 80 km/h, ¿cuánto tiempo tardará en recorrer 240 km?",
+      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
+      "respuesta_correcta": "3 horas"
+    },
+    {
+      "pregunta": "Si un avión viaja a 600 km/h, ¿cuánto tiempo tardará en recorrer 1200 km?",
+      "opciones": ["1 hora", "2 horas", "3 horas", "4 horas"],
+      "respuesta_correcta": "2 horas"
+    },
+    {
+      "pregunta": "Si una bicicleta viaja a 15 km/h, ¿cuánto tiempo tardará en recorrer 45 km?",
+      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
+      "respuesta_correcta": "3 horas"
+    },
+    {
+      "pregunta": "Si un barco viaja a 25 km/h, ¿cuánto tiempo tardará en recorrer 100 km?",
+      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
+      "respuesta_correcta": "4 horas"
+    },
+    {
+      "pregunta": "Si un corredor viaja a 10 km/h, ¿cuánto tiempo tardará en recorrer 50 km?",
+      "opciones": ["3 horas", "4 horas", "5 horas", "6 horas"],
+      "respuesta_correcta": "5 horas"
+    },
+    {
+      "pregunta": "Si un tren viaja a 90 km/h, ¿cuánto tiempo tardará en recorrer 270 km?",
+      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
+      "respuesta_correcta": "3 horas"
+    },
+    {
+      "pregunta": "Si un avión viaja a 500 km/h, ¿cuánto tiempo tardará en recorrer 2500 km?",
+      "opciones": ["4 horas", "5 horas", "6 horas", "7 horas"],
+      "respuesta_correcta": "5 horas"
+    },
+    {
+      "pregunta": "Si un coche viaja a 60 km/h, ¿cuánto tiempo tardará en recorrer 180 km?",
+      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
+      "respuesta_correcta": "3 horas"
+    },
+    {
+      "pregunta": "Si una bicicleta viaja a 12 km/h, ¿cuánto tiempo tardará en recorrer 60 km?",
+      "opciones": ["3 horas", "4 horas", "5 horas", "6 horas"],
+      "respuesta_correcta": "5 horas"
+    },
+    {
+      "pregunta": "Si un barco viaja a 40 km/h, ¿cuánto tiempo tardará en recorrer 160 km?",
+      "opciones": ["3 horas", "4 horas", "5 horas", "6 horas"],
+      "respuesta_correcta": "4 horas"
+    },
+    {
+      "pregunta": "Si una entrada al cine cuesta 7€ y tienes 30€, ¿cuántas entradas puedes comprar?",
+      "opciones": ["3", "4", "5", "6"],
+      "respuesta_correcta": "4"
+    },
+    {
+      "pregunta": "Si una manzana cuesta 1€ y tienes 5€, ¿cuántas manzanas puedes comprar?",
+      "opciones": ["4", "5", "6", "7"],
+      "respuesta_correcta": "5"
+    },
+    {
+      "pregunta": "Si un libro cuesta 8€ y tienes 50€, ¿cuántos libros puedes comprar?",
+      "opciones": ["5", "6", "7", "8"],
+      "respuesta_correcta": "6"
+    },
+    {
+      "pregunta": "Si un juguete cuesta 12€ y tienes 100€, ¿cuántos juguetes puedes comprar?",
+      "opciones": ["7", "8", "9", "10"],
+      "respuesta_correcta": "8"
+    },
+    {
+      "pregunta": "Si un bolígrafo cuesta 2€ y tienes 15€, ¿cuántos bolígrafos puedes comprar?",
+      "opciones": ["6", "7", "8", "9"],
+      "respuesta_correcta": "7"
+    },
+    {
+      "pregunta": "¿Cuánto es 15 + 19?",
+      "opciones": ["32", "33", "34", "35"],
+      "respuesta_correcta": "34"
+    },
+    {
+      "pregunta": "¿Cuánto es 22 + 18?",
+      "opciones": ["39", "40", "41", "42"],
+      "respuesta_correcta": "40"
+    },
+    {
+      "pregunta": "¿Cuánto es 11 + 17?",
+      "opciones": ["27", "28", "29", "30"],
+      "respuesta_correcta": "28"
+    },
+    {
+      "pregunta": "¿Cuánto es 24 + 9?",
+      "opciones": ["32", "33", "34", "35"],
+      "respuesta_correcta": "33"
+    },
+    {
+      "pregunta": "¿Cuánto es 7 + 21?",
+      "opciones": ["27", "28", "29", "30"],
+      "respuesta_correcta": "28"
+    }
+  ]
+}
