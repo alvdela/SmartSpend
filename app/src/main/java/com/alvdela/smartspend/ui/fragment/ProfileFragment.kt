@@ -68,7 +68,7 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        showProfilePicture()
+        if (!ContextFamily.isMock )showProfilePicture()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,7 +97,7 @@ class ProfileFragment : Fragment() {
         }
 
         initButtons()
-        showProfilePicture()
+        if (!ContextFamily.isMock) showProfilePicture()
 
         val toolbarProfile = view.findViewById<Toolbar>(R.id.toolbar_profile)
         val activity = requireActivity() as AppCompatActivity
@@ -323,6 +323,8 @@ class ProfileFragment : Fragment() {
                     updatePasswordInDatabase()
                 }
                 Toast.makeText(requireContext(), "Contraseña cambiada", Toast.LENGTH_SHORT).show()
+                val tvPasswordProfile = view.findViewById<TextView>(R.id.tvPasswordProfile)
+                tvPasswordProfile.text = "********"
                 dialog.dismiss()
             }
         }

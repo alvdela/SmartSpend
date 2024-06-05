@@ -139,7 +139,7 @@ class MainParentsActivity : AppCompatActivity(),
     private lateinit var openTaskAdapter: TaskOpenAdapter
 
     //Constantes
-    private val MAX_USER_LENGHT = 10
+    private val MAX_USER_LENGHT = 15
     private val MAX_DECIMALS = 2
 
     private lateinit var gestureDetector: GestureDetector
@@ -387,6 +387,7 @@ class MainParentsActivity : AppCompatActivity(),
                 if (fecha.isBefore(LocalDate.now())) {
                     allOk = false
                     tvAdviseDate.text = resources.getString(R.string.fecha_anterior_a_hoy)
+                    tvAdviseDate.setTextColor(Color.RED)
                 }
             }
             if (allOk) {
@@ -705,7 +706,7 @@ class MainParentsActivity : AppCompatActivity(),
                 if (family.checkName(userName.text.toString())) {
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
-                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                    userName.error = "Nombre demasiado largo. Máximo 15 caracteres."
                 } else if (passwordInput.text.toString().length < 4 && passwordInput.text.toString()
                         .isNotEmpty()
                 ) {
@@ -1057,6 +1058,7 @@ class MainParentsActivity : AppCompatActivity(),
         drawer.addDrawerListener(toggle)
 
         toggle.syncState()
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
     private fun initNavView() {

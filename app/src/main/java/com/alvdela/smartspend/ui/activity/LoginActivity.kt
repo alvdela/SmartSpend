@@ -157,17 +157,21 @@ class LoginActivity : AppCompatActivity() {
     private fun loginUser() {
         email = emailInput.text.toString()
         password = passwordInput.text.toString()
-
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful){
-                    ContextFamily.isMock = false
-                    uid = FirebaseAuth.getInstance().currentUser!!.uid
-                    getFamily()
-                }else{
-                    errorText.visibility = View.VISIBLE
+        if (email.isNotBlank() && password.isNotBlank()){
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful){
+                        ContextFamily.isMock = false
+                        uid = FirebaseAuth.getInstance().currentUser!!.uid
+                        getFamily()
+                    }else{
+                        errorText.visibility = View.VISIBLE
+                    }
                 }
-            }
+        }else{
+            emailInput.error = "Por favor introduzca un email"
+            passwordInput.error = "Por favor introduzca la contraseña"
+        }
     }
 
     private fun goSignIn() {
