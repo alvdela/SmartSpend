@@ -1,11 +1,10 @@
 package com.alvdela.smartspend.ui.activity
 
+import DatePickerFragment
 import TaskCompleteAdapter
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -44,11 +43,27 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alvdela.smartspend.ui.Animations
 import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
+import com.alvdela.smartspend.adapter.ExpenseAdapter
+import com.alvdela.smartspend.adapter.MemberAdapter
+import com.alvdela.smartspend.adapter.TaskOpenAdapter
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.filters.Validator
+import com.alvdela.smartspend.model.Allowance
+import com.alvdela.smartspend.model.AllowanceType
+import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.model.Member
+import com.alvdela.smartspend.model.MemberType
+import com.alvdela.smartspend.model.Parent
+import com.alvdela.smartspend.model.Task
+import com.alvdela.smartspend.model.TaskState
+import com.alvdela.smartspend.ui.Animations
+import com.alvdela.smartspend.ui.fragment.GraphFragment
+import com.alvdela.smartspend.ui.fragment.ProfileFragment
+import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
+import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
 import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.util.Constants.ALLOWANCES
 import com.alvdela.smartspend.util.Constants.CASHFLOW
@@ -58,23 +73,6 @@ import com.alvdela.smartspend.util.Constants.HISTORIC
 import com.alvdela.smartspend.util.Constants.MEMBERS
 import com.alvdela.smartspend.util.Constants.TASKS
 import com.alvdela.smartspend.util.Constants.dateFormat
-import com.alvdela.smartspend.model.Allowance
-import com.alvdela.smartspend.model.AllowanceType
-import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
-import com.alvdela.smartspend.adapter.ExpenseAdapter
-import com.alvdela.smartspend.adapter.MemberAdapter
-import com.alvdela.smartspend.model.Child
-import com.alvdela.smartspend.model.Member
-import com.alvdela.smartspend.model.MemberType
-import com.alvdela.smartspend.model.Parent
-import com.alvdela.smartspend.model.Task
-import com.alvdela.smartspend.model.TaskState
-import com.alvdela.smartspend.adapter.TaskOpenAdapter
-import com.alvdela.smartspend.ui.fragment.GraphFragment
-import com.alvdela.smartspend.ui.fragment.ProfileFragment
-import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
-import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
-import com.alvdela.smartspend.ui.widget.TaskParentWidget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -85,6 +83,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+
 
 class MainParentsActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener{
@@ -1058,7 +1057,14 @@ class MainParentsActivity : AppCompatActivity(),
         drawer.addDrawerListener(toggle)
 
         toggle.syncState()
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
+        toggle.toolbarNavigationClickListener = View.OnClickListener {
+            if (drawer.isDrawerVisible(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START)
+            } else {
+                drawer.openDrawer(GravityCompat.START)
+            }
+        }
     }
 
     private fun initNavView() {
@@ -1070,8 +1076,9 @@ class MainParentsActivity : AppCompatActivity(),
         navigationView.removeHeaderView(headerView)
         navigationView.addHeaderView(headerView)
 
-        /*val tvUser: TextView = findViewById(R.id.tvUserEmail)
-        tvUser.text = family.getEmail()*/
+        val tvUser: TextView = headerView.findViewById(R.id.tvUserEmail)
+        tvUser.text = family.getEmail()
+        tvUser.setTextColor(Color.BLACK)
     }
 
     @Deprecated("Deprecated")

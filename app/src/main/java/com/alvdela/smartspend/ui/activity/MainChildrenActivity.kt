@@ -13,6 +13,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -806,7 +807,14 @@ class MainChildrenActivity : AppCompatActivity(),
         drawer.addDrawerListener(toggle)
 
         toggle.syncState()
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
+        toggle.toolbarNavigationClickListener = View.OnClickListener {
+            if (drawer.isDrawerVisible(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START)
+            } else {
+                drawer.openDrawer(GravityCompat.START)
+            }
+        }
     }
 
     private fun initNavView() {
@@ -818,6 +826,9 @@ class MainChildrenActivity : AppCompatActivity(),
         navigationView.removeHeaderView(headerView)
         navigationView.addHeaderView(headerView)
 
+        val tvUser: TextView = headerView.findViewById(R.id.tvUserEmail)
+        tvUser.text = family.getEmail()
+        tvUser.setTextColor(Color.BLACK)
     }
 
     @Deprecated("Deprecated")
