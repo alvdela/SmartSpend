@@ -107,6 +107,16 @@ class Family(
         return this.taskList
     }
 
+    fun getTaskOfChild(child: String): MutableList<Task>{
+        val newList = mutableListOf<Task>()
+        for (task in this.taskList){
+            if (task.getChildName() == child){
+                newList.add(task)
+            }
+        }
+        return newList
+    }
+
     fun getTask(indexTask: Int): Task {
         return this.taskList[indexTask]
     }

@@ -421,8 +421,6 @@ class MainChildrenActivity : AppCompatActivity(),
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
                 showGoals()
-                expenseAdapter.notifyDataSetChanged()
-
                 dialog.dismiss()
             }
         } else {
@@ -449,14 +447,15 @@ class MainChildrenActivity : AppCompatActivity(),
         }
         Handler().postDelayed({
             showMoney()
+            expenseAdapter.notifyDataSetChanged()
         }, 2000)
     }
 
     /* Metodos para las tareas */
     private fun completeTask(selectedTask: Int) {
-        val task = family.getTask(selectedTask)
+        val tasks = family.getTaskOfChild(user)
+        val task = tasks[selectedTask]
         task.setState(TaskState.COMPLETE)
-        task.setChild(child)
         if (!isMock) {
             updateTaskInDatabase(task, TASKS)
         }
@@ -648,7 +647,7 @@ class MainChildrenActivity : AppCompatActivity(),
 
     private fun showTask() {
         mandatoryTaskAdapter = TaskMandatoryAdapter(
-            tasks = family.getTaskList()
+            tasks = family.getTaskOfChild(user)
         ) { selectedTask ->
             completeTask(
                 selectedTask
@@ -660,7 +659,7 @@ class MainChildrenActivity : AppCompatActivity(),
         rvTaskObligatorias.itemAnimator = DefaultItemAnimator()
 
         noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
-            tasks = family.getTaskList()
+            tasks = family.getTaskOfChild(user)
         ) { selectedTask ->
             completeTask(
                 selectedTask

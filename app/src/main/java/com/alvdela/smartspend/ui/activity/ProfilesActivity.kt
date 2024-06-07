@@ -36,6 +36,7 @@ import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.ui.widget.TaskChildWidget
 import com.alvdela.smartspend.ui.widget.TaskParentWidget
+import com.alvdela.smartspend.util.CropImage.getCroppedBitmap
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
@@ -196,31 +197,6 @@ class ProfilesActivity : AppCompatActivity() {
             .addOnFailureListener {
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
-    }
-
-    private fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
-        val output = Bitmap.createBitmap(
-            bitmap.getWidth(),
-            bitmap.getHeight(), Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(output)
-        val color = -0xbdbdbe
-        val paint = Paint()
-        val rect = Rect(0, 0, bitmap.getWidth(), bitmap.getHeight())
-        paint.isAntiAlias = true
-        canvas.drawARGB(0, 0, 0, 0)
-        paint.setColor(color)
-        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-        canvas.drawCircle(
-            (bitmap.getWidth() / 2).toFloat(), (bitmap.getHeight() / 2).toFloat(),
-            (
-                    bitmap.getWidth() / 2).toFloat(), paint
-        )
-        paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
-        canvas.drawBitmap(bitmap, rect, rect, paint)
-        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
-        //return _bmp;
-        return output
     }
 
     fun triggerGoMain(view: View) {

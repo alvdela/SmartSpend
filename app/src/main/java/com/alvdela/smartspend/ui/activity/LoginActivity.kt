@@ -434,12 +434,14 @@ class LoginActivity : AppCompatActivity() {
                     val task = Task(description, limitDate, mandatory, price, state)
                     val id = document.id
                     task.setId(id)
-                    if (state == TaskState.COMPLETE) {
-                        if (document.getString("child")!! != ""){
+
+                    if (document.getString("child")!! != ""){
+                        if(family.checkName(document.getString("child")!!)){
                             val child = family.getMember(document.getString("child")!!) as Child
                             task.setChild(child)
                         }
                     }
+
                     if (typeOfTask == Constants.HISTORIC) {
                         val completedDateString = document.getString("completedDate")!!
                         var completedDate: LocalDate?

@@ -67,7 +67,9 @@
 
         <activity
             android:name=".ui.activity.QuizActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".ui.activity.CameraActivity"
             android:exported="false" />
@@ -79,9 +81,10 @@
         <activity
             android:name=".ui.activity.ProfilesActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            />
         <activity
             android:name=".ui.activity.SignInActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.activity.MainParentsActivity"

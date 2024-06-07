@@ -99,7 +99,6 @@ class Task (
 
     fun reOpenTask(){
         this.state = TaskState.OPEN
-        this.child = null
         this.completedDate = null
     }
 }

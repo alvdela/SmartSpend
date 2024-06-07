@@ -59,8 +59,9 @@ class Child(user: String, password: String) : Member(user, password) {
                 }
             }
             if (allowance.allowanceExpired()) {
-                if(!ContextFamily.isMock)
+                if(!ContextFamily.isMock){
                     deleteAllowanceFromDatabase(allowance.getId())
+                }
                 iterator.remove()
             }
         }

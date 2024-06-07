@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.GestureDetector
@@ -314,8 +315,6 @@ class MainParentsActivity : AppCompatActivity(),
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
             task.setState(TaskState.OPEN)
-            task.setChild(null)
-            task.setCompletedDate(null)
             if (!isMock){
                 updateTaskInDatabase(task, TASKS)
             }
@@ -336,6 +335,9 @@ class MainParentsActivity : AppCompatActivity(),
             dialog.dismiss()
             completeTaskAdapter.removeItem()
             ProfilesActivity.updateWidgets(this)
+            Handler().postDelayed({
+                showCashFlow(task.getChildName())
+            }, 1000)
         }
     }
 
@@ -359,6 +361,26 @@ class MainParentsActivity : AppCompatActivity(),
         inputRecompensa.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
 
         val tvAdviseDate = dialog.findViewById<TextView>(R.id.tv_advise_date)
+
+        val options = family.getChildrenNames()
+        var selectedOption = ""
+        val adapter = CustomSpinnerAdapter(this, options)
+        val asignarMiembro = dialog.findViewById<Spinner>(R.id.spinnerMembers)
+        asignarMiembro.adapter = adapter
+        asignarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                selectedOption = options[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                //Do nothing
+            }
+        }
 
         val cancelTask = dialog.findViewById<Button>(R.id.cancelTask)
         cancelTask.setOnClickListener {
@@ -389,6 +411,10 @@ class MainParentsActivity : AppCompatActivity(),
                     tvAdviseDate.setTextColor(Color.RED)
                 }
             }
+            if (selectedOption == ""){
+                Toast.makeText(this, "Debe asignar la tarea", Toast.LENGTH_SHORT).show()
+                allOk = false
+            }
             if (allOk) {
                 val description = inputDescripcionTarea.text.toString()
                 var recompensa = BigDecimal(0)
@@ -397,6 +423,7 @@ class MainParentsActivity : AppCompatActivity(),
                 }
                 val task =
                     Task(description, fecha, cbObligatoria.isChecked, recompensa, TaskState.OPEN)
+                task.setChild(family.getMember(selectedOption) as Child)
                 family.addTask(task)
                 if (!isMock){
                     addTaskToDatabase(task, TASKS)
@@ -743,8 +770,8 @@ class MainParentsActivity : AppCompatActivity(),
                                 val result = family.addMember(child)
                                 memberAdapter.notifyDataSetChanged()
                                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                                initSpinner()
                             }
-                            initSpinner()
                         }
 
                         else -> {
@@ -1377,6 +1404,7 @@ class MainParentsActivity : AppCompatActivity(),
                     child.setId(document.id)
                     memberAdapter.notifyDataSetChanged()
                     Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                    initSpinner()
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Error al crear al miembro", Toast.LENGTH_SHORT).show()
