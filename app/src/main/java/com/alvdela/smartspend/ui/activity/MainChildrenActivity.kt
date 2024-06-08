@@ -173,7 +173,7 @@ class MainChildrenActivity : AppCompatActivity(),
         val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
         currentUserName.text = user
         currentUserName.setOnClickListener {
-            showProfilePicture()
+            showEditProfile()
         }
         val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
         ivCurrentUserImage.setOnClickListener {

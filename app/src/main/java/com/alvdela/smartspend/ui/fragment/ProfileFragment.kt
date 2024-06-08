@@ -399,7 +399,7 @@ class ProfileFragment : Fragment() {
             } else if (ContextFamily.family!!.checkName(name)) {
                 tvWrongName.visibility = View.VISIBLE
             } else if (name.length > MAX_USER_LENGHT) {
-                inputNewName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                inputNewName.error = "Nombre demasiado largo. Máximo $MAX_USER_LENGHT caracteres."
             } else {
                 if (!ContextFamily.isMock) {
                     updateUserNameInDatabase(name)

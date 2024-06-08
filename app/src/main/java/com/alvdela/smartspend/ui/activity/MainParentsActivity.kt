@@ -140,7 +140,7 @@ class MainParentsActivity : AppCompatActivity(),
     private lateinit var openTaskAdapter: TaskOpenAdapter
 
     //Constantes
-    private val MAX_USER_LENGHT = 15
+    private val MAX_USER_LENGHT = 10
     private val MAX_DECIMALS = 2
 
     private lateinit var gestureDetector: GestureDetector
@@ -736,7 +736,7 @@ class MainParentsActivity : AppCompatActivity(),
                 if (family.checkName(userName.text.toString())) {
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
-                    userName.error = "Nombre demasiado largo. Máximo 15 caracteres."
+                    userName.error = "Nombre demasiado largo. Máximo $MAX_USER_LENGHT caracteres."
                 } else if (passwordInput.text.toString().length < 4 && passwordInput.text.toString()
                         .isNotEmpty()
                 ) {
@@ -879,7 +879,7 @@ class MainParentsActivity : AppCompatActivity(),
                 if (family.checkName(userName.text.toString()) && userName.text.toString() != selectedMember) {
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
-                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                    userName.error = "Nombre demasiado largo. Máximo $MAX_USER_LENGHT caracteres."
                 } else if (passwordInput.text.toString().length < 4 && passwordInput.text.toString()
                         .isNotEmpty()) {
                     val tvRecomendado = dialog.findViewById<TextView>(R.id.tvRecomendado)
