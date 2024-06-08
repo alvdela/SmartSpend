@@ -435,11 +435,12 @@ class LoginActivity : AppCompatActivity() {
                     val id = document.id
                     task.setId(id)
 
+                    val assigned = document.getBoolean("assigned")!!
+                    task.setAssigned(assigned)
+
                     if (document.getString("child")!! != ""){
-                        if(family.checkName(document.getString("child")!!)){
-                            val child = family.getMember(document.getString("child")!!) as Child
-                            task.setChild(child)
-                        }
+                        val child = family.getMemberById(document.getString("child")!!) as Child
+                        task.setChild(child)
                     }
 
                     if (typeOfTask == Constants.HISTORIC) {

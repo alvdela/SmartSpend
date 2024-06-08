@@ -8,6 +8,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
@@ -45,6 +47,7 @@ import java.io.File
 class ProfilesActivity : AppCompatActivity() {
 
     private lateinit var profilesButtons: MutableList<Button>
+    private var images: MutableMap<String,Bitmap> = mutableMapOf()
 
     private lateinit var familyName: TextView
     private lateinit var passwordInput: EditText
@@ -190,6 +193,7 @@ class ProfilesActivity : AppCompatActivity() {
                     val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
                     val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 260, 260, true)
                     val circularImage = getCroppedBitmap(scaledBitmap)
+                    images[member.getUser()] = circularImage
                     val drawable: Drawable = BitmapDrawable(resources, circularImage)
                     button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
                 }
@@ -210,6 +214,12 @@ class ProfilesActivity : AppCompatActivity() {
         initShowButtons()
 
         val tvProfileName = dialog.findViewById<TextView>(R.id.tvProfile)
+        val ivProfilePicture = dialog.findViewById<ImageView>(R.id.ivProfilePicture)
+        if (images[user] != null){
+            ivProfilePicture.setImageBitmap(images[user])
+        }else{
+            ivProfilePicture.setColorFilter(Color.BLACK)
+        }
         val unlockImage = dialog.findViewById<LinearLayout>(R.id.ivUnlock)
         val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
         val accessButton = dialog.findViewById<Button>(R.id.accessButton)

@@ -74,6 +74,7 @@ import com.alvdela.smartspend.util.Constants.HISTORIC
 import com.alvdela.smartspend.util.Constants.MEMBERS
 import com.alvdela.smartspend.util.Constants.TASKS
 import com.alvdela.smartspend.util.Constants.dateFormat
+import com.alvdela.smartspend.util.CropImage
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -260,7 +261,7 @@ class MainParentsActivity : AppCompatActivity(),
                     if (bitmap != null) {
                         val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
                         ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
-                        ivCurrentUserImage.setImageBitmap(bitmap)
+                        ivCurrentUserImage.setImageBitmap(CropImage.getCroppedBitmap(bitmap))
                     }
                 }
             }
@@ -314,7 +315,7 @@ class MainParentsActivity : AppCompatActivity(),
         }
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
-            task.setState(TaskState.OPEN)
+            task.reOpenTask()
             if (!isMock){
                 updateTaskInDatabase(task, TASKS)
             }
@@ -362,9 +363,13 @@ class MainParentsActivity : AppCompatActivity(),
 
         val tvAdviseDate = dialog.findViewById<TextView>(R.id.tv_advise_date)
 
-        val options = family.getChildrenNames()
+        val childNames = family.getChildrenNames()
+        val options = mutableListOf("Todos")
+        for (childName in childNames){
+            options.add(childName)
+        }
         var selectedOption = ""
-        val adapter = CustomSpinnerAdapter(this, options)
+        val adapter = CustomSpinnerAdapter(this, options.toList())
         val asignarMiembro = dialog.findViewById<Spinner>(R.id.spinnerMembers)
         asignarMiembro.adapter = adapter
         asignarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -411,10 +416,6 @@ class MainParentsActivity : AppCompatActivity(),
                     tvAdviseDate.setTextColor(Color.RED)
                 }
             }
-            if (selectedOption == ""){
-                Toast.makeText(this, "Debe asignar la tarea", Toast.LENGTH_SHORT).show()
-                allOk = false
-            }
             if (allOk) {
                 val description = inputDescripcionTarea.text.toString()
                 var recompensa = BigDecimal(0)
@@ -423,7 +424,10 @@ class MainParentsActivity : AppCompatActivity(),
                 }
                 val task =
                     Task(description, fecha, cbObligatoria.isChecked, recompensa, TaskState.OPEN)
-                task.setChild(family.getMember(selectedOption) as Child)
+                if (selectedOption != "Todos"){
+                    task.setChild(family.getMember(selectedOption) as Child)
+                    task.setAssigned(true)
+                }
                 family.addTask(task)
                 if (!isMock){
                     addTaskToDatabase(task, TASKS)
@@ -1420,6 +1424,16 @@ class MainParentsActivity : AppCompatActivity(),
             deleteAllAllowancesFromDatabase(userId)
             deleteCashFlowFromDatabase(userId)
             deleteAllGoalsFromDatabase(userId)
+            for (task in family.getTaskOfChild(selectedMember)){
+                if (task.isAssigned()){
+                    deleteTaskFromDatabase(task.getId(), TASKS)
+                }
+            }
+            for (task in family.getTaskHistory()){
+                if (task.isAssigned() && task.getChild()!!.getUser() == selectedMember){
+                    deleteTaskFromDatabase(task.getId(), HISTORIC)
+                }
+            }
         }
         //Eliminamos las fotos de perfil (si tiene)
         deletePictures(userId)
@@ -1506,6 +1520,10 @@ class MainParentsActivity : AppCompatActivity(),
         if (typeOfTask == HISTORIC && task.getCompletedDate() != null) {
             completedDate = task.getCompletedDate()!!.format(dateFormat)
         }
+        var childId = ""
+        if (task.getChild() != null){
+            childId = task.getChild()!!.getId()
+        }
         FirebaseFirestore.getInstance()
             .collection(uid)
             .document(FAMILY)
@@ -1518,13 +1536,14 @@ class MainParentsActivity : AppCompatActivity(),
                     "price" to task.getPrice().toString(),
                     "state" to TaskState.toString(task.getState()),
                     "completedDate" to completedDate,
-                    "child" to task.getChildName()
+                    "child" to childId,
+                    "assigned" to task.isAssigned()
                 )
             )
             .addOnSuccessListener { document ->
                 task.setId(document.id)
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 Toast.makeText(this, "Error al añadir la tarea", Toast.LENGTH_SHORT).show()
                 println("Error al añadir la tarea")
             }
@@ -1546,9 +1565,9 @@ class MainParentsActivity : AppCompatActivity(),
     }
 
     private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
-        var completedDate = ""
-        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
-            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+        var childId = ""
+        if (task.getChild() != null){
+            childId = task.getChild()!!.getId()
         }
         FirebaseFirestore.getInstance()
             .collection(uid)
@@ -1559,7 +1578,7 @@ class MainParentsActivity : AppCompatActivity(),
                 mapOf(
                     "state" to TaskState.toString(task.getState()),
                     "completedDate" to "",
-                    "child" to ""
+                    "child" to childId
                 )
             )
             .addOnSuccessListener {

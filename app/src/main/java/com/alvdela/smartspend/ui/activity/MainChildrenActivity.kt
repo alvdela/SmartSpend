@@ -72,6 +72,7 @@ import com.alvdela.smartspend.adapter.TaskNoMandatoryAdapter
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
 import com.alvdela.smartspend.ui.widget.TaskChildWidget
 import com.alvdela.smartspend.ui.widget.TaskParentWidget
+import com.alvdela.smartspend.util.CropImage
 import com.alvdela.smartspend.util.EmailSender
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -244,7 +245,7 @@ class MainChildrenActivity : AppCompatActivity(),
                     if (bitmap != null) {
                         val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
                         ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
-                        ivCurrentUserImage.setImageBitmap(bitmap)
+                        ivCurrentUserImage.setImageBitmap(CropImage.getCroppedBitmap(bitmap))
                     }
                 }
             }
@@ -456,6 +457,7 @@ class MainChildrenActivity : AppCompatActivity(),
         val tasks = family.getTaskOfChild(user)
         val task = tasks[selectedTask]
         task.setState(TaskState.COMPLETE)
+        task.setChild(child)
         if (!isMock) {
             updateTaskInDatabase(task, TASKS)
         }
@@ -948,10 +950,6 @@ class MainChildrenActivity : AppCompatActivity(),
     /* Operaciones de Firebase */
 
     private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
-        var completedDate = ""
-        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
-            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
-        }
         FirebaseFirestore.getInstance()
             .collection(uid)
             .document(FAMILY)
@@ -960,8 +958,7 @@ class MainChildrenActivity : AppCompatActivity(),
             .update(
                 mapOf(
                     "state" to TaskState.toString(task.getState()),
-                    "completedDate" to completedDate,
-                    "child" to task.getChildName()
+                    "child" to child.getId()
                 )
             )
             .addOnSuccessListener {

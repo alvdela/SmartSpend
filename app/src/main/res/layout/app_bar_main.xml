@@ -34,8 +34,7 @@
                     android:maxHeight="50dp"
                     android:maxWidth="50dp"
                     android:layout_gravity="end"
-                    android:scaleType="fitCenter"
-                    android:background="@drawable/image_shape"/>
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/tvCurrentUserName"

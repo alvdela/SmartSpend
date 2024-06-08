@@ -143,7 +143,7 @@ class TaskHistoryFragment : Fragment() {
                 taskHistoryAdapter.notifyDataSetChanged()
             }else{
                 deleteTaskFromDatabase(task.getId(), Constants.HISTORIC)
-                addTaskToDatabase(task,selectedTask, Constants.TASKS)
+                addTaskToDatabase(task, selectedTask, Constants.TASKS)
             }
             dataChanged = true
             dialog.dismiss()
@@ -174,6 +174,10 @@ class TaskHistoryFragment : Fragment() {
         if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
             completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
         }
+        var childId = ""
+        if (task.getChild() != null){
+            childId = task.getChild()!!.getId()
+        }
         FirebaseFirestore.getInstance()
             .collection(uid)
             .document(Constants.FAMILY)
@@ -186,17 +190,19 @@ class TaskHistoryFragment : Fragment() {
                     "price" to task.getPrice().toString(),
                     "state" to TaskState.toString(task.getState()),
                     "completedDate" to completedDate,
-                    "child" to task.getChildName()
+                    "child" to childId,
+                    "assigned" to task.isAssigned()
                 )
             )
             .addOnSuccessListener { document ->
+                task.setId(document.id)
                 ContextFamily.family!!.removeTaskFromHistoric(selectedTask)
                 ContextFamily.family!!.addTask(task)
                 taskHistoryAdapter.notifyDataSetChanged()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Se produjo un error al reabrir la tarea", Toast.LENGTH_SHORT).show()
-                println("Error al añadir la tarea: $e")
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error al reabrir la tarea", Toast.LENGTH_SHORT).show()
+                println("Error al reabrir la tarea")
             }
     }
 
