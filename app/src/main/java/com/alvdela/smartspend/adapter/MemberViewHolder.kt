@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.alvdela.smartspend.ContextFamily
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Member
@@ -43,7 +44,9 @@ class MemberViewHolder(val view: View) : ViewHolder(view) {
         context: Context
     ) {
 
-        showProfilePicture(member)
+        if (!ContextFamily.isMock){
+            showProfilePicture(member)
+        }
 
         tvMemberName.text = member.getUser()
         if (member is Parent) {

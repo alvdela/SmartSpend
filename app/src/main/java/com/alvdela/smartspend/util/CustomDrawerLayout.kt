@@ -2,7 +2,6 @@ package com.alvdela.smartspend.util
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.MotionEvent
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -16,13 +15,9 @@ class CustomDrawerLayout : DrawerLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return isDrawerOpen(GravityCompat.START) || isDrawerOpen(GravityCompat.END)
-    }
-
-    override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if (isDrawerOpen(GravityCompat.START) || isDrawerOpen(GravityCompat.END)) {
-            return true
+        if (isDrawerOpen(GravityCompat.START)) {
+            return super.onInterceptTouchEvent(ev)
         }
-        return super.onTouchEvent(ev)
+        return false
     }
 }
