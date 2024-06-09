@@ -74,7 +74,7 @@
             android:name=".ui.activity.CameraActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.MainChildrenActivity"
+            android:name=".ui.activity.ChildrenActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -87,7 +87,7 @@
             android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.MainParentsActivity"
+            android:name=".ui.activity.ParentsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />

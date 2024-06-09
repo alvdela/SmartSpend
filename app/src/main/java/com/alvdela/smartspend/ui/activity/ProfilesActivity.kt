@@ -7,13 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -30,7 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
@@ -70,7 +64,7 @@ class ProfilesActivity : AppCompatActivity() {
         }
 
         fun updateWidgets(context: Context) {
-            if (!ContextFamily.isMock) {
+            if (!FamilyManager.isMock) {
                 var intent = Intent(context, TaskParentWidget::class.java).apply {
                     action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
                     val ids = mAppWidgetManager.getAppWidgetIds(
@@ -114,8 +108,13 @@ class ProfilesActivity : AppCompatActivity() {
         family.checkChildrenPayments()
     }
 
+    override fun onResume() {
+        super.onResume()
+        family.checkChildrenPayments()
+    }
+
     private fun getFamily() {
-        family = ContextFamily.family!!
+        family = FamilyManager.family!!
         email = family.getEmail()
     }
 
@@ -123,7 +122,7 @@ class ProfilesActivity : AppCompatActivity() {
         setViews()
         hideButtons()
         showFamilyData()
-        if (!ContextFamily.isMock) initWidgets(this)
+        if (!FamilyManager.isMock) initWidgets(this)
     }
 
     private fun setViews() {
@@ -174,7 +173,7 @@ class ProfilesActivity : AppCompatActivity() {
             profilesButtons[i].visibility = View.VISIBLE
             profilesButtons[i].text = clave
             profilesButtons[i].tag = clave
-            if (!ContextFamily.isMock) {
+            if (!FamilyManager.isMock) {
                 showProfilePicture(profilesButtons[i], member)
             }
             i++
@@ -284,7 +283,7 @@ class ProfilesActivity : AppCompatActivity() {
                 if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
 
-        if (ContextFamily.isMock) {
+        if (FamilyManager.isMock) {
             val tvInfo = dialog.findViewById<TextView>(R.id.tvInfo)
             tvInfo.text = resources.getString(R.string.forget_in_mock)
             val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
@@ -293,7 +292,7 @@ class ProfilesActivity : AppCompatActivity() {
 
         val accessForgetButton = dialog.findViewById<Button>(R.id.accessForgetButton)
         accessForgetButton.setOnClickListener {
-            if (ContextFamily.isMock) {
+            if (FamilyManager.isMock) {
                 member!!.setPassword("")
                 if (member is Parent) {
                     dialog.dismiss()
@@ -325,14 +324,14 @@ class ProfilesActivity : AppCompatActivity() {
     }
 
     private fun goParentMain(user: String) {
-        val intent = Intent(this, MainParentsActivity::class.java).apply {
+        val intent = Intent(this, ParentsActivity::class.java).apply {
             putExtra("USER_NAME", user)
         }
         startActivity(intent)
     }
 
     private fun goChildMain(user: String) {
-        val intent = Intent(this, MainChildrenActivity::class.java).apply {
+        val intent = Intent(this, ChildrenActivity::class.java).apply {
             putExtra("USER_NAME", user)
         }
         startActivity(intent)
@@ -347,7 +346,7 @@ class ProfilesActivity : AppCompatActivity() {
         }
         val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonLogOut)
         confirmButton.setOnClickListener {
-            ContextFamily.reset()
+            FamilyManager.reset()
             startActivity(Intent(this, LoginActivity::class.java))
             super.onBackPressed()
         }

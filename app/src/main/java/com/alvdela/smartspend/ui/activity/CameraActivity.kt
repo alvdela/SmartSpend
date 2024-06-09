@@ -30,7 +30,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.exifinterface.media.ExifInterface
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.databinding.ActivityCameraBinding
 import com.alvdela.smartspend.model.Member
@@ -85,7 +85,7 @@ class CameraActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         user = bundle?.getString("USER_NAME").toString()
-        member = ContextFamily.family!!.getMember(user)
+        member = FamilyManager.family!!.getMember(user)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -137,7 +137,7 @@ class CameraActivity : AppCompatActivity() {
 
                     val confirmPhotoButton = dialog.findViewById<Button>(R.id.confirmPhotoButton)
                     confirmPhotoButton.setOnClickListener {
-                        if (!ContextFamily.isMock){
+                        if (!FamilyManager.isMock){
                             uploadFile(photoFile)
                         }
                         dialog.dismiss()
@@ -293,7 +293,7 @@ class CameraActivity : AppCompatActivity() {
 
                     val confirmPhotoButton = dialog.findViewById<Button>(R.id.confirmPhotoButton)
                     confirmPhotoButton.setOnClickListener {
-                        if (!ContextFamily.isMock){
+                        if (!FamilyManager.isMock){
                             uploadFile(photoFile)
                         }
                         dialog.dismiss()

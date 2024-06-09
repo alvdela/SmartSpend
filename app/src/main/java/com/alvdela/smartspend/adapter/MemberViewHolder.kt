@@ -3,7 +3,6 @@ package com.alvdela.smartspend.adapter
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
@@ -13,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Member
@@ -44,7 +43,7 @@ class MemberViewHolder(val view: View) : ViewHolder(view) {
         context: Context
     ) {
 
-        if (!ContextFamily.isMock){
+        if (!FamilyManager.isMock){
             showProfilePicture(member)
         }
 

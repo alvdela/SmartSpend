@@ -80,10 +80,10 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun register() {
+        showLoading()
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwordInput.text.toString())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    showLoading()
                     uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
                     addFamily()
                     FirebaseAuth.getInstance().currentUser?.sendEmailVerification()

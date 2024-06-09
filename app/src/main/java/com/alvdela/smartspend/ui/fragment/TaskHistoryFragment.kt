@@ -16,7 +16,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.model.Task
@@ -45,10 +45,10 @@ class TaskHistoryFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        historyTasks = ContextFamily.family!!.getTaskHistory()
-        tasks = ContextFamily.family!!.getTaskList()
+        historyTasks = FamilyManager.family!!.getTaskHistory()
+        tasks = FamilyManager.family!!.getTaskList()
 
-        if (!ContextFamily.isMock){
+        if (!FamilyManager.isMock){
             uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         }
     }
@@ -98,11 +98,11 @@ class TaskHistoryFragment : Fragment() {
         val confirmDelete = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmDelete.setOnClickListener {
             for (task in historyTasks){
-                if (!ContextFamily.isMock){
+                if (!FamilyManager.isMock){
                     deleteTaskFromDatabase(task.getId(), Constants.HISTORIC)
                 }
             }
-            ContextFamily.family!!.clearHistory()
+            FamilyManager.family!!.clearHistory()
             taskHistoryAdapter.notifyDataSetChanged()
             dialog.dismiss()
         }
@@ -137,9 +137,9 @@ class TaskHistoryFragment : Fragment() {
         val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonLogOut)
         confirmButton.setOnClickListener {
             task.reOpenTask()
-            if (ContextFamily.isMock){
-                ContextFamily.family!!.removeTaskFromHistoric(selectedTask)
-                ContextFamily.family!!.addTask(task)
+            if (FamilyManager.isMock){
+                FamilyManager.family!!.removeTaskFromHistoric(selectedTask)
+                FamilyManager.family!!.addTask(task)
                 taskHistoryAdapter.notifyDataSetChanged()
             }else{
                 deleteTaskFromDatabase(task.getId(), Constants.HISTORIC)
@@ -196,8 +196,8 @@ class TaskHistoryFragment : Fragment() {
             )
             .addOnSuccessListener { document ->
                 task.setId(document.id)
-                ContextFamily.family!!.removeTaskFromHistoric(selectedTask)
-                ContextFamily.family!!.addTask(task)
+                FamilyManager.family!!.removeTaskFromHistoric(selectedTask)
+                FamilyManager.family!!.addTask(task)
                 taskHistoryAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener {

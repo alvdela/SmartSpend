@@ -44,7 +44,7 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.adapter.ExpenseAdapter
@@ -87,12 +87,12 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
 
-class MainParentsActivity : AppCompatActivity(),
+class ParentsActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener{
 
     //Informacion de la familia y miembro actual
-    private val family = ContextFamily.family!!
-    private val isMock = ContextFamily.isMock
+    private val family = FamilyManager.family!!
+    private val isMock = FamilyManager.isMock
     private var user = ""
 
     private var uid = "mock"
@@ -159,12 +159,12 @@ class MainParentsActivity : AppCompatActivity(),
         showTasks()
         showMembers()
         initGestures()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     override fun onStart() {
         super.onStart()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     private fun initObjects() {
@@ -815,8 +815,21 @@ class MainParentsActivity : AppCompatActivity(),
                     }
                     index++
                 }
+                for (task in family.getTaskOfChild(selectedMember)){
+                    if (task.isAssigned()){
+                        family.getTaskList().remove(task)
+                    }
+                }
+                for (task in family.getTaskHistory()){
+                    if (task.isAssigned() && task.getChild()!!.getUser() == selectedMember){
+                        deleteTaskFromDatabase(task.getId(), HISTORIC)
+                        family.getTaskHistory().remove(task)
+                    }
+                }
                 membersCopy.remove(selectedMember)
                 memberAdapter.notifyItemRemoved(position)
+                completeTaskAdapter.notifyDataSetChanged()
+                openTaskAdapter.notifyDataSetChanged()
             }
             dialog.dismiss()
         }
@@ -1237,7 +1250,7 @@ class MainParentsActivity : AppCompatActivity(),
 
     private fun signOut() {
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.reset()
+        FamilyManager.reset()
     }
 
     private fun initSpinner() {
@@ -1427,11 +1440,13 @@ class MainParentsActivity : AppCompatActivity(),
             for (task in family.getTaskOfChild(selectedMember)){
                 if (task.isAssigned()){
                     deleteTaskFromDatabase(task.getId(), TASKS)
+                    family.getTaskList().remove(task)
                 }
             }
             for (task in family.getTaskHistory()){
                 if (task.isAssigned() && task.getChild()!!.getUser() == selectedMember){
                     deleteTaskFromDatabase(task.getId(), HISTORIC)
+                    family.getTaskHistory().remove(task)
                 }
             }
         }
@@ -1558,6 +1573,8 @@ class MainParentsActivity : AppCompatActivity(),
             .delete()
             .addOnSuccessListener {
                 println("Tarea eliminada correctamente")
+                completeTaskAdapter.notifyDataSetChanged()
+                openTaskAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { e ->
                 println("Error al eliminar la tarea: $e")

@@ -7,8 +7,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -49,7 +47,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.adapter.ExpenseAdapter
@@ -70,8 +68,6 @@ import com.alvdela.smartspend.adapter.GoalAdapter
 import com.alvdela.smartspend.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.adapter.TaskNoMandatoryAdapter
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
-import com.alvdela.smartspend.ui.widget.TaskChildWidget
-import com.alvdela.smartspend.ui.widget.TaskParentWidget
 import com.alvdela.smartspend.util.CropImage
 import com.alvdela.smartspend.util.EmailSender
 import com.google.android.material.navigation.NavigationView
@@ -88,7 +84,7 @@ import kotlinx.coroutines.launch
 import javax.mail.MessagingException
 import kotlin.math.abs
 
-class MainChildrenActivity : AppCompatActivity(),
+class ChildrenActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener {
 
     private val MAX_DECIMALS = 2
@@ -123,8 +119,8 @@ class MainChildrenActivity : AppCompatActivity(),
 
     //Informacion de la familia y miembro actual
     private var user: String = ""
-    private val family = ContextFamily.family!!
-    private val isMock = ContextFamily.isMock
+    private val family = FamilyManager.family!!
+    private val isMock = FamilyManager.isMock
     private lateinit var child: Child
 
     private var uid = "mock"
@@ -155,7 +151,7 @@ class MainChildrenActivity : AppCompatActivity(),
 
     override fun onStart() {
         super.onStart()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     private fun initObjects() {
@@ -185,7 +181,7 @@ class MainChildrenActivity : AppCompatActivity(),
         initButtons()
         initToolBar()
         initNavView()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     private fun initButtons() {
@@ -886,7 +882,7 @@ class MainChildrenActivity : AppCompatActivity(),
 
     private fun signOut() {
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.reset()
+        FamilyManager.reset()
     }
 
     private fun addRecord(newString: String) {

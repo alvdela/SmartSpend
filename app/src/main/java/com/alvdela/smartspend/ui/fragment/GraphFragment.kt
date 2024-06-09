@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
@@ -58,7 +58,7 @@ class GraphFragment : Fragment(), GestureDetector.OnGestureListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        family = ContextFamily.family!!
+        family = FamilyManager.family!!
     }
 
     override fun onCreateView(
