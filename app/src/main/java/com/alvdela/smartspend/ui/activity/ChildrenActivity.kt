@@ -12,6 +12,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -868,9 +869,10 @@ class ChildrenActivity : AppCompatActivity(),
     private fun share() {
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos!")
-            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos! Descargalo en: " +
+                    "https://drive.google.com/drive/folders/1Stqs6IXHRg-zNMq-mzJZIlkCjEbnGi3L?usp=sharing")
             putExtra(Intent.EXTRA_TITLE, "SmartSpend")
+            type = "text/plain"
         }
 
         startActivity(Intent.createChooser(shareIntent, "Compartir mediante"))

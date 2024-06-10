@@ -1236,9 +1236,10 @@ class ParentsActivity : AppCompatActivity(),
     private fun share() {
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos!")
-            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos! Descargalo en: " +
+                    "https://drive.google.com/drive/folders/1Stqs6IXHRg-zNMq-mzJZIlkCjEbnGi3L?usp=sharing")
             putExtra(Intent.EXTRA_TITLE, "SmartSpend")
+            type = "text/plain"
         }
 
         startActivity(Intent.createChooser(shareIntent, "Compartir mediante"))
@@ -1441,6 +1442,8 @@ class ParentsActivity : AppCompatActivity(),
                 if (task.isAssigned()){
                     deleteTaskFromDatabase(task.getId(), TASKS)
                     family.getTaskList().remove(task)
+                    completeTaskAdapter.notifyDataSetChanged()
+                    openTaskAdapter.notifyDataSetChanged()
                 }
             }
             for (task in family.getTaskHistory()){
@@ -1573,8 +1576,6 @@ class ParentsActivity : AppCompatActivity(),
             .delete()
             .addOnSuccessListener {
                 println("Tarea eliminada correctamente")
-                completeTaskAdapter.notifyDataSetChanged()
-                openTaskAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { e ->
                 println("Error al eliminar la tarea: $e")
