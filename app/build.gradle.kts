@@ -27,6 +27,10 @@ android {
         enable = true
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
