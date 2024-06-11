@@ -115,6 +115,6 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonConfirmNewName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWrongPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/tvWrongName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

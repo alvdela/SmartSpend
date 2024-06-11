@@ -5,11 +5,13 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -19,7 +21,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.filters.Validator
 import com.alvdela.smartspend.util.Constants
@@ -59,8 +61,8 @@ class ProfileFragment : Fragment() {
         arguments?.let {
             user = it.getString(USER_BUNDLE)
         }
-        member = ContextFamily.family!!.getMember(user!!)!!
-        if (!ContextFamily.isMock) {
+        member = FamilyManager.family!!.getMember(user!!)!!
+        if (!FamilyManager.isMock) {
             uid = FirebaseAuth.getInstance().currentUser!!.uid
         }
         configProfileOpen = true
@@ -68,7 +70,7 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        showProfilePicture()
+        if (!FamilyManager.isMock )showProfilePicture()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,11 +81,11 @@ class ProfileFragment : Fragment() {
         tvUserName.text = user
 
         tvNombreFamilia = view.findViewById(R.id.tvNombreFamilia)
-        tvNombreFamilia.text = ContextFamily.family!!.getName()
+        tvNombreFamilia.text = FamilyManager.family!!.getName()
 
-        if (ContextFamily.family!!.isParent(user!!)) {
+        if (FamilyManager.family!!.isParent(user!!)) {
             val tvEmail = view.findViewById<TextView>(R.id.tvEmail)
-            tvEmail.text = ContextFamily.family!!.getEmail()
+            tvEmail.text = FamilyManager.family!!.getEmail()
         } else {
             val lyEmail = view.findViewById<LinearLayout>(R.id.lyEmailProfile)
             lyEmail.visibility = View.GONE
@@ -97,7 +99,7 @@ class ProfileFragment : Fragment() {
         }
 
         initButtons()
-        showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
 
         val toolbarProfile = view.findViewById<Toolbar>(R.id.toolbar_profile)
         val activity = requireActivity() as AppCompatActivity
@@ -128,7 +130,7 @@ class ProfileFragment : Fragment() {
         }
 
         val btEditEmail = view.findViewById<ImageView>(R.id.btEditEmail)
-        if (ContextFamily.isMock){
+        if (FamilyManager.isMock){
             btEditEmail.visibility = View.GONE
         }else{
             btEditEmail.setOnClickListener {
@@ -148,21 +150,21 @@ class ProfileFragment : Fragment() {
 
         val btDeleteMember = view.findViewById<TextView>(R.id.btDeleteMember)
         btDeleteMember.setOnClickListener {
-            if (!ContextFamily.isMock) {
+            if (!FamilyManager.isMock) {
                 deleteProfile()
-            } else if (ContextFamily.family!!.getMembers().size == 1){
+            } else if (FamilyManager.family!!.getMembers().size == 1){
                 Toast.makeText(
                     requireContext(),
                     "No se puede eliminar la familia de prueba",
                     Toast.LENGTH_SHORT
                 ).show()
             }else{
-                ContextFamily.family!!.deleteMember(user!!)
+                FamilyManager.family!!.deleteMember(user!!)
                 backToProfiles()
             }
         }
 
-        if (!ContextFamily.family!!.isParent(user!!)) {
+        if (!FamilyManager.family!!.isParent(user!!)) {
             btEditFamilyName.visibility = View.GONE
             btEditEmail.visibility = View.GONE
             btDeleteMember.visibility = View.GONE
@@ -171,7 +173,7 @@ class ProfileFragment : Fragment() {
 
     private fun showProfilePicture() {
         val uuid = FirebaseAuth.getInstance().currentUser!!.uid
-        val fileName = ContextFamily.family!!.getMember(user!!)!!.getId()
+        val fileName = FamilyManager.family!!.getMember(user!!)!!.getId()
 
         val storageRef = FirebaseStorage.getInstance().reference.child("images/$uuid/$fileName")
         val localFile = File.createTempFile("tempImage", "jpg")
@@ -192,7 +194,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun changePicture() {
-        if (!ContextFamily.isMock){
+        if (!FamilyManager.isMock){
             val intent = Intent(requireContext(), CameraActivity::class.java).apply {
                 putExtra("USER_NAME", user)
             }
@@ -217,7 +219,7 @@ class ProfileFragment : Fragment() {
 
         var parents = 0
         var childs = 0
-        for ((_, member) in ContextFamily.family!!.getMembers()) {
+        for ((_, member) in FamilyManager.family!!.getMembers()) {
             if (member is Parent) {
                 parents++
             } else {
@@ -234,7 +236,7 @@ class ProfileFragment : Fragment() {
             } else {
                 FirebaseAuth.getInstance()
                     .signInWithEmailAndPassword(
-                        ContextFamily.family!!.getEmail(),
+                        FamilyManager.family!!.getEmail(),
                         passwordInput.text.toString()
                     )
                     .addOnSuccessListener {
@@ -267,7 +269,10 @@ class ProfileFragment : Fragment() {
 
         val tvInfo1 = dialog.findViewById<TextView>(R.id.tvInfo1)
         val oldPasswordInput = dialog.findViewById<EditText>(R.id.oldPasswordInput)
-        oldPasswordInput.setText("")
+        val newPasswordInput = dialog.findViewById<EditText>(R.id.newPasswordInput)
+        val repeatPasswordInput = dialog.findViewById<EditText>(R.id.repeatPasswordInput)
+        initShowButtons()
+
         if (member.getPassword() == "") {
             tvInfo1.visibility = View.GONE
             val oldPasswordContainer =
@@ -275,18 +280,13 @@ class ProfileFragment : Fragment() {
             oldPasswordContainer.visibility = View.GONE
         }
 
-        val newPasswordInput = dialog.findViewById<EditText>(R.id.newPasswordInput)
-        newPasswordInput.setText("")
-
-        val repeatPasswordInput = dialog.findViewById<EditText>(R.id.repeatPasswordInput)
-        repeatPasswordInput.setText("")
-
         val tvWrongPassword = dialog.findViewById<TextView>(R.id.tvWrongPassword)
         tvWrongPassword.visibility = View.GONE
         val tvWrongSize = dialog.findViewById<TextView>(R.id.tvWrongSize)
         tvWrongSize.visibility = View.GONE
         val tvWrongRepeat = dialog.findViewById<TextView>(R.id.tvWrongRepeat)
         tvWrongRepeat.visibility = View.GONE
+        initShowButtons()
 
         val buttonCancelNewPassword = dialog.findViewById<Button>(R.id.buttonCancelNewPassword)
         buttonCancelNewPassword.setOnClickListener {
@@ -319,13 +319,40 @@ class ProfileFragment : Fragment() {
             }
             if (allOk) {
                 member.setPassword(newPasswordInput.text.toString())
-                if (!ContextFamily.isMock) {
+                if (!FamilyManager.isMock) {
                     updatePasswordInDatabase()
                 }
                 Toast.makeText(requireContext(), "Contraseña cambiada", Toast.LENGTH_SHORT).show()
+                val tvPasswordProfile = view.findViewById<TextView>(R.id.tvPasswordProfile)
+                tvPasswordProfile.text = "********"
                 dialog.dismiss()
             }
         }
+    }
+
+    private fun initShowButtons() {
+
+        val showOldPassword = dialog.findViewById<CheckBox>(R.id.showOldPassword)
+        val oldPasswordInput = dialog.findViewById<EditText>(R.id.oldPasswordInput)
+        showOldPassword.setOnCheckedChangeListener{ _, isChecked ->
+            oldPasswordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+
+        val showNewPassword = dialog.findViewById<CheckBox>(R.id.showNewPassword)
+        val newPasswordInput = dialog.findViewById<EditText>(R.id.newPasswordInput)
+        showNewPassword.setOnCheckedChangeListener{ _, isChecked ->
+            newPasswordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+
+        val showRepeatPassword = dialog.findViewById<CheckBox>(R.id.showRepeatPassword)
+        val repeatPasswordInput = dialog.findViewById<EditText>(R.id.repeatPasswordInput)
+        showRepeatPassword.setOnCheckedChangeListener{ _, isChecked ->
+            repeatPasswordInput.transformationMethod = if (isChecked) null else PasswordTransformationMethod.getInstance()
+        }
+
+        oldPasswordInput.setText("")
+        newPasswordInput.setText("")
+        repeatPasswordInput.setText("")
     }
 
     private fun editEmail() {
@@ -346,7 +373,7 @@ class ProfileFragment : Fragment() {
                 inputNewEmail.error = "Es necesario un nuevo email"
             } else if (!Validator.validateEmail(newEmail)) {
                 inputNewEmail.error = "Email no valido"
-            } else if (!ContextFamily.isMock) {
+            } else if (!FamilyManager.isMock) {
                 val user = FirebaseAuth.getInstance().currentUser
                 user?.verifyBeforeUpdateEmail(newEmail)
                     ?.addOnCompleteListener { task ->
@@ -356,7 +383,7 @@ class ProfileFragment : Fragment() {
                                 "Enviado correo de confirmación",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            ContextFamily.reset()
+                            FamilyManager.reset()
                             startActivity(Intent(requireContext(), LoginActivity::class.java))
                             dialog.dismiss()
                         } else {
@@ -393,17 +420,17 @@ class ProfileFragment : Fragment() {
             val name = inputNewName.text.toString()
             if (name.isBlank()) {
                 inputNewName.error = "Es necesario un nuevo nombre"
-            } else if (ContextFamily.family!!.checkName(name)) {
+            } else if (FamilyManager.family!!.checkName(name)) {
                 tvWrongName.visibility = View.VISIBLE
             } else if (name.length > MAX_USER_LENGHT) {
-                inputNewName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                inputNewName.error = "Nombre demasiado largo. Máximo $MAX_USER_LENGHT caracteres."
             } else {
-                if (!ContextFamily.isMock) {
+                if (!FamilyManager.isMock) {
                     updateUserNameInDatabase(name)
                 } else {
-                    ContextFamily.family!!.deleteMember(member.getUser())
+                    FamilyManager.family!!.deleteMember(member.getUser())
                     member.setUser(name)
-                    ContextFamily.family!!.addMember(member)
+                    FamilyManager.family!!.addMember(member)
                     tvUserName.text = name
                     user = name
                     Toast.makeText(
@@ -443,12 +470,12 @@ class ProfileFragment : Fragment() {
             } else if (name.length > MAX_FAMILY_NAME) {
                 inputNewName.error = "Nombre demasiado largo. Máximo 30 caracteres."
             } else {
-                if (!ContextFamily.isMock) {
+                if (!FamilyManager.isMock) {
                     updateFamilyNameInDatabase(name)
-                    tvNombreFamilia.text = ContextFamily.family!!.getName()
+                    tvNombreFamilia.text = FamilyManager.family!!.getName()
                 } else {
-                    ContextFamily.family!!.setName(name)
-                    tvNombreFamilia.text = ContextFamily.family!!.getName()
+                    FamilyManager.family!!.setName(name)
+                    tvNombreFamilia.text = FamilyManager.family!!.getName()
                 }
                 dialog.dismiss()
             }
@@ -469,7 +496,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun backToLogin() {
-        ContextFamily.reset()
+        FamilyManager.reset()
         val intent = Intent(requireContext(), LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
@@ -489,9 +516,9 @@ class ProfileFragment : Fragment() {
                 )
             )
             .addOnSuccessListener {
-                ContextFamily.family!!.deleteMember(member.getUser())
+                FamilyManager.family!!.deleteMember(member.getUser())
                 member.setUser(name)
-                ContextFamily.family!!.addMember(member)
+                FamilyManager.family!!.addMember(member)
                 tvUserName.text = name
                 user = name
                 Toast.makeText(
@@ -524,8 +551,8 @@ class ProfileFragment : Fragment() {
                     "Datos de la familia actualizados correctamente",
                     Toast.LENGTH_SHORT
                 ).show()
-                ContextFamily.family!!.setName(name)
-                tvNombreFamilia.text = ContextFamily.family!!.getName()
+                FamilyManager.family!!.setName(name)
+                tvNombreFamilia.text = FamilyManager.family!!.getName()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(
@@ -558,9 +585,9 @@ class ProfileFragment : Fragment() {
             .document(member.getId())
             .delete()
             .addOnSuccessListener {
-                ContextFamily.family!!.deleteMember(selectedMember)
+                FamilyManager.family!!.deleteMember(selectedMember)
                 deletePictures(member.getId())
-                if (ContextFamily.family!!.getMembers().isNotEmpty()) {
+                if (FamilyManager.family!!.getMembers().isNotEmpty()) {
                     backToProfiles()
                 }
                 println("Miembro eliminado correctamente")

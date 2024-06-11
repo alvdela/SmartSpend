@@ -12,12 +12,15 @@
 
     <ImageView
         android:id="@+id/ivMemberPicture"
+        android:padding="5dp"
         android:layout_width="65dp"
         android:layout_height="65dp"
+        android:maxHeight="65dp"
+        android:maxWidth="65dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_default_profile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/black" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvMemberName"

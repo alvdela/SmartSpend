@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -14,7 +13,6 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.Surface
 import android.webkit.MimeTypeMap
 import android.widget.Button
 import android.widget.ImageView
@@ -32,17 +30,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.exifinterface.media.ExifInterface
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.databinding.ActivityCameraBinding
 import com.alvdela.smartspend.model.Member
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageMetadata
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
@@ -51,6 +47,7 @@ import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+
 
 class CameraActivity : AppCompatActivity() {
     companion object{
@@ -88,7 +85,7 @@ class CameraActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         user = bundle?.getString("USER_NAME").toString()
-        member = ContextFamily.family!!.getMember(user)
+        member = FamilyManager.family!!.getMember(user)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -125,7 +122,7 @@ class CameraActivity : AppCompatActivity() {
 
                     val inputStream = this.contentResolver.openInputStream(uri)
                     val bitmap = BitmapFactory.decodeStream(inputStream)
-                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 350, 350, true)
+                    val scaledBitmap = cropImage(bitmap)
                     saveBitmapToFile(scaledBitmap, photoFile)
 
                     showPopUp(R.layout.pop_up_profile_photo)
@@ -140,7 +137,7 @@ class CameraActivity : AppCompatActivity() {
 
                     val confirmPhotoButton = dialog.findViewById<Button>(R.id.confirmPhotoButton)
                     confirmPhotoButton.setOnClickListener {
-                        if (!ContextFamily.isMock){
+                        if (!FamilyManager.isMock){
                             uploadFile(photoFile)
                         }
                         dialog.dismiss()
@@ -278,8 +275,8 @@ class CameraActivity : AppCompatActivity() {
 
                     }
 
-                    // Reescalar la imagen
-                    val scaledBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 350, 350, true)
+                    val scaledBitmap = cropImage(rotatedBitmap)
+
                     saveBitmapToFile(scaledBitmap, photoFile)
 
                     showPopUp(R.layout.pop_up_profile_photo)
@@ -296,7 +293,7 @@ class CameraActivity : AppCompatActivity() {
 
                     val confirmPhotoButton = dialog.findViewById<Button>(R.id.confirmPhotoButton)
                     confirmPhotoButton.setOnClickListener {
-                        if (!ContextFamily.isMock){
+                        if (!FamilyManager.isMock){
                             uploadFile(photoFile)
                         }
                         dialog.dismiss()
@@ -317,6 +314,18 @@ class CameraActivity : AppCompatActivity() {
         FileOutputStream(file).use { out ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
         }
+    }
+
+    private fun cropImage(bitmap: Bitmap): Bitmap {
+        val originalWidth = bitmap.width
+        val originalHeight = bitmap.height
+
+        val squareSize = Math.min(originalWidth, originalHeight)
+
+        val x = (originalWidth - squareSize) / 2
+        val y = (originalHeight - squareSize) / 2
+
+        return Bitmap.createBitmap(bitmap, x, y, squareSize, squareSize)
     }
 
     private fun rotateImageIfRequired(img: Bitmap, selectedImage: File): Bitmap {
@@ -353,7 +362,7 @@ class CameraActivity : AppCompatActivity() {
                 myFile.delete()
 
                 Toast.makeText(this,"Imagen de perfil actualizada.", Toast.LENGTH_LONG).show()
-
+                finish()
             }
             .addOnFailureListener{
                 Toast.makeText(this,"Fallo al cargar la imagen. Imagen guardada en local.", Toast.LENGTH_LONG).show()

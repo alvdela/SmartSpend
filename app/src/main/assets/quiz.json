@@ -21,11 +21,6 @@
       "respuesta_correcta": "16 cm"
     },
     {
-      "pregunta": "Si un tren recorre 60 km en 1 hora, ¿cuánto tiempo tardará en recorrer 180 km?",
-      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
-      "respuesta_correcta": "3 horas"
-    },
-    {
       "pregunta": "¿Qué número falta en la secuencia: 5, 10, __, 20, 25?",
       "opciones": ["12", "13", "14", "15"],
       "respuesta_correcta": "15"
@@ -84,11 +79,6 @@
       "pregunta": "¿Cuál es el área de un rectángulo con lados de 3 cm y 6 cm?",
       "opciones": ["18 cm²", "15 cm²", "12 cm²", "9 cm²"],
       "respuesta_correcta": "18 cm²"
-    },
-    {
-      "pregunta": "Si un coche viaja a 50 km/h, ¿cuánto tiempo tardará en recorrer 200 km?",
-      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
-      "respuesta_correcta": "4 horas"
     },
     {
       "pregunta": "¿Qué número falta en la secuencia: 2, 4, __, 8, 10?",
@@ -614,56 +604,6 @@
       "pregunta": "Si ahorras 9€ cada día, ¿cuánto habrás ahorrado después de seis días?",
       "opciones": ["45", "48", "54", "60"],
       "respuesta_correcta": "54"
-    },
-    {
-      "pregunta": "Si un tren viaja a 80 km/h, ¿cuánto tiempo tardará en recorrer 240 km?",
-      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
-      "respuesta_correcta": "3 horas"
-    },
-    {
-      "pregunta": "Si un avión viaja a 600 km/h, ¿cuánto tiempo tardará en recorrer 1200 km?",
-      "opciones": ["1 hora", "2 horas", "3 horas", "4 horas"],
-      "respuesta_correcta": "2 horas"
-    },
-    {
-      "pregunta": "Si una bicicleta viaja a 15 km/h, ¿cuánto tiempo tardará en recorrer 45 km?",
-      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
-      "respuesta_correcta": "3 horas"
-    },
-    {
-      "pregunta": "Si un barco viaja a 25 km/h, ¿cuánto tiempo tardará en recorrer 100 km?",
-      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
-      "respuesta_correcta": "4 horas"
-    },
-    {
-      "pregunta": "Si un corredor viaja a 10 km/h, ¿cuánto tiempo tardará en recorrer 50 km?",
-      "opciones": ["3 horas", "4 horas", "5 horas", "6 horas"],
-      "respuesta_correcta": "5 horas"
-    },
-    {
-      "pregunta": "Si un tren viaja a 90 km/h, ¿cuánto tiempo tardará en recorrer 270 km?",
-      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
-      "respuesta_correcta": "3 horas"
-    },
-    {
-      "pregunta": "Si un avión viaja a 500 km/h, ¿cuánto tiempo tardará en recorrer 2500 km?",
-      "opciones": ["4 horas", "5 horas", "6 horas", "7 horas"],
-      "respuesta_correcta": "5 horas"
-    },
-    {
-      "pregunta": "Si un coche viaja a 60 km/h, ¿cuánto tiempo tardará en recorrer 180 km?",
-      "opciones": ["2 horas", "3 horas", "4 horas", "5 horas"],
-      "respuesta_correcta": "3 horas"
-    },
-    {
-      "pregunta": "Si una bicicleta viaja a 12 km/h, ¿cuánto tiempo tardará en recorrer 60 km?",
-      "opciones": ["3 horas", "4 horas", "5 horas", "6 horas"],
-      "respuesta_correcta": "5 horas"
-    },
-    {
-      "pregunta": "Si un barco viaja a 40 km/h, ¿cuánto tiempo tardará en recorrer 160 km?",
-      "opciones": ["3 horas", "4 horas", "5 horas", "6 horas"],
-      "respuesta_correcta": "4 horas"
     },
     {
       "pregunta": "Si una entrada al cine cuesta 7€ y tienes 30€, ¿cuántas entradas puedes comprar?",

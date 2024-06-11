@@ -235,6 +235,7 @@ Se le aconseja revisar esta Política de Privacidad periódicamente para cualqui
     <string name="push_notification_info">Recibe notificaciones push cada vez que uno de los niños de la familia añada un gasto</string>
     <string name="tareas_pendientes">Tareas pendientes</string>
     <string name="remember_change_password">Su perfil no tiene contraseña.\n Recuerde crear una desde Mi perfil</string>
+    <string name="asignar_tarea">Asignar tarea</string>
 
 </resources>
 

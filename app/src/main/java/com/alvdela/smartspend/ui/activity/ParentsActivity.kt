@@ -1,16 +1,16 @@
 package com.alvdela.smartspend.ui.activity
 
+import DatePickerFragment
 import TaskCompleteAdapter
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.GestureDetector
@@ -44,11 +44,27 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alvdela.smartspend.ui.Animations
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
+import com.alvdela.smartspend.adapter.ExpenseAdapter
+import com.alvdela.smartspend.adapter.MemberAdapter
+import com.alvdela.smartspend.adapter.TaskOpenAdapter
 import com.alvdela.smartspend.filters.DecimalDigitsInputFilter
 import com.alvdela.smartspend.filters.Validator
+import com.alvdela.smartspend.model.Allowance
+import com.alvdela.smartspend.model.AllowanceType
+import com.alvdela.smartspend.model.Child
+import com.alvdela.smartspend.model.Member
+import com.alvdela.smartspend.model.MemberType
+import com.alvdela.smartspend.model.Parent
+import com.alvdela.smartspend.model.Task
+import com.alvdela.smartspend.model.TaskState
+import com.alvdela.smartspend.ui.Animations
+import com.alvdela.smartspend.ui.fragment.GraphFragment
+import com.alvdela.smartspend.ui.fragment.ProfileFragment
+import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
+import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
 import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.util.Constants.ALLOWANCES
 import com.alvdela.smartspend.util.Constants.CASHFLOW
@@ -58,23 +74,7 @@ import com.alvdela.smartspend.util.Constants.HISTORIC
 import com.alvdela.smartspend.util.Constants.MEMBERS
 import com.alvdela.smartspend.util.Constants.TASKS
 import com.alvdela.smartspend.util.Constants.dateFormat
-import com.alvdela.smartspend.model.Allowance
-import com.alvdela.smartspend.model.AllowanceType
-import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
-import com.alvdela.smartspend.adapter.ExpenseAdapter
-import com.alvdela.smartspend.adapter.MemberAdapter
-import com.alvdela.smartspend.model.Child
-import com.alvdela.smartspend.model.Member
-import com.alvdela.smartspend.model.MemberType
-import com.alvdela.smartspend.model.Parent
-import com.alvdela.smartspend.model.Task
-import com.alvdela.smartspend.model.TaskState
-import com.alvdela.smartspend.adapter.TaskOpenAdapter
-import com.alvdela.smartspend.ui.fragment.GraphFragment
-import com.alvdela.smartspend.ui.fragment.ProfileFragment
-import com.alvdela.smartspend.ui.fragment.ProfileFragment.Companion.USER_BUNDLE
-import com.alvdela.smartspend.ui.fragment.TaskHistoryFragment
-import com.alvdela.smartspend.ui.widget.TaskParentWidget
+import com.alvdela.smartspend.util.CropImage
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -86,12 +86,13 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
-class MainParentsActivity : AppCompatActivity(),
+
+class ParentsActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener{
 
     //Informacion de la familia y miembro actual
-    private val family = ContextFamily.family!!
-    private val isMock = ContextFamily.isMock
+    private val family = FamilyManager.family!!
+    private val isMock = FamilyManager.isMock
     private var user = ""
 
     private var uid = "mock"
@@ -158,12 +159,12 @@ class MainParentsActivity : AppCompatActivity(),
         showTasks()
         showMembers()
         initGestures()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     override fun onStart() {
         super.onStart()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     private fun initObjects() {
@@ -260,7 +261,7 @@ class MainParentsActivity : AppCompatActivity(),
                     if (bitmap != null) {
                         val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
                         ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
-                        ivCurrentUserImage.setImageBitmap(bitmap)
+                        ivCurrentUserImage.setImageBitmap(CropImage.getCroppedBitmap(bitmap))
                     }
                 }
             }
@@ -314,9 +315,7 @@ class MainParentsActivity : AppCompatActivity(),
         }
         val reOpenTask = dialog.findViewById<Button>(R.id.reOpenTask)
         reOpenTask.setOnClickListener {
-            task.setState(TaskState.OPEN)
-            task.setChild(null)
-            task.setCompletedDate(null)
+            task.reOpenTask()
             if (!isMock){
                 updateTaskInDatabase(task, TASKS)
             }
@@ -337,6 +336,9 @@ class MainParentsActivity : AppCompatActivity(),
             dialog.dismiss()
             completeTaskAdapter.removeItem()
             ProfilesActivity.updateWidgets(this)
+            Handler().postDelayed({
+                showCashFlow(task.getChildName())
+            }, 1000)
         }
     }
 
@@ -360,6 +362,30 @@ class MainParentsActivity : AppCompatActivity(),
         inputRecompensa.filters = arrayOf(DecimalDigitsInputFilter(MAX_DECIMALS))
 
         val tvAdviseDate = dialog.findViewById<TextView>(R.id.tv_advise_date)
+
+        val childNames = family.getChildrenNames()
+        val options = mutableListOf("Todos")
+        for (childName in childNames){
+            options.add(childName)
+        }
+        var selectedOption = ""
+        val adapter = CustomSpinnerAdapter(this, options.toList())
+        val asignarMiembro = dialog.findViewById<Spinner>(R.id.spinnerMembers)
+        asignarMiembro.adapter = adapter
+        asignarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                selectedOption = options[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                //Do nothing
+            }
+        }
 
         val cancelTask = dialog.findViewById<Button>(R.id.cancelTask)
         cancelTask.setOnClickListener {
@@ -387,6 +413,7 @@ class MainParentsActivity : AppCompatActivity(),
                 if (fecha.isBefore(LocalDate.now())) {
                     allOk = false
                     tvAdviseDate.text = resources.getString(R.string.fecha_anterior_a_hoy)
+                    tvAdviseDate.setTextColor(Color.RED)
                 }
             }
             if (allOk) {
@@ -397,6 +424,10 @@ class MainParentsActivity : AppCompatActivity(),
                 }
                 val task =
                     Task(description, fecha, cbObligatoria.isChecked, recompensa, TaskState.OPEN)
+                if (selectedOption != "Todos"){
+                    task.setChild(family.getMember(selectedOption) as Child)
+                    task.setAssigned(true)
+                }
                 family.addTask(task)
                 if (!isMock){
                     addTaskToDatabase(task, TASKS)
@@ -705,7 +736,7 @@ class MainParentsActivity : AppCompatActivity(),
                 if (family.checkName(userName.text.toString())) {
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
-                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                    userName.error = "Nombre demasiado largo. Máximo $MAX_USER_LENGHT caracteres."
                 } else if (passwordInput.text.toString().length < 4 && passwordInput.text.toString()
                         .isNotEmpty()
                 ) {
@@ -743,8 +774,8 @@ class MainParentsActivity : AppCompatActivity(),
                                 val result = family.addMember(child)
                                 memberAdapter.notifyDataSetChanged()
                                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                                initSpinner()
                             }
-                            initSpinner()
                         }
 
                         else -> {
@@ -784,8 +815,21 @@ class MainParentsActivity : AppCompatActivity(),
                     }
                     index++
                 }
+                for (task in family.getTaskOfChild(selectedMember)){
+                    if (task.isAssigned()){
+                        family.getTaskList().remove(task)
+                    }
+                }
+                for (task in family.getTaskHistory()){
+                    if (task.isAssigned() && task.getChild()!!.getUser() == selectedMember){
+                        deleteTaskFromDatabase(task.getId(), HISTORIC)
+                        family.getTaskHistory().remove(task)
+                    }
+                }
                 membersCopy.remove(selectedMember)
                 memberAdapter.notifyItemRemoved(position)
+                completeTaskAdapter.notifyDataSetChanged()
+                openTaskAdapter.notifyDataSetChanged()
             }
             dialog.dismiss()
         }
@@ -848,7 +892,7 @@ class MainParentsActivity : AppCompatActivity(),
                 if (family.checkName(userName.text.toString()) && userName.text.toString() != selectedMember) {
                     memberNameWarning.visibility = View.VISIBLE
                 } else if (userName.text.toString().length > MAX_USER_LENGHT) {
-                    userName.error = "Nombre demasiado largo. Máximo 10 caracteres."
+                    userName.error = "Nombre demasiado largo. Máximo $MAX_USER_LENGHT caracteres."
                 } else if (passwordInput.text.toString().length < 4 && passwordInput.text.toString()
                         .isNotEmpty()) {
                     val tvRecomendado = dialog.findViewById<TextView>(R.id.tvRecomendado)
@@ -1057,6 +1101,14 @@ class MainParentsActivity : AppCompatActivity(),
         drawer.addDrawerListener(toggle)
 
         toggle.syncState()
+
+        toggle.toolbarNavigationClickListener = View.OnClickListener {
+            if (drawer.isDrawerVisible(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START)
+            } else {
+                drawer.openDrawer(GravityCompat.START)
+            }
+        }
     }
 
     private fun initNavView() {
@@ -1068,8 +1120,9 @@ class MainParentsActivity : AppCompatActivity(),
         navigationView.removeHeaderView(headerView)
         navigationView.addHeaderView(headerView)
 
-        /*val tvUser: TextView = findViewById(R.id.tvUserEmail)
-        tvUser.text = family.getEmail()*/
+        val tvUser: TextView = headerView.findViewById(R.id.tvUserEmail)
+        tvUser.text = family.getEmail()
+        tvUser.setTextColor(Color.BLACK)
     }
 
     @Deprecated("Deprecated")
@@ -1183,9 +1236,10 @@ class MainParentsActivity : AppCompatActivity(),
     private fun share() {
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos!")
-            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos! Descargalo en: " +
+                    "https://drive.google.com/drive/folders/1Stqs6IXHRg-zNMq-mzJZIlkCjEbnGi3L?usp=sharing")
             putExtra(Intent.EXTRA_TITLE, "SmartSpend")
+            type = "text/plain"
         }
 
         startActivity(Intent.createChooser(shareIntent, "Compartir mediante"))
@@ -1197,7 +1251,7 @@ class MainParentsActivity : AppCompatActivity(),
 
     private fun signOut() {
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.reset()
+        FamilyManager.reset()
     }
 
     private fun initSpinner() {
@@ -1368,6 +1422,7 @@ class MainParentsActivity : AppCompatActivity(),
                     child.setId(document.id)
                     memberAdapter.notifyDataSetChanged()
                     Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+                    initSpinner()
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Error al crear al miembro", Toast.LENGTH_SHORT).show()
@@ -1383,6 +1438,20 @@ class MainParentsActivity : AppCompatActivity(),
             deleteAllAllowancesFromDatabase(userId)
             deleteCashFlowFromDatabase(userId)
             deleteAllGoalsFromDatabase(userId)
+            for (task in family.getTaskOfChild(selectedMember)){
+                if (task.isAssigned()){
+                    deleteTaskFromDatabase(task.getId(), TASKS)
+                    family.getTaskList().remove(task)
+                    completeTaskAdapter.notifyDataSetChanged()
+                    openTaskAdapter.notifyDataSetChanged()
+                }
+            }
+            for (task in family.getTaskHistory()){
+                if (task.isAssigned() && task.getChild()!!.getUser() == selectedMember){
+                    deleteTaskFromDatabase(task.getId(), HISTORIC)
+                    family.getTaskHistory().remove(task)
+                }
+            }
         }
         //Eliminamos las fotos de perfil (si tiene)
         deletePictures(userId)
@@ -1469,6 +1538,10 @@ class MainParentsActivity : AppCompatActivity(),
         if (typeOfTask == HISTORIC && task.getCompletedDate() != null) {
             completedDate = task.getCompletedDate()!!.format(dateFormat)
         }
+        var childId = ""
+        if (task.getChild() != null){
+            childId = task.getChild()!!.getId()
+        }
         FirebaseFirestore.getInstance()
             .collection(uid)
             .document(FAMILY)
@@ -1481,13 +1554,14 @@ class MainParentsActivity : AppCompatActivity(),
                     "price" to task.getPrice().toString(),
                     "state" to TaskState.toString(task.getState()),
                     "completedDate" to completedDate,
-                    "child" to task.getChildName()
+                    "child" to childId,
+                    "assigned" to task.isAssigned()
                 )
             )
             .addOnSuccessListener { document ->
                 task.setId(document.id)
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 Toast.makeText(this, "Error al añadir la tarea", Toast.LENGTH_SHORT).show()
                 println("Error al añadir la tarea")
             }
@@ -1509,9 +1583,9 @@ class MainParentsActivity : AppCompatActivity(),
     }
 
     private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
-        var completedDate = ""
-        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
-            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
+        var childId = ""
+        if (task.getChild() != null){
+            childId = task.getChild()!!.getId()
         }
         FirebaseFirestore.getInstance()
             .collection(uid)
@@ -1522,7 +1596,7 @@ class MainParentsActivity : AppCompatActivity(),
                 mapOf(
                     "state" to TaskState.toString(task.getState()),
                     "completedDate" to "",
-                    "child" to ""
+                    "child" to childId
                 )
             )
             .addOnSuccessListener {

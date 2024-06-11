@@ -1,6 +1,6 @@
 package com.alvdela.smartspend.model
 
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.util.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -51,16 +51,17 @@ class Child(user: String, password: String) : Member(user, password) {
                     LocalDate.now()
                 )
                 addIncome(payment)
-                if (!ContextFamily.isMock){
-                    updateAllowanceInDatabase(allowance)
+                if (!FamilyManager.isMock){
                     updateMoneyInDatabase(true, allowance.getPayment())
+                    updateAllowanceInDatabase(allowance)
                 }else{
                     this.actualMoney += allowance.getPayment()
                 }
             }
             if (allowance.allowanceExpired()) {
-                if(!ContextFamily.isMock)
+                if(!FamilyManager.isMock){
                     deleteAllowanceFromDatabase(allowance.getId())
+                }
                 iterator.remove()
             }
         }
@@ -73,7 +74,7 @@ class Child(user: String, password: String) : Member(user, password) {
             while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
                 index++
             }
-            if(!ContextFamily.isMock){
+            if(!FamilyManager.isMock){
                 addCashFlowToDatabase(index, cashFlow)
                 updateMoneyInDatabase(false, cashFlow.amount)
             }else{
@@ -90,7 +91,7 @@ class Child(user: String, password: String) : Member(user, password) {
         while (index < this.cashFlowList.size && this.cashFlowList[index].date.isAfter(cashFlow.date)) {
             index++
         }
-        if(!ContextFamily.isMock){
+        if(!FamilyManager.isMock){
             addCashFlowToDatabase(index,cashFlow)
         }else{
             this.cashFlowList.add(index, cashFlow)
@@ -123,7 +124,7 @@ class Child(user: String, password: String) : Member(user, password) {
             val payment =
                 CashFlow(goal.getDescription(), goal.getSaving(), CashFlowType.INGRESO, LocalDate.now())
             addIncome(payment)
-            if (!ContextFamily.isMock){
+            if (!FamilyManager.isMock){
                 updateMoneyInDatabase(true, goal.getSaving())
             }else{
                 this.actualMoney += goal.getSaving()
@@ -135,7 +136,7 @@ class Child(user: String, password: String) : Member(user, password) {
     fun claimPrice(description: String, money: BigDecimal) {
         val payment = CashFlow(description, money, CashFlowType.RECOMPENSA, LocalDate.now())
         addIncome(payment)
-        if (!ContextFamily.isMock){
+        if (!FamilyManager.isMock){
             updateMoneyInDatabase(true, money)
         }else{
             this.actualMoney += money

@@ -7,12 +7,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -48,7 +48,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.ui.Animations
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.adapter.ExpenseAdapter
@@ -69,8 +69,7 @@ import com.alvdela.smartspend.adapter.GoalAdapter
 import com.alvdela.smartspend.adapter.TaskMandatoryAdapter
 import com.alvdela.smartspend.adapter.TaskNoMandatoryAdapter
 import com.alvdela.smartspend.ui.fragment.ProfileFragment
-import com.alvdela.smartspend.ui.widget.TaskChildWidget
-import com.alvdela.smartspend.ui.widget.TaskParentWidget
+import com.alvdela.smartspend.util.CropImage
 import com.alvdela.smartspend.util.EmailSender
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -86,7 +85,7 @@ import kotlinx.coroutines.launch
 import javax.mail.MessagingException
 import kotlin.math.abs
 
-class MainChildrenActivity : AppCompatActivity(),
+class ChildrenActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener, GestureDetector.OnGestureListener {
 
     private val MAX_DECIMALS = 2
@@ -121,8 +120,8 @@ class MainChildrenActivity : AppCompatActivity(),
 
     //Informacion de la familia y miembro actual
     private var user: String = ""
-    private val family = ContextFamily.family!!
-    private val isMock = ContextFamily.isMock
+    private val family = FamilyManager.family!!
+    private val isMock = FamilyManager.isMock
     private lateinit var child: Child
 
     private var uid = "mock"
@@ -153,7 +152,7 @@ class MainChildrenActivity : AppCompatActivity(),
 
     override fun onStart() {
         super.onStart()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     private fun initObjects() {
@@ -171,7 +170,7 @@ class MainChildrenActivity : AppCompatActivity(),
         val currentUserName = findViewById<TextView>(R.id.tvCurrentUserName)
         currentUserName.text = user
         currentUserName.setOnClickListener {
-            showProfilePicture()
+            showEditProfile()
         }
         val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
         ivCurrentUserImage.setOnClickListener {
@@ -183,7 +182,7 @@ class MainChildrenActivity : AppCompatActivity(),
         initButtons()
         initToolBar()
         initNavView()
-        if (!ContextFamily.isMock) showProfilePicture()
+        if (!FamilyManager.isMock) showProfilePicture()
     }
 
     private fun initButtons() {
@@ -243,7 +242,7 @@ class MainChildrenActivity : AppCompatActivity(),
                     if (bitmap != null) {
                         val ivCurrentUserImage = findViewById<ImageView>(R.id.ivCurrentUserImage)
                         ivCurrentUserImage.scaleType = ImageView.ScaleType.FIT_CENTER
-                        ivCurrentUserImage.setImageBitmap(bitmap)
+                        ivCurrentUserImage.setImageBitmap(CropImage.getCroppedBitmap(bitmap))
                     }
                 }
             }
@@ -420,8 +419,6 @@ class MainChildrenActivity : AppCompatActivity(),
                 child.claimGoal(selectedGoal)
                 goalAdapter.notifyItemRemoved(selectedGoal)
                 showGoals()
-                expenseAdapter.notifyDataSetChanged()
-
                 dialog.dismiss()
             }
         } else {
@@ -448,12 +445,14 @@ class MainChildrenActivity : AppCompatActivity(),
         }
         Handler().postDelayed({
             showMoney()
+            expenseAdapter.notifyDataSetChanged()
         }, 2000)
     }
 
     /* Metodos para las tareas */
     private fun completeTask(selectedTask: Int) {
-        val task = family.getTask(selectedTask)
+        val tasks = family.getTaskOfChild(user)
+        val task = tasks[selectedTask]
         task.setState(TaskState.COMPLETE)
         task.setChild(child)
         if (!isMock) {
@@ -647,7 +646,7 @@ class MainChildrenActivity : AppCompatActivity(),
 
     private fun showTask() {
         mandatoryTaskAdapter = TaskMandatoryAdapter(
-            tasks = family.getTaskList()
+            tasks = family.getTaskOfChild(user)
         ) { selectedTask ->
             completeTask(
                 selectedTask
@@ -659,7 +658,7 @@ class MainChildrenActivity : AppCompatActivity(),
         rvTaskObligatorias.itemAnimator = DefaultItemAnimator()
 
         noMandatoryTaskAdapter = TaskNoMandatoryAdapter(
-            tasks = family.getTaskList()
+            tasks = family.getTaskOfChild(user)
         ) { selectedTask ->
             completeTask(
                 selectedTask
@@ -806,6 +805,14 @@ class MainChildrenActivity : AppCompatActivity(),
         drawer.addDrawerListener(toggle)
 
         toggle.syncState()
+
+        toggle.toolbarNavigationClickListener = View.OnClickListener {
+            if (drawer.isDrawerVisible(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START)
+            } else {
+                drawer.openDrawer(GravityCompat.START)
+            }
+        }
     }
 
     private fun initNavView() {
@@ -817,6 +824,9 @@ class MainChildrenActivity : AppCompatActivity(),
         navigationView.removeHeaderView(headerView)
         navigationView.addHeaderView(headerView)
 
+        val tvUser: TextView = headerView.findViewById(R.id.tvUserEmail)
+        tvUser.text = family.getEmail()
+        tvUser.setTextColor(Color.BLACK)
     }
 
     @Deprecated("Deprecated")
@@ -859,9 +869,10 @@ class MainChildrenActivity : AppCompatActivity(),
     private fun share() {
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos!")
-            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "¡Descubre la nueva forma de enseñar finanzas a tus hijos! Descargalo en: " +
+                    "https://drive.google.com/drive/folders/1Stqs6IXHRg-zNMq-mzJZIlkCjEbnGi3L?usp=sharing")
             putExtra(Intent.EXTRA_TITLE, "SmartSpend")
+            type = "text/plain"
         }
 
         startActivity(Intent.createChooser(shareIntent, "Compartir mediante"))
@@ -873,7 +884,7 @@ class MainChildrenActivity : AppCompatActivity(),
 
     private fun signOut() {
         startActivity(Intent(this, LoginActivity::class.java))
-        ContextFamily.reset()
+        FamilyManager.reset()
     }
 
     private fun addRecord(newString: String) {
@@ -937,10 +948,6 @@ class MainChildrenActivity : AppCompatActivity(),
     /* Operaciones de Firebase */
 
     private fun updateTaskInDatabase(task: Task, typeOfTask: String) {
-        var completedDate = ""
-        if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
-            completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
-        }
         FirebaseFirestore.getInstance()
             .collection(uid)
             .document(FAMILY)
@@ -949,8 +956,7 @@ class MainChildrenActivity : AppCompatActivity(),
             .update(
                 mapOf(
                     "state" to TaskState.toString(task.getState()),
-                    "completedDate" to completedDate,
-                    "child" to task.getChildName()
+                    "child" to child.getId()
                 )
             )
             .addOnSuccessListener {
