@@ -1,7 +1,7 @@
-Trabajo de fin de grado. 
-Universidad de Valladolid.
-Alumno: Álvaro de la Rosa Zarzuelo.
-Tutor: Juan A. Muñoz Cristobal.
+Trabajo de fin de grado. \n
+Universidad de Valladolid. \n
+Alumno: Álvaro de la Rosa Zarzuelo. \n
+Tutor: Juan A. Muñoz Cristobal. \n
 ----------------------------------------------------------------------------------------------------------------------------
  Creación de una aplicación móvil educacional diseñada para introducir a los niños, de forma dinámica y entretenida, 
  en las habilidades básicas para la gestión del dinero, presupuestar y ahorrar. Se emplean técnicas de simulación y una 
