@@ -16,7 +16,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.model.Task
@@ -45,10 +45,10 @@ class TaskHistoryFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        historyTasks = ContextFamily.family!!.getTaskHistory()
-        tasks = ContextFamily.family!!.getTaskList()
+        historyTasks = FamilyManager.family!!.getTaskHistory()
+        tasks = FamilyManager.family!!.getTaskList()
 
-        if (!ContextFamily.isMock){
+        if (!FamilyManager.isMock){
             uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         }
     }
@@ -98,11 +98,11 @@ class TaskHistoryFragment : Fragment() {
         val confirmDelete = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmDelete.setOnClickListener {
             for (task in historyTasks){
-                if (!ContextFamily.isMock){
+                if (!FamilyManager.isMock){
                     deleteTaskFromDatabase(task.getId(), Constants.HISTORIC)
                 }
             }
-            ContextFamily.family!!.clearHistory()
+            FamilyManager.family!!.clearHistory()
             taskHistoryAdapter.notifyDataSetChanged()
             dialog.dismiss()
         }
@@ -137,13 +137,13 @@ class TaskHistoryFragment : Fragment() {
         val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonLogOut)
         confirmButton.setOnClickListener {
             task.reOpenTask()
-            if (ContextFamily.isMock){
-                ContextFamily.family!!.removeTaskFromHistoric(selectedTask)
-                ContextFamily.family!!.addTask(task)
+            if (FamilyManager.isMock){
+                FamilyManager.family!!.removeTaskFromHistoric(selectedTask)
+                FamilyManager.family!!.addTask(task)
                 taskHistoryAdapter.notifyDataSetChanged()
             }else{
                 deleteTaskFromDatabase(task.getId(), Constants.HISTORIC)
-                addTaskToDatabase(task,selectedTask, Constants.TASKS)
+                addTaskToDatabase(task, selectedTask, Constants.TASKS)
             }
             dataChanged = true
             dialog.dismiss()
@@ -174,6 +174,10 @@ class TaskHistoryFragment : Fragment() {
         if (typeOfTask == Constants.HISTORIC && task.getCompletedDate() != null) {
             completedDate = task.getCompletedDate()!!.format(Constants.dateFormat)
         }
+        var childId = ""
+        if (task.getChild() != null){
+            childId = task.getChild()!!.getId()
+        }
         FirebaseFirestore.getInstance()
             .collection(uid)
             .document(Constants.FAMILY)
@@ -186,17 +190,19 @@ class TaskHistoryFragment : Fragment() {
                     "price" to task.getPrice().toString(),
                     "state" to TaskState.toString(task.getState()),
                     "completedDate" to completedDate,
-                    "child" to task.getChildName()
+                    "child" to childId,
+                    "assigned" to task.isAssigned()
                 )
             )
             .addOnSuccessListener { document ->
-                ContextFamily.family!!.removeTaskFromHistoric(selectedTask)
-                ContextFamily.family!!.addTask(task)
+                task.setId(document.id)
+                FamilyManager.family!!.removeTaskFromHistoric(selectedTask)
+                FamilyManager.family!!.addTask(task)
                 taskHistoryAdapter.notifyDataSetChanged()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Se produjo un error al reabrir la tarea", Toast.LENGTH_SHORT).show()
-                println("Error al añadir la tarea: $e")
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error al reabrir la tarea", Toast.LENGTH_SHORT).show()
+                println("Error al reabrir la tarea")
             }
     }
 

@@ -7,11 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -28,7 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Child
 import com.alvdela.smartspend.model.Family
@@ -36,7 +32,10 @@ import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.ui.widget.TaskChildWidget
 import com.alvdela.smartspend.ui.widget.TaskParentWidget
+import com.alvdela.smartspend.util.Constants
+import com.alvdela.smartspend.util.CropImage.getCroppedBitmap
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 
@@ -44,6 +43,7 @@ import java.io.File
 class ProfilesActivity : AppCompatActivity() {
 
     private lateinit var profilesButtons: MutableList<Button>
+    private var images: MutableMap<String,Bitmap> = mutableMapOf()
 
     private lateinit var familyName: TextView
     private lateinit var passwordInput: EditText
@@ -66,7 +66,7 @@ class ProfilesActivity : AppCompatActivity() {
         }
 
         fun updateWidgets(context: Context) {
-            if (!ContextFamily.isMock) {
+            if (!FamilyManager.isMock) {
                 var intent = Intent(context, TaskParentWidget::class.java).apply {
                     action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
                     val ids = mAppWidgetManager.getAppWidgetIds(
@@ -110,8 +110,13 @@ class ProfilesActivity : AppCompatActivity() {
         family.checkChildrenPayments()
     }
 
+    override fun onResume() {
+        super.onResume()
+        family.checkChildrenPayments()
+    }
+
     private fun getFamily() {
-        family = ContextFamily.family!!
+        family = FamilyManager.family!!
         email = family.getEmail()
     }
 
@@ -119,7 +124,7 @@ class ProfilesActivity : AppCompatActivity() {
         setViews()
         hideButtons()
         showFamilyData()
-        if (!ContextFamily.isMock) initWidgets(this)
+        if (!FamilyManager.isMock) initWidgets(this)
     }
 
     private fun setViews() {
@@ -170,7 +175,7 @@ class ProfilesActivity : AppCompatActivity() {
             profilesButtons[i].visibility = View.VISIBLE
             profilesButtons[i].text = clave
             profilesButtons[i].tag = clave
-            if (!ContextFamily.isMock) {
+            if (!FamilyManager.isMock) {
                 showProfilePicture(profilesButtons[i], member)
             }
             i++
@@ -189,6 +194,7 @@ class ProfilesActivity : AppCompatActivity() {
                     val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
                     val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 260, 260, true)
                     val circularImage = getCroppedBitmap(scaledBitmap)
+                    images[member.getUser()] = circularImage
                     val drawable: Drawable = BitmapDrawable(resources, circularImage)
                     button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
                 }
@@ -196,31 +202,6 @@ class ProfilesActivity : AppCompatActivity() {
             .addOnFailureListener {
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
-    }
-
-    private fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
-        val output = Bitmap.createBitmap(
-            bitmap.getWidth(),
-            bitmap.getHeight(), Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(output)
-        val color = -0xbdbdbe
-        val paint = Paint()
-        val rect = Rect(0, 0, bitmap.getWidth(), bitmap.getHeight())
-        paint.isAntiAlias = true
-        canvas.drawARGB(0, 0, 0, 0)
-        paint.setColor(color)
-        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-        canvas.drawCircle(
-            (bitmap.getWidth() / 2).toFloat(), (bitmap.getHeight() / 2).toFloat(),
-            (
-                    bitmap.getWidth() / 2).toFloat(), paint
-        )
-        paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
-        canvas.drawBitmap(bitmap, rect, rect, paint)
-        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
-        //return _bmp;
-        return output
     }
 
     fun triggerGoMain(view: View) {
@@ -234,6 +215,12 @@ class ProfilesActivity : AppCompatActivity() {
         initShowButtons()
 
         val tvProfileName = dialog.findViewById<TextView>(R.id.tvProfile)
+        val ivProfilePicture = dialog.findViewById<ImageView>(R.id.ivProfilePicture)
+        if (images[user] != null){
+            ivProfilePicture.setImageBitmap(images[user])
+        }else{
+            ivProfilePicture.setColorFilter(Color.BLACK)
+        }
         val unlockImage = dialog.findViewById<LinearLayout>(R.id.ivUnlock)
         val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
         val accessButton = dialog.findViewById<Button>(R.id.accessButton)
@@ -298,7 +285,7 @@ class ProfilesActivity : AppCompatActivity() {
                 if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
 
-        if (ContextFamily.isMock) {
+        if (FamilyManager.isMock) {
             val tvInfo = dialog.findViewById<TextView>(R.id.tvInfo)
             tvInfo.text = resources.getString(R.string.forget_in_mock)
             val passwordContainer = dialog.findViewById<RelativeLayout>(R.id.passwordContainer)
@@ -307,7 +294,7 @@ class ProfilesActivity : AppCompatActivity() {
 
         val accessForgetButton = dialog.findViewById<Button>(R.id.accessForgetButton)
         accessForgetButton.setOnClickListener {
-            if (ContextFamily.isMock) {
+            if (FamilyManager.isMock) {
                 member!!.setPassword("")
                 if (member is Parent) {
                     dialog.dismiss()
@@ -322,6 +309,7 @@ class ProfilesActivity : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             member!!.setPassword("")
+                            updateMemberInDatabase(member)
                             if (member is Parent) {
                                 dialog.dismiss()
                                 goParentMain(member.getUser())
@@ -339,14 +327,14 @@ class ProfilesActivity : AppCompatActivity() {
     }
 
     private fun goParentMain(user: String) {
-        val intent = Intent(this, MainParentsActivity::class.java).apply {
+        val intent = Intent(this, ParentsActivity::class.java).apply {
             putExtra("USER_NAME", user)
         }
         startActivity(intent)
     }
 
     private fun goChildMain(user: String) {
-        val intent = Intent(this, MainChildrenActivity::class.java).apply {
+        val intent = Intent(this, ChildrenActivity::class.java).apply {
             putExtra("USER_NAME", user)
         }
         startActivity(intent)
@@ -361,7 +349,7 @@ class ProfilesActivity : AppCompatActivity() {
         }
         val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonLogOut)
         confirmButton.setOnClickListener {
-            ContextFamily.reset()
+            FamilyManager.reset()
             startActivity(Intent(this, LoginActivity::class.java))
             super.onBackPressed()
         }
@@ -382,4 +370,23 @@ class ProfilesActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun updateMemberInDatabase(member: Member) {
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(member.getId())
+            .update(
+                mapOf(
+                    "password" to member.getPassword(),
+                )
+            )
+            .addOnSuccessListener {
+                Toast.makeText(this,"Contraseña eliminada", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                println("Error al eliminar la contraseña del perfil")
+            }
+    }
 }

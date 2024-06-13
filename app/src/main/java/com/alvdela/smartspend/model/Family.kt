@@ -53,12 +53,21 @@ class Family(
 
     fun getChildren(): List<Child> {
         val childList = mutableListOf<Child>()
-        for ((userName, member) in members) {
+        for ((_, member) in members) {
             if (member is Child) {
                 childList.add(member)
             }
         }
         return childList.toList()
+    }
+
+    fun getMemberById(id: String): Member? {
+        for ((_, member) in members) {
+            if (member.getId() == id) {
+                return member
+            }
+        }
+        return null
     }
 
     fun getChildrenNames(): List<String> {
@@ -105,6 +114,16 @@ class Family(
 
     fun getTaskList(): MutableList<Task> {
         return this.taskList
+    }
+
+    fun getTaskOfChild(child: String): MutableList<Task>{
+        val newList = mutableListOf<Task>()
+        for (task in this.taskList){
+            if (task.getChildName() == child || task.getChildName() == ""){
+                newList.add(task)
+            }
+        }
+        return newList
     }
 
     fun getTask(indexTask: Int): Task {

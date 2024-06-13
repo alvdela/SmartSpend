@@ -14,3 +14,10 @@
 .cxx
 local.properties
 app/src/main/resources/application.conf
+app/lint-baseline.xml
+app/debug/app-debug.apk
+app/debug/output-metadata.json
+app/release/app-release.apk
+app/release/output-metadata.json
+app/release/baselineProfiles/0/app-release.dm
+app/release/baselineProfiles/1/app-release.dm

@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.CashFlowType
 import com.alvdela.smartspend.model.Child
@@ -58,7 +58,7 @@ class GraphFragment : Fragment(), GestureDetector.OnGestureListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        family = ContextFamily.family!!
+        family = FamilyManager.family!!
     }
 
     override fun onCreateView(
@@ -77,7 +77,7 @@ class GraphFragment : Fragment(), GestureDetector.OnGestureListener {
         activity.setSupportActionBar(toolbarProfile)
         toolbarProfile.setNavigationOnClickListener {
             // Cerrar el Fragment
-            ProfileFragment.configProfileOpen = false
+            configProfileOpen = false
             requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
         }
     }
@@ -228,19 +228,21 @@ class GraphFragment : Fragment(), GestureDetector.OnGestureListener {
         months.add(month)
 
         for (cashFlow in child.getCashFlow()) {
-            if (cashFlow.date.month == month) {
-                monthExpense += cashFlow.amount
-            } else {
-                expenses.add(0, monthExpense)
-                if (expenses.size >= 6) {
-                    break
+            if (cashFlow.type != CashFlowType.RECOMPENSA && cashFlow.type != CashFlowType.INGRESO){
+                if (cashFlow.date.month == month) {
+                    monthExpense += cashFlow.amount
+                } else {
+                    expenses.add(0, monthExpense)
+                    if (expenses.size >= 6) {
+                        break
+                    }
+
+                    monthExpense = BigDecimal(0)
+                    monthExpense += cashFlow.amount
+
+                    month = cashFlow.date.month
+                    months.add(0, month)
                 }
-
-                monthExpense = BigDecimal(0)
-                monthExpense += cashFlow.amount
-
-                month = cashFlow.date.month
-                months.add(0, month)
             }
         }
         expenses.add(0, monthExpense)

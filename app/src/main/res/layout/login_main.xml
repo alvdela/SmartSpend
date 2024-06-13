@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -11,50 +11,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="45dp"
         android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="45dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginBottom="50sp"
-        android:weightSum="5.1">
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4.2"
+            android:layout_weight="3.5"
             android:src="@drawable/logo" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/email"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/andika_regular"
+            android:text="@string/email"
             android:textAlignment="center"
-            android:textSize="27sp"
             android:textColor="@color/black"
-            android:layout_marginTop="10dp" />
+            android:textSize="27sp" />
 
         <EditText
             android:id="@+id/familia_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textColor="@color/black"
             android:background="@drawable/text_box"
+            android:textAlignment="center"
+            android:textColor="@color/black"
             android:textCursorDrawable="@drawable/custom_cursor"
-            />
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/password"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/andika_regular"
+            android:text="@string/password"
             android:textAlignment="center"
-            android:textSize="27sp"
             android:textColor="@color/black"
-            android:layout_marginTop="10dp" />
+            android:textSize="27sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -66,21 +66,22 @@
                 android:id="@+id/password_login"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/text_box"
                 android:inputType="textPassword"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textCursorDrawable="@drawable/custom_cursor"
-                android:background="@drawable/text_box"
                 android:textSize="20sp" />
+
             <CheckBox
                 android:id="@+id/show_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/password_selector"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:button="@drawable/password_selector" />
         </RelativeLayout>
 
         <TextView
@@ -88,64 +89,61 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.05"
+            android:fontFamily="@font/andika_regular"
+            android:text="@string/login_incorrectos"
             android:textAlignment="center"
             android:textColor="@color/red"
             android:textSize="15sp"
-            android:fontFamily="@font/andika_regular"
-            android:text="@string/login_incorrectos"
-            android:visibility="visible"
-            />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/forgetButton"
             android:layout_width="wrap_content"
-            android:layout_gravity="center"
             android:layout_height="0dp"
-            android:paddingTop="5dp"
-            android:textSize="17sp"
-            android:textAlignment="center"
-            android:text="@string/forgot"
-            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:layout_weight="0.5"
-            android:layout_marginTop="10dp" />
+            android:paddingTop="5dp"
+            android:text="@string/forgot"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="15dp"
-            android:layout_weight="0.2">
+            android:layout_weight="0.2"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/acceder_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/corners_blue"
                 android:fontFamily="@font/andika_regular"
-                android:text="@string/acceder"
-                android:textSize="22sp"
                 android:padding="5dp"
                 android:paddingStart="30dp"
                 android:paddingEnd="30dp"
-                android:background="@drawable/corners_blue"
+                android:text="@string/acceder"
                 android:textAlignment="center"
-                android:layout_alignParentStart="true"
-                />
+                android:textColor="@color/white"
+                android:textSize="22sp" />
 
             <TextView
                 android:id="@+id/registrarse_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/corners_blue"
                 android:fontFamily="@font/andika_regular"
-                android:text="@string/registrarse"
-                android:textSize="22sp"
                 android:padding="5dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:background="@drawable/corners_blue"
-                android:layout_alignParentEnd="true"
-                />
+                android:text="@string/registrarse"
+                android:textColor="@color/white"
+                android:textSize="22sp" />
 
         </RelativeLayout>
 
@@ -153,8 +151,8 @@
             android:id="@+id/mock_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/dark_gray"
             android:layout_gravity="center"
+            android:backgroundTint="@color/dark_gray"
             android:text="@string/acceder_como_invitado"
             android:textColor="@color/black"
             android:textSize="15sp" />
@@ -167,9 +165,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/ic_copyright"
         android:backgroundTint="@android:color/transparent"
-        android:onClick="showLicense"/>
+        android:onClick="showLicense"
+        android:src="@drawable/ic_copyright"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/condition_of_use_button"
@@ -177,22 +177,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/ic_condition_of_use"
         android:backgroundTint="@android:color/transparent"
-        android:onClick="showPrivacyTerms"/>
+        android:onClick="showPrivacyTerms"
+        android:src="@drawable/ic_condition_of_use"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentPrivacy"
+        android:name="com.alvdela.smartspend.ui.fragment.PrivacyPolicy"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.alvdela.smartspend.ui.fragment.PrivacyPolicy"
-        tools:background="@color/gray_light_trans"
-        android:translationY="1000dp"/>
+        android:translationY="1000dp"
+        tools:background="@color/gray_light_trans" />
 
     <include
         layout="@layout/loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
@@ -95,8 +95,8 @@ class TaskWidgetFactory(private val context: Context, private val intent: Intent
 
     private fun getTasks() {
         var tasks = mutableListOf<Task>()
-        if (ContextFamily.family != null) {
-            tasks = ContextFamily.family!!.getTaskList()
+        if (FamilyManager.family != null) {
+            tasks = FamilyManager.family!!.getTaskList()
         }
         filterTasks(taskType, tasks)
     }

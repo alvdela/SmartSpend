@@ -18,7 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentContainerView
-import com.alvdela.smartspend.ContextFamily
+import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.util.Constants.ALLOWANCES
@@ -114,7 +114,7 @@ class LoginActivity : AppCompatActivity() {
         errorText.visibility = View.INVISIBLE
 
         mockButton.setOnClickListener {
-            ContextFamily.isMock = true
+            FamilyManager.isMock = true
             createMockFamily()
         }
 
@@ -157,17 +157,25 @@ class LoginActivity : AppCompatActivity() {
     private fun loginUser() {
         email = emailInput.text.toString()
         password = passwordInput.text.toString()
-
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful){
-                    ContextFamily.isMock = false
-                    uid = FirebaseAuth.getInstance().currentUser!!.uid
-                    getFamily()
-                }else{
-                    errorText.visibility = View.VISIBLE
+        if (email.isNotBlank() && password.isNotBlank()){
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful){
+                        if (FirebaseAuth.getInstance().currentUser!!.isEmailVerified){
+                            FamilyManager.isMock = false
+                            uid = FirebaseAuth.getInstance().currentUser!!.uid
+                            getFamily()
+                        }else{
+                            Toast.makeText(this, "Por favor, confirme su correo electrónico", Toast.LENGTH_LONG).show()
+                        }
+                    }else{
+                        errorText.visibility = View.VISIBLE
+                    }
                 }
-            }
+        }else{
+            emailInput.error = "Por favor introduzca un email"
+            passwordInput.error = "Por favor introduzca la contraseña"
+        }
     }
 
     private fun goSignIn() {
@@ -179,7 +187,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun createMockFamily() {
-        ContextFamily.isMock = true
+        FamilyManager.isMock = true
         FirebaseAuth.getInstance().signInAnonymously()
         uid = "mock"
         getFamily()
@@ -246,7 +254,7 @@ class LoginActivity : AppCompatActivity() {
                 if (document.exists()) {
                     val familyName = document.getString("familyName")
                     var familyEmail = document.getString("familyEmail")
-                    if (!ContextFamily.isMock){
+                    if (!FamilyManager.isMock){
                         val user = FirebaseAuth.getInstance().currentUser
                         if (familyEmail != user?.email){
                             familyEmail = user?.email
@@ -254,7 +262,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                     val family = Family(familyName!!, familyEmail!!)
-                    ContextFamily.family = family
+                    FamilyManager.family = family
                     getMembers()
                 }else{
                     Toast.makeText(this, "Error con firebase", Toast.LENGTH_SHORT).show()
@@ -294,7 +302,7 @@ class LoginActivity : AppCompatActivity() {
                         val parent = Parent(user, password)
                         val id = document.id
                         parent.setId(id)
-                        ContextFamily.family?.addMember(parent)
+                        FamilyManager.family?.addMember(parent)
                     } else if (MemberType.fromString(document.getString("type")!!) == MemberType.CHILD) {
                         val user = document.getString("user")!!
                         val password = document.getString("password")!!
@@ -303,7 +311,7 @@ class LoginActivity : AppCompatActivity() {
                         val id = document.id
                         child.setId(id)
                         child.setActualMoney(money)
-                        ContextFamily.family?.addMember(child)
+                        FamilyManager.family?.addMember(child)
                     }
                 }
                 getChildrenInfo()
@@ -314,7 +322,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun getChildrenInfo() {
-        for (child in ContextFamily.family!!.getChildren()){
+        for (child in FamilyManager.family!!.getChildren()){
             getAllowances(child)
             child.setCashFlow(getCashFlow(child.getId()))
             child.setGoals(getGoals(child.getId()))
@@ -405,7 +413,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun getTask(typeOfTask: String) {
-        val family = ContextFamily.family!!
+        val family = FamilyManager.family!!
         FirebaseFirestore.getInstance()
             .collection(uid)
             .document(FAMILY)
@@ -430,12 +438,15 @@ class LoginActivity : AppCompatActivity() {
                     val task = Task(description, limitDate, mandatory, price, state)
                     val id = document.id
                     task.setId(id)
-                    if (state == TaskState.COMPLETE) {
-                        if (document.getString("child")!! != ""){
-                            val child = family.getMember(document.getString("child")!!) as Child
-                            task.setChild(child)
-                        }
+
+                    val assigned = document.getBoolean("assigned")!!
+                    task.setAssigned(assigned)
+
+                    if (document.getString("child")!! != ""){
+                        val child = family.getMemberById(document.getString("child")!!) as Child
+                        task.setChild(child)
                     }
+
                     if (typeOfTask == Constants.HISTORIC) {
                         val completedDateString = document.getString("completedDate")!!
                         var completedDate: LocalDate?

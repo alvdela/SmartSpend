@@ -7,9 +7,11 @@ import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentContainerView
 import com.alvdela.smartspend.R
 import com.alvdela.smartspend.filters.Validator
@@ -78,6 +80,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun register() {
+        showLoading()
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwordInput.text.toString())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -129,7 +132,7 @@ class SignInActivity : AppCompatActivity() {
         }
         if (tutorNameInput.text.isBlank()) {
             allOk = false
-            tutorNameInput.error = "Es necesario un nombre de tutor"
+            tutorNameInput.error = "Es necesario un nombre de tutor legal"
         }
         if (tutorNameInput.text.toString().length > 12) {
             allOk = false
@@ -207,6 +210,7 @@ class SignInActivity : AppCompatActivity() {
             )
             .addOnCompleteListener {
                 FirebaseAuth.getInstance().signOut()
+                dismissLoading()
                 startActivity(Intent(this, LoginActivity::class.java))
             }
     }
@@ -224,5 +228,17 @@ class SignInActivity : AppCompatActivity() {
             passwordAgainInput.transformationMethod =
                 if (isChecked) null else PasswordTransformationMethod.getInstance()
         }
+    }
+
+    private fun showLoading(){
+        val loadingView = findViewById<ConstraintLayout>(R.id.loadingView)
+        loadingView.visibility = View.VISIBLE
+        val loadingImage = findViewById<ImageView>(R.id.loadingImage)
+        Animations.spinImage(loadingImage)
+    }
+
+    private fun dismissLoading(){
+        val loadingView = findViewById<ConstraintLayout>(R.id.loadingView)
+        loadingView.visibility = View.GONE
     }
 }

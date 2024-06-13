@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.activity.MainParentsActivity">
+    tools:context=".ui.activity.ParentsActivity">
     
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/light_blue"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:layout_scrollFlags="scroll|enterAlways">
+            app:layout_scrollFlags="enterAlways">
 
         </androidx.appcompat.widget.Toolbar>
         

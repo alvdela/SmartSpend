@@ -9,11 +9,12 @@ class Task (
     private var limitDate: LocalDate? = null,
     private var mandatory: Boolean = false,
     private var price: BigDecimal = BigDecimal(0),
-    private var state: TaskState
+    private var state: TaskState,
 ){
     private lateinit var id: String
     private var completedDate: LocalDate? = null
     private var child: Child? = null
+    private var assigned = false
 
     fun getDescription(): String {
         return description
@@ -37,6 +38,14 @@ class Task (
 
     fun setMandatory(mandatory: Boolean) {
         this.mandatory = mandatory
+    }
+
+    fun isAssigned(): Boolean {
+        return assigned
+    }
+
+    fun setAssigned(assigned: Boolean) {
+        this.assigned = assigned
     }
 
     fun getPrice(): BigDecimal {
@@ -66,6 +75,10 @@ class Task (
 
     fun setChild(child: Child?){
         this.child = child
+    }
+
+    fun getChild(): Child? {
+        return this.child
     }
 
     fun getChildName(): String{
@@ -99,7 +112,9 @@ class Task (
 
     fun reOpenTask(){
         this.state = TaskState.OPEN
-        this.child = null
         this.completedDate = null
+        if (!this.assigned){
+            this.child = null
+        }
     }
 }
