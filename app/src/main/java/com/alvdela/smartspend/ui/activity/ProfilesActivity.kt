@@ -32,8 +32,10 @@ import com.alvdela.smartspend.model.Member
 import com.alvdela.smartspend.model.Parent
 import com.alvdela.smartspend.ui.widget.TaskChildWidget
 import com.alvdela.smartspend.ui.widget.TaskParentWidget
+import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.util.CropImage.getCroppedBitmap
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 
@@ -307,6 +309,7 @@ class ProfilesActivity : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             member!!.setPassword("")
+                            updateMemberInDatabase(member)
                             if (member is Parent) {
                                 dialog.dismiss()
                                 goParentMain(member.getUser())
@@ -367,4 +370,23 @@ class ProfilesActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun updateMemberInDatabase(member: Member) {
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        FirebaseFirestore.getInstance()
+            .collection(uid)
+            .document(Constants.FAMILY)
+            .collection(Constants.MEMBERS)
+            .document(member.getId())
+            .update(
+                mapOf(
+                    "password" to member.getPassword(),
+                )
+            )
+            .addOnSuccessListener {
+                Toast.makeText(this,"Contraseña eliminada", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                println("Error al eliminar la contraseña del perfil")
+            }
+    }
 }
