@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/light_blue"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:layout_scrollFlags="scroll|enterAlways">
+            app:layout_scrollFlags="enterAlways">
 
             <ImageView
                 android:id="@+id/btDeleteAllTask"
