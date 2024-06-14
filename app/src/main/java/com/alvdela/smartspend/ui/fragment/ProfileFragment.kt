@@ -152,15 +152,12 @@ class ProfileFragment : Fragment() {
         btDeleteMember.setOnClickListener {
             if (!FamilyManager.isMock) {
                 deleteProfile()
-            } else if (FamilyManager.family!!.getMembers().size == 1){
+            } else{
                 Toast.makeText(
                     requireContext(),
                     "No se puede eliminar la familia de prueba",
                     Toast.LENGTH_SHORT
                 ).show()
-            }else{
-                FamilyManager.family!!.deleteMember(user!!)
-                backToProfiles()
             }
         }
 

@@ -678,9 +678,9 @@ class ParentsActivity : AppCompatActivity(),
         showPopUp(R.layout.pop_up_add_member)
 
         val memberNameWarning = dialog.findViewById<TextView>(R.id.tvMiembroExistente)
-        memberNameWarning.visibility = View.INVISIBLE
+        memberNameWarning.visibility = View.GONE
         val passwordWarning = dialog.findViewById<TextView>(R.id.tv_advise_password2)
-        passwordWarning.visibility = View.INVISIBLE
+        passwordWarning.visibility = View.GONE
         val tvCantidadInicial = dialog.findViewById<TextView>(R.id.tvCantidadInicial)
         val inputCantidadInicial = dialog.findViewById<EditText>(R.id.inputCantidadInicial)
         inputCantidadInicial.setText("")
@@ -840,9 +840,9 @@ class ParentsActivity : AppCompatActivity(),
         val member = family.getMember(selectedMember)!!
 
         val memberNameWarning = dialog.findViewById<TextView>(R.id.tvMiembroExistente)
-        memberNameWarning.visibility = View.INVISIBLE
+        memberNameWarning.visibility = View.GONE
         val passwordWarning = dialog.findViewById<TextView>(R.id.tv_advise_password2)
-        passwordWarning.visibility = View.INVISIBLE
+        passwordWarning.visibility = View.GONE
 
         val radioGroup = dialog.findViewById<RadioGroup>(R.id.rgMemberButtons)
         radioGroup.visibility = View.GONE

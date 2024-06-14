@@ -111,7 +111,7 @@ class LoginActivity : AppCompatActivity() {
         signInButton = findViewById(R.id.registrarse_button)
         mockButton = findViewById(R.id.mock_button)
 
-        errorText.visibility = View.INVISIBLE
+        errorText.visibility = View.GONE
 
         mockButton.setOnClickListener {
             FamilyManager.isMock = true

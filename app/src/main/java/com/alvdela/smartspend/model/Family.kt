@@ -140,7 +140,11 @@ class Family(
     }
 
     fun addTaskToHistory(task: Task){
-        this.oldTask.add(0,task)
+        var index = 0
+        while (index < this.oldTask.size && this.oldTask[index].getCompletedDate()!!.isAfter(task.getCompletedDate())) {
+            index++
+        }
+        this.oldTask.add(index,task)
         if (oldTask.size > MAX_HISTORIC){
             removeTaskFromHistoric(oldTask.size)
         }

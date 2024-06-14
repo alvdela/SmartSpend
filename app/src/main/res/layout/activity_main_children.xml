@@ -207,7 +207,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="18dp"
                 android:background="@color/color2"
                 android:fontFamily="@font/andika_regular"
@@ -223,7 +223,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTaskExtra"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:background="@color/white"
@@ -232,6 +232,7 @@
                 android:scrollbarSize="5dp"
                 android:scrollbarThumbVertical="@android:color/darker_gray"
                 android:scrollbars="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvTareasExtra" />
@@ -277,20 +278,18 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvGoals"
                 android:layout_width="match_parent"
-                android:layout_height="450dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_height="0dp"
+                android:layout_margin="15dp"
+                android:background="@color/white"
+                android:fadeScrollbars="false"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:scrollbarSize="5dp"
+                android:scrollbarThumbVertical="@android:color/darker_gray"
+                android:scrollbars="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/buttonAddGoal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vDivideLine3"
-                android:scrollbars="vertical"
-                android:scrollbarThumbVertical="@android:color/darker_gray"
-                android:scrollbarSize="5dp"
-                android:scrollbarAlwaysDrawVerticalTrack="true"
-                android:fadeScrollbars="false"
-                android:background="@color/white"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/vDivideLine3" />
 
             <Button
                 android:id="@+id/buttonAddGoal"
