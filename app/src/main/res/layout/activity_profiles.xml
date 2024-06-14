@@ -45,7 +45,7 @@
             android:backgroundTint="@color/color1"
             android:drawableTop="@drawable/ic_default_profile"
             android:onClick="triggerGoMain"
-            tools:text="Invitadooooo"
+            tools:text=""
             android:tag="0" />
 
         <Button

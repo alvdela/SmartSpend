@@ -13,10 +13,6 @@ import com.alvdela.smartspend.ui.activity.SignInActivity
 
 class PrivacyPolicy : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

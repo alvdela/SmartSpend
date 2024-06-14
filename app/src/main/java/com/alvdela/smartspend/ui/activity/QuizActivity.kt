@@ -13,13 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.alvdela.smartspend.R
 import android.content.Context
-import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
-import com.airbnb.lottie.LottieAnimationView
 import com.alvdela.smartspend.model.Pregunta
 import com.alvdela.smartspend.model.Quiz
 import com.alvdela.smartspend.ui.Animations

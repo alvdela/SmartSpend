@@ -175,9 +175,11 @@ class ProfilesActivity : AppCompatActivity() {
             profilesButtons[i].visibility = View.VISIBLE
             profilesButtons[i].text = clave
             profilesButtons[i].tag = clave
+
             if (!FamilyManager.isMock) {
                 showProfilePicture(profilesButtons[i], member)
             }
+
             i++
         }
     }
@@ -192,16 +194,30 @@ class ProfilesActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 if (localFile.exists() && localFile.length() > 0) {
                     val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 260, 260, true)
-                    val circularImage = getCroppedBitmap(scaledBitmap)
+
+                    val displayMetrics = this.resources.displayMetrics
+                    val screenWidth = displayMetrics.widthPixels
+                    val desiredWidth = (screenWidth * 0.25).toInt()
+
+                    val circularImage = getCroppedBitmap(bitmap)
+
                     images[member.getUser()] = circularImage
                     val drawable: Drawable = BitmapDrawable(resources, circularImage)
-                    button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
+                    val scaledDrawable = scaleDrawable(drawable, desiredWidth, desiredWidth)
+                    button.setCompoundDrawablesWithIntrinsicBounds(null, scaledDrawable, null, null)
                 }
             }
             .addOnFailureListener {
                 //Toast.makeText(this, "Fallo al obtener imagen de perfil", Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun scaleDrawable(drawable: Drawable?, width: Int, height: Int): Drawable? {
+        if (drawable == null) return null
+
+        val bitmap = (drawable as BitmapDrawable).bitmap
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+        return BitmapDrawable(resources, scaledBitmap)
     }
 
     fun triggerGoMain(view: View) {

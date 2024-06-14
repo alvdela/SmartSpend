@@ -12,7 +12,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -502,7 +501,9 @@ class ChildrenActivity : AppCompatActivity(),
             if (descripcionText.isEmpty()) {
                 descripcion.error = "Se necesita una descripción"
                 Toast.makeText(this, "Se necesita una descripción", Toast.LENGTH_SHORT).show()
-            } else if (amount.text.toString().isEmpty()) {
+            } else if (descripcionText.length > 25) {
+                amount.error = "Descripción demasiado larga (max 25)"
+            }else if (amount.text.toString().isEmpty()) {
                 amount.error = "La cantidad no puede quedar vacia"
                 Toast.makeText(this, "La cantidad no puede quedar vacia", Toast.LENGTH_SHORT).show()
             } else if (amount.text.toString().toBigDecimal() > child.getActualMoney()) {
