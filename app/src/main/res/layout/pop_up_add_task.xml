@@ -95,6 +95,8 @@
             android:textColor="@color/black"
             android:textCursorDrawable="@drawable/custom_cursor"
             android:textSize="18sp"
+            android:hint="@string/opcional"
+            android:textColorHint="@color/darker_gray"
             tools:text="" />
 
         <CheckBox
@@ -113,7 +115,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/andika_regular"
-        android:text="@string/opcional"
         android:textAlignment="center"
         android:textColor="@color/darker_gray"
         android:textSize="15sp"
@@ -158,23 +159,12 @@
         android:textColor="@color/black"
         android:textCursorDrawable="@drawable/custom_cursor"
         android:textSize="18sp"
+        android:hint="@string/opcional"
+        android:textColorHint="@color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvRecompensa">
     </EditText>
-
-    <TextView
-        android:id="@+id/tv_advise_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/andika_regular"
-        android:text="@string/opcional"
-        android:textAlignment="center"
-        android:textColor="@color/darker_gray"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recompensa" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -187,7 +177,7 @@
         app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_advise_price" />
+        app:layout_constraintTop_toBottomOf="@+id/recompensa" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -198,7 +188,7 @@
         app:layout_constraintBottom_toTopOf="@+id/line7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_advise_price">
+        app:layout_constraintTop_toBottomOf="@+id/recompensa">
 
         <Spinner
             android:id="@+id/spinnerMembers"

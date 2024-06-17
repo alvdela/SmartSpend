@@ -513,6 +513,9 @@ class ChildrenActivity : AppCompatActivity(),
                     "La cantidad no puede ser mayor que la cantidad disponible",
                     Toast.LENGTH_SHORT
                 ).show()
+            }else if (amount.text.toString().toBigDecimal() == BigDecimal(0)) {
+                amount.error = "La cantidad no puede ser 0"
+                Toast.makeText(this, "La cantidad no puede ser 0", Toast.LENGTH_SHORT).show()
             } else {
                 val amountNumber = amount.text.toString().toBigDecimal()
                 addRecord(descripcionText)

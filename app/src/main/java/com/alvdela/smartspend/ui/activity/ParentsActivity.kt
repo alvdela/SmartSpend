@@ -291,9 +291,13 @@ class ParentsActivity : AppCompatActivity(),
             dialog.dismiss()
         }
 
+        val task = family.getTask(selectedTask)
+
         val confirmButton = dialog.findViewById<Button>(R.id.confirmDelete)
         confirmButton.setOnClickListener {
-            family.getTask(selectedTask).setCompletedDate(LocalDate.now())
+            task.setCompletedDate(LocalDate.now())
+            task.setAssigned(false)
+            task.setChild(null)
             if (!isMock){
                 deleteTaskFromDatabase(family.getTask(selectedTask).getId(), TASKS)
                 addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
@@ -327,17 +331,20 @@ class ParentsActivity : AppCompatActivity(),
         val closeTask = dialog.findViewById<Button>(R.id.closeTask)
         closeTask.setOnClickListener {
             task.givePrice()
-            family.getTask(selectedTask).setCompletedDate(LocalDate.now())
-            if (!isMock){
-                deleteTaskFromDatabase(family.getTask(selectedTask).getId(), TASKS)
-                addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
-            }
-            family.removeTask(selectedTask)
-            dialog.dismiss()
-            completeTaskAdapter.removeItem()
-            ProfilesActivity.updateWidgets(this)
+            showCashFlow(task.getChildName())
+
             Handler().postDelayed({
-                showCashFlow(task.getChildName())
+                task.setCompletedDate(LocalDate.now())
+                task.setAssigned(false)
+                task.setChild(null)
+                if (!isMock){
+                    deleteTaskFromDatabase(family.getTask(selectedTask).getId(), TASKS)
+                    addTaskToDatabase(family.getTask(selectedTask), HISTORIC)
+                }
+                family.removeTask(selectedTask)
+                dialog.dismiss()
+                completeTaskAdapter.removeItem()
+                ProfilesActivity.updateWidgets(this)
             }, 1000)
         }
     }
@@ -828,8 +835,8 @@ class ParentsActivity : AppCompatActivity(),
                 }
                 membersCopy.remove(selectedMember)
                 memberAdapter.notifyItemRemoved(position)
-                completeTaskAdapter.notifyDataSetChanged()
-                openTaskAdapter.notifyDataSetChanged()
+                completeTaskAdapter.removeItem()
+                openTaskAdapter.removeItem()
             }
             dialog.dismiss()
         }
@@ -928,7 +935,10 @@ class ParentsActivity : AppCompatActivity(),
         if (childSelected.getCashFlow().isNotEmpty()) {
             recyclerView.adapter = ExpenseAdapter(childSelected.getCashFlow())
         } else {
-            Toast.makeText(this, "No existen movimientos", Toast.LENGTH_SHORT).show()
+            if (seguimiento){
+                Toast.makeText(this, "No existen movimientos", Toast.LENGTH_SHORT).show()
+            }
+            recyclerView.adapter = ExpenseAdapter(mutableListOf())
         }
     }
 
@@ -1442,14 +1452,13 @@ class ParentsActivity : AppCompatActivity(),
                 if (task.isAssigned()){
                     deleteTaskFromDatabase(task.getId(), TASKS)
                     family.getTaskList().remove(task)
-                    completeTaskAdapter.notifyDataSetChanged()
-                    openTaskAdapter.notifyDataSetChanged()
-                }
-            }
-            for (task in family.getTaskHistory()){
-                if (task.isAssigned() && task.getChild()!!.getUser() == selectedMember){
-                    deleteTaskFromDatabase(task.getId(), HISTORIC)
-                    family.getTaskHistory().remove(task)
+                    completeTaskAdapter.removeItem()
+                    openTaskAdapter.removeItem()
+                }else{
+                    task.reOpenTask()
+                    completeTaskAdapter.removeItem()
+                    openTaskAdapter.removeItem()
+                    updateTaskInDatabase(task, TASKS)
                 }
             }
         }
