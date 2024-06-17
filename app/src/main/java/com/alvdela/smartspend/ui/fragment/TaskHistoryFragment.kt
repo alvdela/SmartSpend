@@ -7,8 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,11 +20,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alvdela.smartspend.FamilyManager
 import com.alvdela.smartspend.R
+import com.alvdela.smartspend.adapter.CustomSpinnerAdapter
 import com.alvdela.smartspend.util.Constants
 import com.alvdela.smartspend.model.Task
 import com.alvdela.smartspend.model.TaskState
 import com.alvdela.smartspend.ui.activity.ProfilesActivity
 import com.alvdela.smartspend.adapter.TaskHistoryAdapter
+import com.alvdela.smartspend.model.Child
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -124,19 +128,45 @@ class TaskHistoryFragment : Fragment() {
 
     private fun reOpenTask(selectedTask: Int) {
         val task = historyTasks[selectedTask]
-        showPopUp(R.layout.pop_up_log_out)
+        showPopUp(R.layout.pop_up_reopen)
 
-        val textViewInfo = dialog.findViewById<TextView>(R.id.tvlogOut)
-        textViewInfo.text = resources.getString(R.string.reopen_task)
+        val childNames = FamilyManager.family!!.getChildrenNames()
+        val options = mutableListOf("Todos")
+        for (childName in childNames){
+            options.add(childName)
+        }
+        var selectedOption = ""
+        val adapter = CustomSpinnerAdapter(requireContext(), options.toList())
+        val asignarMiembro = dialog.findViewById<Spinner>(R.id.spinnerMembers)
+        asignarMiembro.adapter = adapter
+        asignarMiembro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                selectedOption = options[position]
+            }
 
-        val cancelButton = dialog.findViewById<Button>(R.id.cancelButtonLogOut)
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                //Do nothing
+            }
+        }
+
+
+        val cancelButton = dialog.findViewById<Button>(R.id.cancelButtonReOpen)
         cancelButton.setOnClickListener {
             dialog.dismiss()
         }
 
-        val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonLogOut)
+        val confirmButton = dialog.findViewById<Button>(R.id.confirmButtonReOpen)
         confirmButton.setOnClickListener {
             task.reOpenTask()
+            if (selectedOption != "Todos"){
+                task.setChild(FamilyManager.family!!.getMember(selectedOption) as Child)
+                task.setAssigned(true)
+            }
             if (FamilyManager.isMock){
                 FamilyManager.family!!.removeTaskFromHistoric(selectedTask)
                 FamilyManager.family!!.addTask(task)
